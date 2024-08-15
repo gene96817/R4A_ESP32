@@ -1,0 +1,36 @@
+########################################################
+# Syntax Coloring Map for Robots-For-All ESP32 support
+########################################################
+# Class
+###################################################################
+
+r4aEsp32                            KEYWORD1
+
+###################################################################
+# Methods and Functions
+###################################################################
+
+r4aEsp32DumpBuffer                  KEYWORD2
+
+r4aEsp32DisplayBatteryVoltage       KEYWORD2
+r4aEsp32FlashBlueLed                KEYWORD2
+r4aEsp32GetBatteryVoltage           KEYWORD2
+r4aEsp32IsAddressInEEPROM           KEYWORD2
+r4aEsp32IsAddressInPSRAM            KEYWORD2
+r4aEsp32IsAddressInRAM              KEYWORD2
+r4aEsp32IsAddressInROM              KEYWORD2
+r4aEsp32IsAddressInSRAM             KEYWORD2
+r4aEsp32LockAcquire                 KEYWORD2
+r4aEsp32LockRelease                 KEYWORD2
+r4aEsp32PartitionFind               KEYWORD2
+r4aEsp32PartitionTableDisplay       KEYWORD2
+r4aEsp32UsbSerialUpdate             KEYWORD2
+
+r4aEsp32GpioDisplayRegisters        KEYWORD2
+r4aEsp32GpioDisplayIoMuxRegisters   KEYWORD2
+
+
+r4aEsp32TimerDisplayTimerRegs       KEYWORD2
+r4aEsp32TimerDisplayWatchdogRegs    KEYWORD2
+r4aEsp32TimerDisplayTimerIntRegs    KEYWORD2
+r4aEsp32TimerDisplayRegs            KEYWORD2
