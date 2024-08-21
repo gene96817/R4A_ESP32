@@ -4,7 +4,7 @@
   Decode and display the timer registers
 **********************************************************************/
 
-#include "R4A_ESP32_Timer.h"
+#include "R4A_ESP32.h"
 
 //*********************************************************************
 // Display the timer registers
@@ -58,16 +58,16 @@ void r4aEsp32TimerDisplayTimerIntRegs(uint32_t timerAddr, Print * display)
 void r4aEsp32TimerDisplayRegs(Print * display)
 {
     // Timer group 0
-    r4aTimerDisplayTimerRegs(0x3FF5F000, display);
-    r4aTimerDisplayTimerRegs(0x3FF5F024, display);
-    r4aTimerDisplayWatchdogRegs(0x3FF5F048, display);
-    r4aTimerDisplayTimerIntRegs(0x3FF5F09c, display);
+    r4aEsp32TimerDisplayTimerRegs(0x3FF5F000, display);
+    r4aEsp32TimerDisplayTimerRegs(0x3FF5F024, display);
+    r4aEsp32TimerDisplayWatchdogRegs(0x3FF5F048, display);
+    r4aEsp32TimerDisplayTimerIntRegs(0x3FF5F09c, display);
     display->println();
 
     // Timer group 1
-    r4aTimerDisplayTimerRegs(0x3FF60000, display);
-    r4aTimerDisplayTimerRegs(0x3FF60024, display);
-    r4aTimerDisplayWatchdogRegs(0x3FF60048, display);
-    r4aTimerDisplayTimerIntRegs(0x3FF6009c, display);
+    r4aEsp32TimerDisplayTimerRegs(0x3FF60000, display);
+    r4aEsp32TimerDisplayTimerRegs(0x3FF60024, display);
+    r4aEsp32TimerDisplayWatchdogRegs(0x3FF60048, display);
+    r4aEsp32TimerDisplayTimerIntRegs(0x3FF6009c, display);
     display->println();
 }

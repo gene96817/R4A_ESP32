@@ -1,82 +1,17 @@
 /**********************************************************************
-  RSA_ESP32.cpp
+  R4A_ESP32.cpp
 
   ESP32 WROVER module support
 **********************************************************************/
 
-//*********************************************************************
-// Display the battery voltage
-void r4aEsp32DisplayBatteryVoltage(Print * display)
-{
-    float voltage;
-    int adcValue;
+#include "R4A_ESP32.h"
 
-    // Get the battery voltage
-    voltage = r4aEsp32GetBatteryVoltage(&adcValue);
+//****************************************
+// Locals
+//****************************************
 
-    // Display the battery voltage
-    if (adcValue < 5)
-        display->printf("Power switch is off (0x%04x)!\r\n", adcValue);
-    else
-        display->printf("Battery Voltage (%d, 0x%04x): %.2f Volts\r\n",
-                       adcValue, adcValue, voltage);
-}
-
-//*********************************************************************
-// Flash the ESP32 WROVER blue LED
-void r4aEsp32FlashBlueLed()
-{
-    int blueLED = digitalRead(BLUE_LED_BUZZER_PIN);
-    digitalWrite(BLUE_LED_BUZZER_PIN, !blueLED);
-    delay(250);
-    digitalWrite(BLUE_LED_BUZZER_PIN, blueLED);
-}
-
-//*********************************************************************
-// Get the battery voltage
-float r4aEsp32GetBatteryVoltage(int * adcValue)
-{
-    float batteryVoltage;
-    uint32_t tempFunc32;
-    int voltage;
-
-    // Bug: No WS2812 output
-    //      The WS2812 code uses the RMT (remote control peripheral) and
-    //      the GPIO mux is making the connection.  The pinMode call below
-    //      switches the GPIO mux for pin 32 from the RMT to the GPIO
-    //      controller.  However setting the pinMode back to output does
-    //      not restore the GPIO mux value.
-    //
-    // Fix: Share the pin between battery voltage input and WS2812 output
-    //      Save and restore the GPIO mux value.
-    //
-    // Remember the GPIO pin mux value
-    tempFunc32 = r4aGpioRegs->R4A_GPIO_FUNC_OUT_SEL_CFG_REG[BATTERY_WS2812_PIN];
-
-    // Switch from RMT output for the WS2812 to GPIO input for ADC
-    pinMode(BATTERY_WS2812_PIN, INPUT);
-
-    // Read the voltage multiple times and take the average
-    voltage = 0;
-    for (int index = 0; index < 8; index++)
-        voltage += analogRead(BATTERY_WS2812_PIN);
-    voltage >>= 3;
-
-    // Restore the GPIO pin to an output for the WS2812 and reconnect the
-    // pin to the RMT (remote control peripheral)
-    pinMode(BATTERY_WS2812_PIN, OUTPUT);
-    r4aGpioRegs->R4A_GPIO_FUNC_OUT_SEL_CFG_REG[BATTERY_WS2812_PIN] = tempFunc32;
-
-    // Return the ADC value
-    if (adcValue)
-        *adcValue = voltage;
-
-    // Convert the ADC reading into a voltage value
-    batteryVoltage = (ADC_REFERENCE_VOLTAGE
-                   * (voltage * BATTERY_VOLTAGE_MULTIPLIER))
-                   / 4095.;
-    return batteryVoltage;
-}
+static uint8_t r4aEsp32GpioPinMode[256];
+static float r4aEsp32VoltageReference;
 
 //*********************************************************************
 // Determine if the address is in the EEPROM (Flash)
@@ -133,7 +68,7 @@ void r4aEsp32LockAcquire(volatile int * lock)
 }
 
 //*********************************************************************
-// Take out a lock
+// Release a lock
 void r4aEsp32LockRelease(volatile int * lock)
 {
     *lock = 0;
@@ -210,60 +145,140 @@ void r4aEsp32PartitionTableDisplay(Print * display)
 }
 
 //*********************************************************************
-// Read a command from USB serial
-void r4aEsp32UsbSerialUpdate()
+// Set and save the pin mode
+uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode)
 {
-    static String command = "";
+    pinMode(pin, mode);
+    uint8_t previousMode = r4aEsp32GpioPinMode[pin];
+    r4aEsp32GpioPinMode[pin] = mode;
+    return previousMode;
+}
+
+//*********************************************************************
+// Read a line of input from a Stream into a String
+String * r4aEsp32ReadLine(String * buffer, Stream * stream)
+{
     char data;
 
-    // Wait for a command
-    while (Serial.available())
+    // Wait for an input character
+    while (stream->available())
     {
-        // Get the command
-        data = Serial.read();
+        // Get the input character
+        data = stream->read();
         if ((data != '\r') && (data != '\n'))
         {
             // Handle backspace
             if (data == 8)
             {
-                if (command.length() <= 0)
-                    Serial.write(7);
+                // Output a bell when the buffer is empty
+                if (buffer->length() <= 0)
+                    stream->write(7);
                 else
                 {
                     // Remove the character from the line
-                    Serial.write(data);
-                    Serial.write(' ');
-                    Serial.write(data);
+                    stream->write(data);
+                    stream->write(' ');
+                    stream->write(data);
 
-                    // Remove the character from the command
-                    command = command.substring(0, command.length() - 1);
+                    // Remove the character from the buffer
+                    *buffer = buffer->substring(0, buffer->length() - 1);
                 }
             }
             else
             {
                 // Echo the character
-                Serial.write(data);
+                stream->write(data);
 
-                // Add the character to the command line
-                command += data;
+                // Add the character to the line
+                *buffer += data;
             }
+
+            // Still building the stream
+            buffer = nullptr;
         }
+
+        // Ignore the linefeed
+        else if (data == '\n')
+            buffer = nullptr;
+
+        // Echo a carriage return and linefeed
         else if (data == '\r')
-        {
-            // Echo the carriage return
-            Serial.println();
+            stream->println();
 
-            // Start at the main menu if necessary
-            if (!wcsMenu)
-                wcsMenu = wcsMainMenu;
-
-            // Process the command
-            wcsMenu(command.c_str(), &Serial);
-            command = "";
-
-            // Display the menu
-            if (wcsMenu)
-                wcsMenu(nullptr, &Serial);
-        }
+        // Return the line when it is complete
+        return buffer;
     }
+}
+
+//*********************************************************************
+// Display the voltage
+void r4aEsp32VoltageDisplay(int adcPin, float offset, float multiplier, Print * display)
+{
+    float voltage;
+    int16_t adcValue;
+
+    // Get the battery voltage
+    voltage = r4aEsp32VoltageGet(adcPin, offset, multiplier, &adcValue);
+
+    // Display the battery voltage
+    if (adcValue < 5)
+        display->printf("Power switch is off (0x%04x)!\r\n", adcValue);
+    else
+        display->printf("Battery Voltage (%d, 0x%04x): %.2f Volts\r\n",
+                       adcValue, adcValue, voltage);
+}
+
+//*********************************************************************
+// Get the voltage
+float r4aEsp32VoltageGet(int adcPin, float offset, float multiplier, int16_t * adcValue)
+{
+    int averageAdcReading;
+    uint32_t previousFunction;
+    float voltage;
+
+    // Bug: No WS2812 output
+    //      The WS2812 code uses the RMT (remote control peripheral) and
+    //      the GPIO mux is making the connection.  The pinMode call below
+    //      switches the GPIO mux for pin 32 from the RMT to the GPIO
+    //      controller.  However setting the pinMode back to output does
+    //      not restore the GPIO mux value.
+    //
+    // Fix: Share the pin between battery voltage input and WS2812 output
+    //      Save and restore the GPIO mux value.
+    //
+    // Remember the GPIO pin mux value
+    previousFunction = r4aGpioRegs->R4A_GPIO_FUNC_OUT_SEL_CFG_REG[adcPin];
+
+    // Switch from RMT output for the WS2812 to GPIO input for ADC
+    pinMode(adcPin, INPUT);
+
+    // Read the voltage multiple times and take the average
+    averageAdcReading = 0;
+    for (int index = 0; index < 8; index++)
+        averageAdcReading += analogRead(adcPin);
+    averageAdcReading >>= 3;
+
+    // Restore the GPIO pin to an output for the WS2812 and reconnect the
+    // pin to the RMT (remote control peripheral)
+    pinMode(adcPin, r4aEsp32GpioPinMode[adcPin]);
+    r4aGpioRegs->R4A_GPIO_FUNC_OUT_SEL_CFG_REG[adcPin] = previousFunction;
+
+    // Return the ADC value
+    if (adcValue)
+        *adcValue = (int16_t)averageAdcReading;
+
+    // Convert the ADC reading into a voltage value
+    voltage = (float)averageAdcReading * r4aEsp32VoltageReference / 4095.;
+    if (multiplier != 1.)
+        voltage *= multiplier;
+    if (offset)
+        voltage -= offset;
+    return voltage;
+}
+
+//*********************************************************************
+// Set the reference voltage
+void r4aEsp32VoltageSetReference(float maximumVoltage)
+{
+    r4aEsp32VoltageReference = maximumVoltage;
 }

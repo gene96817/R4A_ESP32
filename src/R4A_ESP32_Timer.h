@@ -46,13 +46,4 @@ typedef struct _R4A_ESP32_TIMER_INT_REGS
     uint32_t INT_CLR;   // 0x0c, WO
 } R4A_ESP32_TIMER_INT_REGS;
 
-//****************************************
-// API
-//****************************************
-
-void r4aEsp32TimerDisplayTimerRegs(uint32_t timerAddr, Print * display = &Serial);
-void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display = &Serial);
-void r4aEsp32TimerDisplayTimerIntRegs(uint32_t timerAddr, Print * display = &Serial);
-void r4aEsp32TimerDisplayRegs(Print * display = &Serial);
-
 #endif  // __R4A_ESP32_TIMER_H__

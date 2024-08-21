@@ -1,14 +1,17 @@
 /**********************************************************************
-  R4A_Dump_Buffer.cpp
+  R4A_ESP32_Dump_Buffer.cpp
 
   Display the contents of a buffer
 **********************************************************************/
 
+#include "R4A_ESP32.h"
+
+//*********************************************************************
 // Dump the contents of a buffer
-void r4aEsp32DumpBuffer(Print * display,
-                        uint32_t offset,
+void r4aEsp32DumpBuffer(uint32_t offset,
                         const uint8_t *buffer,
-                        uint32_t length)
+                        uint32_t length,
+                        Print * display)
 {
     int bytes;
     const uint8_t *end;
