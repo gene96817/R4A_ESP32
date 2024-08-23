@@ -7,8 +7,9 @@
 #ifndef __R4A_ESP32_H__
 #define __R4A_ESP32_H__
 
-#include <Arduino.h>
-#include <Wire.h>
+#include <Arduino.h>            // Built-in
+#include <LittleFS.h>           // Built-in, load and store files in flash
+#include <Wire.h>               // Built-in
 
 #include "R4A_ESP32_GPIO.h"
 #include "R4A_ESP32_Timer.h"
@@ -29,6 +30,17 @@ extern const R4A_GPIO_MATRIX r4aGpioMatrixNames[256];
 // I2C General call values
 const uint8_t I2C_GENERAL_CALL_DEVICE_ADDRESS = 0x00;
 const uint8_t I2C_SWRST = 0x06;
+
+// Define time constants
+#define R4A_ESP32_MILLISECONDS_IN_A_SECOND  1000
+#define R4A_ESP32_SECONDS_IN_A_MINUTE       60
+#define R4A_ESP32_MILLISECONDS_IN_A_MINUTE  (R4A_ESP32_SECONDS_IN_A_MINUTE * R4A_ESP32_MILLISECONDS_IN_A_SECOND)
+#define R4A_ESP32_MINUTES_IN_AN_HOUR        60
+#define R4A_ESP32_MILLISECONDS_IN_AN_HOUR   (R4A_ESP32_MINUTES_IN_AN_HOUR * R4A_ESP32_MILLISECONDS_IN_A_MINUTE)
+#define R4A_ESP32_HOURS_IN_A_DAY            24
+#define R4A_ESP32_MILLISECONDS_IN_A_DAY     (R4A_ESP32_HOURS_IN_A_DAY * R4A_ESP32_MILLISECONDS_IN_AN_HOUR)
+
+#define R4A_ESP32_SECONDS_IN_AN_HOUR        (R4A_ESP32_MINUTES_IN_AN_HOUR * R4A_ESP32_SECONDS_IN_A_MINUTE)
 
 //****************************************
 // Dump Buffer API
@@ -123,6 +135,14 @@ uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode);
 //   nullptr when the line is not complete
 String * r4aEsp32ReadLine(String * buffer, Stream * stream);
 
+// Repeatedly display a fatal error message
+// Inputs:
+//   errorMessage: Zero terminated string of characters containing the
+//                 error mesage to be displayed
+//   display: Device used for output
+void r4aEsp32ReportFatalError(const char * errorMessage,
+                              Print * display = &Serial);
+
 // Display the voltage
 // Inputs:
 //   adcPin: GPIO pin number for the ADC pin
@@ -156,101 +176,55 @@ void r4aEsp32VoltageSetReference(float maximumVoltage);
 // GPIO API
 //****************************************
 
-// Display the GPIO registers
-// Inputs:
-//   display: Device used for output
-void r4aEsp32GpioDisplayRegisters(Print * display = &Serial);
-
 // Display the IO MUX registers
 // Inputs:
 //   display: Device used for output
 void r4aEsp32GpioDisplayIoMuxRegisters(Print * display = &Serial);
 
+// Display the GPIO registers
+// Inputs:
+//   display: Device used for output
+void r4aEsp32GpioDisplayRegisters(Print * display = &Serial);
+
 //****************************************
 // I2C Bus API
 //****************************************
 
-typedef struct _R4A_I2C
+typedef struct _R4A_ESP32_I2C
 {
-    TwoWire * bus;
-    volatile int lock;
-} R4A_I2C;
+    TwoWire * bus;      // API for the I2C bus
+    volatile int lock;  // Synchronize access to the I2C bus
+} R4A_ESP32_I2C;
 
-typedef struct _R4A_I2C_DEVICE_DESCRIPTION
+typedef struct _R4A_ESP32_I2C_DEVICE_DESCRIPTION
 {
     uint8_t deviceAddress;  // 0 - 0x7f
     char * displayName;     // Name to display when the device is found
-} R4A_I2C_DEVICE_DESCRIPTION;
-
-// Ping an I2C device and see if it responds
-// Inputs:
-//   i2c: Address of R4A_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-// Outputs:
-//   Returns true if device detected, false otherwise
-bool r4aEsp32I2cBusIsDevicePresent(R4A_I2C * i2c, uint8_t deviceAddress);
+} R4A_ESP32_I2C_DEVICE_DESCRIPTION;
 
 // Enumerate the I2C bus
 // Inputs:
-//   i2c: Address of R4A_I2C structure
+//   i2c: Address of R4A_ESP32_I2C structure
 //   deviceTable: Address of the table containing the address and device
 //                descriptions
 //   deviceTableEntries: Number of entries in the I2C device table, >= 1
 //   display: Device used for output
-void r4aEsp32I2cBusEnumerate(R4A_I2C * i2c,
-                             const R4A_I2C_DEVICE_DESCRIPTION * deviceTable,
+void r4aEsp32I2cBusEnumerate(R4A_ESP32_I2C * i2c,
+                             const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
                              int deviceTableEntries,
                              Print * display = &Serial);
 
-// Send data to an I2C peripheral
+// Ping an I2C device and see if it responds
 // Inputs:
-//   i2c: Address of R4A_I2C structure
+//   i2c: Address of R4A_ESP32_I2C structure
 //   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
-//   cmdByteCount: Number of bytes to send from the command buffer
-//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
-//   dataByteCount: Number of bytes to send from the data buffer
-//   debug: A true value enables debugging for the I2C transaction
-//   releaseI2cBus: A value of true releases the I2C bus after the transaction
-//   display: Device used for output
 // Outputs:
-//   Returns true upon success, false otherwise
-bool r4aEsp32I2cBusWriteWithLock(R4A_I2C * i2c,
-                                 uint8_t deviceI2cAddress,
-                                 const uint8_t * cmdBuffer,
-                                 size_t cmdByteCount,
-                                 const uint8_t * dataBuffer,
-                                 size_t dataByteCount,
-                                 bool debug = false,
-                                 bool releaseI2cBus = true,
-                                 Print * display = &Serial);
-
-// Send data to an I2C peripheral
-// Inputs:
-//   i2c: Address of R4A_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
-//   cmdByteCount: Number of bytes to send from the command buffer
-//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
-//   dataByteCount: Number of bytes to send from the data buffer
-//   debug: A true value enables debugging for the I2C transaction
-//   releaseI2cBus: A value of true releases the I2C bus after the transaction
-//   display: Device used for output
-// Outputs:
-//   Returns true upon success, false otherwise
-bool r4aEsp32I2cBusWrite(R4A_I2C * i2c,
-                         uint8_t deviceI2cAddress,
-                         const uint8_t * cmdBuffer,
-                         size_t cmdByteCount,
-                         const uint8_t * dataBuffer,
-                         size_t dataByteCount,
-                         bool debug = false,
-                         bool releaseI2cBus = true,
-                         Print * display = &Serial);
+//   Returns true if device detected, false otherwise
+bool r4aEsp32I2cBusIsDevicePresent(R4A_ESP32_I2C * i2c, uint8_t deviceAddress);
 
 // Read data from an I2C peripheral
 // Inputs:
-//   i2c: Address of R4A_I2C structure
+//   i2c: Address of R4A_ESP32_I2C structure
 //   deviceAddress: Device address on the I2C bus (0 - 0x7f)
 //   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
 //   cmdByteCount: Number of bytes to send from the command buffer
@@ -261,7 +235,7 @@ bool r4aEsp32I2cBusWrite(R4A_I2C * i2c,
 //   display: Device used for output
 // Outputs:
 //   Returns the number of bytes read
-size_t r4aEsp32I2cBusRead(R4A_I2C * i2c,
+size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
                           uint8_t deviceI2cAddress,
                           const uint8_t * cmdBuffer, // Does not include I2C address
                           size_t cmdByteCount,
@@ -273,7 +247,7 @@ size_t r4aEsp32I2cBusRead(R4A_I2C * i2c,
 
 // Initialize the I2C bus
 // Inputs:
-//   i2c: Address of R4A_I2C structure
+//   i2c: Address of R4A_ESP32_I2C structure
 //   sdaPin: Number of the pin used for the SDA signal
 //   sclPin: Number of the pin used for the SCL signal
 //   clockHz: Clock speed for the I2C bus in Hertz
@@ -281,13 +255,217 @@ size_t r4aEsp32I2cBusRead(R4A_I2C * i2c,
 //                descriptions, may be nullptr
 //   deviceTableEntries: Number of entries in the I2C device table
 //   display: Device used for output
-void r4aEsp32I2cBusSetup(R4A_I2C * i2c,
+void r4aEsp32I2cBusSetup(R4A_ESP32_I2C * i2c,
                          int sdaPin,
                          int sclPin,
                          int clockHz,
-                         const R4A_I2C_DEVICE_DESCRIPTION * deviceTable,
+                         const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
                          int deviceTableEntries,
                          Print * display = &Serial);
+
+// Send data to an I2C peripheral
+// Inputs:
+//   i2c: Address of R4A_ESP32_I2C structure
+//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
+//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
+//   cmdByteCount: Number of bytes to send from the command buffer
+//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
+//   dataByteCount: Number of bytes to send from the data buffer
+//   debug: A true value enables debugging for the I2C transaction
+//   releaseI2cBus: A value of true releases the I2C bus after the transaction
+//   display: Device used for output
+// Outputs:
+//   Returns true upon success, false otherwise
+bool r4aEsp32I2cBusWrite(R4A_ESP32_I2C * i2c,
+                         uint8_t deviceI2cAddress,
+                         const uint8_t * cmdBuffer,
+                         size_t cmdByteCount,
+                         const uint8_t * dataBuffer,
+                         size_t dataByteCount,
+                         bool debug = false,
+                         bool releaseI2cBus = true,
+                         Print * display = &Serial);
+
+// Send data to an I2C peripheral
+// Inputs:
+//   i2c: Address of R4A_ESP32_I2C structure
+//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
+//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
+//   cmdByteCount: Number of bytes to send from the command buffer
+//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
+//   dataByteCount: Number of bytes to send from the data buffer
+//   debug: A true value enables debugging for the I2C transaction
+//   releaseI2cBus: A value of true releases the I2C bus after the transaction
+//   display: Device used for output
+// Outputs:
+//   Returns true upon success, false otherwise
+bool r4aEsp32I2cBusWriteWithLock(R4A_ESP32_I2C * i2c,
+                                 uint8_t deviceI2cAddress,
+                                 const uint8_t * cmdBuffer,
+                                 size_t cmdByteCount,
+                                 const uint8_t * dataBuffer,
+                                 size_t dataByteCount,
+                                 bool debug = false,
+                                 bool releaseI2cBus = true,
+                                 Print * display = &Serial);
+
+//****************************************
+// NVM API
+//****************************************
+
+#define R4A_ESP32_NVM_STRING(x)     ((uint64_t)(intptr_t)(const char *)x)
+#define R4A_ESP32_NVM_FLOAT_CONV    ((double)(0x10000000ull))
+#define R4A_ESP32_NVM_FLT(x)        ((uint64_t)(((double)x) * R4A_ESP32_NVM_FLOAT_CONV))
+
+enum R4A_ESP32_NVM_PARAMETER_TYPE
+{
+    R4A_ESP32_NVM_PT_NULLPTR = 0,
+    R4A_ESP32_NVM_PT_BOOL,        //  1
+    R4A_ESP32_NVM_PT_INT8,        //  2
+    R4A_ESP32_NVM_PT_UINT8,       //  3
+    R4A_ESP32_NVM_PT_INT16,       //  4
+    R4A_ESP32_NVM_PT_UINT16,      //  5
+    R4A_ESP32_NVM_PT_INT32,       //  6
+    R4A_ESP32_NVM_PT_UINT32,      //  7
+    R4A_ESP32_NVM_PT_INT64,       //  8
+    R4A_ESP32_NVM_PT_UINT64,      //  9
+    R4A_ESP32_NVM_PT_FLOAT,       // 10
+    R4A_ESP32_NVM_PT_DOUBLE,      // 11
+    R4A_ESP32_NVM_PT_P_CHAR,      // 12
+};
+
+typedef union
+{
+    bool     b;
+    int8_t   i8;
+    uint8_t  u8;
+    int16_t  i16;
+    uint16_t u16;
+    int32_t  i32;
+    uint32_t u32;
+    int64_t  i64;
+    uint64_t u64;
+    double   d;     // Float values are cast when read and written
+    const char * pcc;
+    void * pv;
+} R4A_ESP32_NVM_VALUE;
+
+typedef struct _R4A_ESP32_NVM_PARAMETER
+{
+    bool required;
+    uint8_t type;
+    uint64_t minimum;
+    uint64_t maximum;
+    void * addr;
+    const char * name;
+    uint64_t value;
+} R4A_ESP32_NVM_PARAMETER;
+
+// Clear a parameter by setting its value to zero
+// Inputs:
+//   filePath: Path to the file to be stored in NVM
+//   parameterTable: Address of the first entry in the parameter table
+//   parameterCount: Number of entries in the parameter table
+//   name: Name of the parameter to be cleared
+//   display: Device used for output
+void r4aEsp32NvmParameterClear(const char * filePath,
+                               const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                               int parameterCount,
+                               const char * name,
+                               Print * display = &Serial);
+
+// Display a parameter
+// Inputs:
+//   parameter: Address of the entry in the parameter table to display
+//   display: Device used for output
+void r4aEsp32NvmDisplayParameter(const R4A_ESP32_NVM_PARAMETER * parameter,
+                                 Print * display = &Serial);
+
+// Display the parameters
+// Inputs:
+//   parameterTable: Address of the first entry in the parameter table
+//   parameterCount: Number of entries in the parameter table
+//   display: Device used for output
+void r4aEsp32NvmDisplayParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                  int parameterCount,
+                                  Print * display = &Serial);
+
+// Dump the parameter file
+// Inputs:
+//   filePath: Path to the file contained in the NVM
+//   display: Device used for output
+void r4aEsp32NvmDumpParameterFile(const char * filePath,
+                                  Print * display = &Serial);
+
+// Get the default set of parameters
+// Inputs:
+//   parameterTable: Address of the first entry in the parameter table
+//   parametersCount: Number of parameters in the table
+void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                     int parametersCount);
+
+// Look up a parameter by name
+// Inputs:
+//   parameterTable: Address of the first entry in the parameter table
+//   parameterCount: Number of entries in the parameter table
+//   name: Name of the parameter to be found
+//   display: Device used for output
+// Outputs:
+//   Returns the address of the found entry in the parameter table or
+//   nullptr if the parameter was not found
+const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                                           int parameterCount,
+                                                           const char * name,
+                                                           Print * display = &Serial);
+
+// Read the parameters from a file
+// Inputs:
+//   filePath: Path to the file contained in the NVM
+//   parameterTable: Address of the first entry in the parameter table
+//   parametersCount: Number of parameters in the table
+//   display: Device used for output
+bool r4aEsp32NvmReadParameters(const char * filePath,
+                               const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                               int parametersCount,
+                               Print * display = &Serial);
+
+// Set a parameter value
+// Inputs:
+//   filePath: Path to the file to be stored in NVM
+//   parameterTable: Address of the first entry in the parameter table
+//   parametersCount: Number of parameters in the table
+//   parameter: Address of the specified parameter in the table
+//   valueString: Character string containing the new value
+//   display: Device used for output
+void r4aEsp32NvmParameterSet(const char * filePath,
+                             const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                             int parameterCount,
+                             const R4A_ESP32_NVM_PARAMETER * parameter,
+                             const char * valueString,
+                             Print * display = &Serial);
+
+// Write the parameters to a file
+// Inputs:
+//   filePath: Path to the file to be stored in NVM
+//   parameterTable: Address of the first entry in the parameter table
+//   parametersCount: Number of parameters in the table
+//   display: Device used for output
+void r4aEsp32NvmWriteParameters(const char * filePath,
+                                const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                int parametersCount,
+                                Print * display = &Serial);
+
+//****************************************
+// Stricmp API
+//****************************************
+
+// Compare two strings ignoring case
+// Inputs:
+//   str1: Address of a zero terminated string of characters
+//   str2: Address of a zero terminated string of characters
+// Outputs:
+//   Returns the delta value of the last comparison (str1[x] - str2[x])
+int r4aEsp32Stricmp(const char *str1, const char *str2);
 
 //****************************************
 // Timer API
@@ -299,17 +477,17 @@ void r4aEsp32I2cBusSetup(R4A_I2C * i2c,
 //   display: Device used for output
 void r4aEsp32TimerDisplayTimerRegs(uint32_t timerAddr, Print * display = &Serial);
 
-// Display the watchdog registers
-// Inputs:
-//   timerAddr: Address of the timer registers of interest
-//   display: Device used for output
-void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display = &Serial);
-
 // Display the timer interrupt registers
 // Inputs:
 //   timerAddr: Address of the timer registers of interest
 //   display: Device used for output
 void r4aEsp32TimerDisplayTimerIntRegs(uint32_t timerAddr, Print * display = &Serial);
+
+// Display the watchdog registers
+// Inputs:
+//   timerAddr: Address of the timer registers of interest
+//   display: Device used for output
+void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display = &Serial);
 
 // Display the timer registers
 // Inputs:

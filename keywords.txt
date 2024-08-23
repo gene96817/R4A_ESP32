@@ -1,36 +1,64 @@
 ########################################################
 # Syntax Coloring Map for Robots-For-All ESP32 support
 ########################################################
-# Class
+# Common prefix
 ###################################################################
 
 r4aEsp32                            KEYWORD1
+
+########################################################
+# Enums
+###################################################################
+
+R4A_ESP32_NVM_PARAMETER_TYPE        KEYWORD1
+
+########################################################
+# Structures
+###################################################################
+
+R4A_ESP32_I2C                       KEYWORD1
+R4A_ESP32_I2C_DEVICE_DESCRIPTION    KEYWORD1
+R4A_ESP32_NVM_VALUE                 KEYWORD1
+R4A_ESP32_NVM_PARAMETER             KEYWORD1
 
 ###################################################################
 # Methods and Functions
 ###################################################################
 
 r4aEsp32DumpBuffer                  KEYWORD2
-
-r4aEsp32DisplayBatteryVoltage       KEYWORD2
-r4aEsp32FlashBlueLed                KEYWORD2
-r4aEsp32GetBatteryVoltage           KEYWORD2
 r4aEsp32IsAddressInEEPROM           KEYWORD2
 r4aEsp32IsAddressInPSRAM            KEYWORD2
 r4aEsp32IsAddressInRAM              KEYWORD2
 r4aEsp32IsAddressInROM              KEYWORD2
 r4aEsp32IsAddressInSRAM             KEYWORD2
-r4aEsp32LockAcquire                 KEYWORD2
-r4aEsp32LockRelease                 KEYWORD2
-r4aEsp32PartitionFind               KEYWORD2
-r4aEsp32PartitionTableDisplay       KEYWORD2
-r4aEsp32UsbSerialUpdate             KEYWORD2
-
 r4aEsp32GpioDisplayRegisters        KEYWORD2
 r4aEsp32GpioDisplayIoMuxRegisters   KEYWORD2
-
-
-r4aEsp32TimerDisplayTimerRegs       KEYWORD2
-r4aEsp32TimerDisplayWatchdogRegs    KEYWORD2
-r4aEsp32TimerDisplayTimerIntRegs    KEYWORD2
+r4aEsp32I2cBusEnumerate             KEYWORD2
+r4aEsp32I2cBusIsDevicePresent       KEYWORD2
+r4aEsp32I2cBusRead                  KEYWORD2
+r4aEsp32I2cBusSetup                 KEYWORD2
+r4aEsp32I2cBusWrite                 KEYWORD2
+r4aEsp32I2cBusWriteWithLock         KEYWORD2
+r4aEsp32LockAcquire                 KEYWORD2
+r4aEsp32LockRelease                 KEYWORD2
+r4aEsp32NvmParameterClear           KEYWORD2
+r4aEsp32NvmDisplayParameter         KEYWORD2
+r4aEsp32NvmDisplayParameters        KEYWORD2
+r4aEsp32NvmDumpParameterFile        KEYWORD2
+r4aEsp32NvmGetDefaultParameters     KEYWORD2
+r4aEsp32NvmParameterLookup          KEYWORD2
+r4aEsp32NvmReadParameters           KEYWORD2
+r4aEsp32NvmParameterSet             KEYWORD2
+r4aEsp32NvmWriteParameters          KEYWORD2
+r4aEsp32PartitionFind               KEYWORD2
+r4aEsp32PartitionTableDisplay       KEYWORD2
+r4aEsp32PinMode                     KEYWORD2
+r4aEsp32ReadLine                    KEYWORD2
+r4aEsp32Stricmp                     KEYWORD2
 r4aEsp32TimerDisplayRegs            KEYWORD2
+r4aEsp32TimerDisplayTimerRegs       KEYWORD2
+r4aEsp32TimerDisplayTimerIntRegs    KEYWORD2
+r4aEsp32TimerDisplayWatchdogRegs    KEYWORD2
+r4aEsp32VoltageDisplay              KEYWORD2
+r4aEsp32VoltageGet                  KEYWORD2
+r4aEsp32VoltageSetReference         KEYWORD2

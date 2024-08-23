@@ -1,5 +1,5 @@
 /**********************************************************************
-  R4A_I2C_Bus.ino
+  R4A_ESP32_I2C_Bus.ino
 
   Handle I2c transactions
 **********************************************************************/
@@ -9,7 +9,7 @@
 //*********************************************************************
 // Ping an I2C device and see if it responds
 // Return true if device detected, false otherwise
-bool r4aEsp32I2cBusIsDevicePresent(R4A_I2C * i2c, uint8_t deviceAddress)
+bool r4aEsp32I2cBusIsDevicePresent(R4A_ESP32_I2C * i2c, uint8_t deviceAddress)
 {
     int status;
 
@@ -31,8 +31,8 @@ bool r4aEsp32I2cBusIsDevicePresent(R4A_I2C * i2c, uint8_t deviceAddress)
 
 //*********************************************************************
 // Enumerate the I2C bus
-void r4aEsp32I2cBusEnumerate(R4A_I2C * i2c,
-                             const R4A_I2C_DEVICE_DESCRIPTION * deviceTable,
+void r4aEsp32I2cBusEnumerate(R4A_ESP32_I2C * i2c,
+                             const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
                              int deviceTableEntries,
                              Print * display)
 {
@@ -94,7 +94,7 @@ void r4aEsp32I2cBusEnumerate(R4A_I2C * i2c,
 //*********************************************************************
 // Send data to an I2C peripheral
 // Return true upon success, false otherwise
-bool r4aEsp32I2cBusWriteWithLock(R4A_I2C * i2c,
+bool r4aEsp32I2cBusWriteWithLock(R4A_ESP32_I2C * i2c,
                                  uint8_t deviceI2cAddress,
                                  const uint8_t * cmdBuffer,
                                  size_t cmdByteCount,
@@ -169,7 +169,7 @@ bool r4aEsp32I2cBusWriteWithLock(R4A_I2C * i2c,
 //*********************************************************************
 // Send data to an I2C peripheral
 // Return true upon success, false otherwise
-bool r4aEsp32I2cBusWrite(R4A_I2C * i2c,
+bool r4aEsp32I2cBusWrite(R4A_ESP32_I2C * i2c,
                          uint8_t deviceI2cAddress,
                          const uint8_t * cmdBuffer,
                          size_t cmdByteCount,
@@ -205,7 +205,7 @@ bool r4aEsp32I2cBusWrite(R4A_I2C * i2c,
 //*********************************************************************
 // Read data from an I2C peripheral
 // Return the number of bytes read
-size_t r4aEsp32I2cBusRead(R4A_I2C * i2c,
+size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
                           uint8_t deviceI2cAddress,
                           const uint8_t * cmdBuffer, // Does not include I2C address
                           size_t cmdByteCount,
@@ -268,11 +268,11 @@ size_t r4aEsp32I2cBusRead(R4A_I2C * i2c,
 
 //*********************************************************************
 // Initialize the I2C bus
-void r4aEsp32I2cBusSetup(R4A_I2C * i2c,
+void r4aEsp32I2cBusSetup(R4A_ESP32_I2C * i2c,
                          int sdaPin,
                          int sclPin,
                          int clockHz,
-                         const R4A_I2C_DEVICE_DESCRIPTION * deviceTable,
+                         const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
                          int deviceTableEntries,
                          Print * display)
 {
