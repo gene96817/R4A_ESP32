@@ -155,62 +155,6 @@ uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode)
 }
 
 //*********************************************************************
-// Read a line of input from a Stream into a String
-String * r4aEsp32ReadLine(String * buffer, Stream * stream)
-{
-    char data;
-
-    // Wait for an input character
-    while (stream->available())
-    {
-        // Get the input character
-        data = stream->read();
-        if ((data != '\r') && (data != '\n'))
-        {
-            // Handle backspace
-            if (data == 8)
-            {
-                // Output a bell when the buffer is empty
-                if (buffer->length() <= 0)
-                    stream->write(7);
-                else
-                {
-                    // Remove the character from the line
-                    stream->write(data);
-                    stream->write(' ');
-                    stream->write(data);
-
-                    // Remove the character from the buffer
-                    *buffer = buffer->substring(0, buffer->length() - 1);
-                }
-            }
-            else
-            {
-                // Echo the character
-                stream->write(data);
-
-                // Add the character to the line
-                *buffer += data;
-            }
-
-            // Still building the stream
-            buffer = nullptr;
-        }
-
-        // Ignore the linefeed
-        else if (data == '\n')
-            buffer = nullptr;
-
-        // Echo a carriage return and linefeed
-        else if (data == '\r')
-            stream->println();
-
-        // Return the line when it is complete
-        return buffer;
-    }
-}
-
-//*********************************************************************
 // Repeatedly display a fatal error message
 void r4aEsp32ReportFatalError(const char * errorMessage,
                               Print * display)

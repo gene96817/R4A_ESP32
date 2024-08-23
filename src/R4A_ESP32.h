@@ -8,7 +8,9 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
+//#include <HardwareSerial.h>     // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
+#include <WiFiClient.h>         // Built-in
 #include <Wire.h>               // Built-in
 
 #include "R4A_ESP32_GPIO.h"
@@ -125,15 +127,6 @@ void r4aEsp32PartitionTableDisplay(Print * display = &Serial);
 // Outputs:
 //   Returns the previous mode of operation for the pin
 uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode);
-
-// Read a line of input from a Stream into a String
-// Inputs:
-//   buffer: Address of a string that contains the input line
-//   stream: Address of a stream in input characters
-// Outputs:
-//   Returns the address of a String containing a line of characters or
-//   nullptr when the line is not complete
-String * r4aEsp32ReadLine(String * buffer, Stream * stream);
 
 // Repeatedly display a fatal error message
 // Inputs:
@@ -454,6 +447,28 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parametersCount,
                                 Print * display = &Serial);
+
+//****************************************
+// Stream API
+//****************************************
+
+// Read a line of input from a serial port into a character array
+// Inputs:
+//   port: Address of a HardwareSerial port structure
+//   echo: Specify true to enable echo of input characters and false otherwise
+//   buffer: Address of a string that contains the input line
+// Outputs:
+//   nullptr when the line is not complete
+String * r4aEsp32ReadLine(bool echo, String * buffer, HardwareSerial * port = &Serial);
+
+// Read a line of input from a WiFi client into a character array
+// Inputs:
+//   port: Address of a WiFiClient port structure
+//   echo: Specify true to enable echo of input characters and false otherwise
+//   buffer: Address of a string that contains the input line
+// Outputs:
+//   nullptr when the line is not complete
+String * r4aEsp32ReadLine(bool echo, String * buffer, WiFiClient * port);
 
 //****************************************
 // Stricmp API
