@@ -14,14 +14,14 @@ bool r4aEsp32I2cBusIsDevicePresent(R4A_ESP32_I2C * i2c, uint8_t deviceAddress)
     int status;
 
     // Single thread the I2C requests
-    r4aEsp32LockAcquire(&i2c->lock);
+    r4aLockAcquire(&i2c->lock);
 
     // Check for an I2C device
     i2c->bus->beginTransmission(deviceAddress);
     status = i2c->bus->endTransmission();
 
     // Release the lock
-    r4aEsp32LockRelease(&i2c->lock);
+    r4aLockRelease(&i2c->lock);
 
     // Return the I2C device found status
     if (status == 0)
@@ -182,7 +182,7 @@ bool r4aEsp32I2cBusWrite(R4A_ESP32_I2C * i2c,
     bool status;
 
     // Single thread the I2C requests
-    r4aEsp32LockAcquire(&i2c->lock);
+    r4aLockAcquire(&i2c->lock);
 
     // Perform the I2C write operation
     status = r4aEsp32I2cBusWriteWithLock(i2c,
@@ -196,7 +196,7 @@ bool r4aEsp32I2cBusWrite(R4A_ESP32_I2C * i2c,
                                          display);
 
     // Release the lock
-    r4aEsp32LockRelease(&i2c->lock);
+    r4aLockRelease(&i2c->lock);
 
     // Return the write status
     return status;
@@ -223,7 +223,7 @@ size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
         bytesRead = 0;
 
         // Single thread the I2C requests
-        r4aEsp32LockAcquire(&i2c->lock);
+        r4aLockAcquire(&i2c->lock);
 
         // Empty the I2C RX buffer
         i2c->bus->flush();
@@ -260,7 +260,7 @@ size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
     } while (0);
 
     // Release the lock
-    r4aEsp32LockRelease(&i2c->lock);
+    r4aLockRelease(&i2c->lock);
 
     // Return the number of bytes read
     return bytesRead;

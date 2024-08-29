@@ -49,32 +49,6 @@ bool r4aEsp32IsAddressInSRAM(void * addr)
 }
 
 //*********************************************************************
-// Take out a lock
-void r4aEsp32LockAcquire(volatile int * lock)
-{
-    uint32_t expected;
-
-    // Single thread access to the lock
-    expected = 0;
-    while (!__atomic_compare_exchange_4(lock,
-                                        &expected,
-                                        xPortGetCoreID() + 1,
-                                        false,
-                                        __ATOMIC_RELAXED,
-                                        __ATOMIC_RELAXED))
-    {
-        expected = 0;
-    }
-}
-
-//*********************************************************************
-// Release a lock
-void r4aEsp32LockRelease(volatile int * lock)
-{
-    *lock = 0;
-}
-
-//*********************************************************************
 // Find the specified partition
 bool r4aEsp32PartitionFind(const char * name)
 {

@@ -98,16 +98,6 @@ bool r4aEsp32IsAddressInROM(void * addr);
 //   Returns true if the address is in SRAM and false otherwise
 bool r4aEsp32IsAddressInSRAM(void * addr);
 
-// Take out a lock
-// Inputs:
-//   lock: Address of the lock
-void r4aEsp32LockAcquire(volatile int * lock);
-
-// Release a lock
-// Inputs:
-//   lock: Address of the lock
-void r4aEsp32LockRelease(volatile int * lock);
-
 // Find the specified partition
 // Inputs:
 //   name: Partition name to be found
@@ -301,6 +291,20 @@ bool r4aEsp32I2cBusWriteWithLock(R4A_ESP32_I2C * i2c,
                                  bool debug = false,
                                  bool releaseI2cBus = true,
                                  Print * display = &Serial);
+
+//****************************************
+// Lock API
+//****************************************
+
+// Take out a lock
+// Inputs:
+//   lock: Address of the lock
+void r4aLockAcquire(volatile int * lock);
+
+// Release a lock
+// Inputs:
+//   lock: Address of the lock
+void r4aLockRelease(volatile int * lock);
 
 //****************************************
 // NVM API
