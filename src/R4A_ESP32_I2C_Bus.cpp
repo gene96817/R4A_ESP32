@@ -125,9 +125,9 @@ bool r4aEsp32I2cBusWriteWithLock(R4A_ESP32_I2C * i2c,
             display->printf("    dataBuffer: %p\r\n", dataBuffer);
             display->printf("    dataByteCount: %d\r\n", dataByteCount);
             if (cmdByteCount)
-                r4aEsp32DumpBuffer((intptr_t)cmdBuffer, cmdBuffer, cmdByteCount, display);
+                r4aDumpBuffer((intptr_t)cmdBuffer, cmdBuffer, cmdByteCount, display);
             if (dataByteCount)
-                r4aEsp32DumpBuffer((intptr_t)dataBuffer, dataBuffer, dataByteCount, display);
+                r4aDumpBuffer((intptr_t)dataBuffer, dataBuffer, dataByteCount, display);
         }
 
         // Address the I2C device
@@ -255,7 +255,7 @@ size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
         if (debug)
         {
             display->printf("    bytesRead: %d\r\n", bytesRead);
-            r4aEsp32DumpBuffer((intptr_t)readBuffer, readBuffer, bytesRead, display);
+            r4aDumpBuffer((intptr_t)readBuffer, readBuffer, bytesRead, display);
         }
     } while (0);
 

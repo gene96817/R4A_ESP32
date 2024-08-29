@@ -498,7 +498,7 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
             break;
         }
 
-        r4aEsp32DumpBuffer(0, nvmData, bytesRead, display);
+        r4aDumpBuffer(0, nvmData, bytesRead, display);
     } while (0);
 
     // Free the NVM data

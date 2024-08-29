@@ -54,10 +54,10 @@ const uint8_t I2C_SWRST = 0x06;
 //   buffer: Address of the buffer containing the data
 //   length: Length of the buffer in bytes
 //   display: Device used for output
-void r4aEsp32DumpBuffer(uint32_t offset,
-                        const uint8_t *buffer,
-                        uint32_t length,
-                        Print * display = &Serial);
+void r4aDumpBuffer(uint32_t offset,
+                   const uint8_t *buffer,
+                   uint32_t length,
+                   Print * display = &Serial);
 
 //****************************************
 // ESP32 API
