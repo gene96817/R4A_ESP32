@@ -137,7 +137,7 @@ void r4aEsp32ReportFatalError(const char * errorMessage,
 
     while (true)
     {
-        if ((millis() - lastDisplayMsec) >= (15 * R4A_ESP32_MILLISECONDS_IN_A_SECOND))
+        if ((millis() - lastDisplayMsec) >= (15 * R4A_MILLISECONDS_IN_A_SECOND))
         {
             lastDisplayMsec = millis();
             display->printf("ERROR: %s\r\n", errorMessage);

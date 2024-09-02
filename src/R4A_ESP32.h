@@ -13,6 +13,7 @@
 #include <WiFiClient.h>         // Built-in
 #include <Wire.h>               // Built-in
 
+#include "R4A_Common.h"
 #include "R4A_ESP32_GPIO.h"
 #include "R4A_ESP32_Timer.h"
 
