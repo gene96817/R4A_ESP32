@@ -8,14 +8,13 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
-//#include <HardwareSerial.h>     // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
 #include <WiFiClient.h>         // Built-in
-#include <Wire.h>               // Built-in
 
 #include "R4A_Common.h"
 #include "R4A_ESP32_GPIO.h"
 #include "R4A_ESP32_Timer.h"
+#include <R4A_I2C.h>
 
 //****************************************
 // Constants
@@ -29,36 +28,6 @@ extern const int r4aGpioPortToIoMuxIndex[R4A_GPIO_MAX_PORTS];
 extern const char * const r4aIoMuxNames[R4A_GPIO_MAX_PORTS][8];
 extern const uint8_t r4aIoMuxIsGpio[R4A_GPIO_MAX_PORTS];
 extern const R4A_GPIO_MATRIX r4aGpioMatrixNames[256];
-
-// I2C General call values
-const uint8_t I2C_GENERAL_CALL_DEVICE_ADDRESS = 0x00;
-const uint8_t I2C_SWRST = 0x06;
-
-// Define time constants
-#define R4A_ESP32_MILLISECONDS_IN_A_SECOND  1000
-#define R4A_ESP32_SECONDS_IN_A_MINUTE       60
-#define R4A_ESP32_MILLISECONDS_IN_A_MINUTE  (R4A_ESP32_SECONDS_IN_A_MINUTE * R4A_ESP32_MILLISECONDS_IN_A_SECOND)
-#define R4A_ESP32_MINUTES_IN_AN_HOUR        60
-#define R4A_ESP32_MILLISECONDS_IN_AN_HOUR   (R4A_ESP32_MINUTES_IN_AN_HOUR * R4A_ESP32_MILLISECONDS_IN_A_MINUTE)
-#define R4A_ESP32_HOURS_IN_A_DAY            24
-#define R4A_ESP32_MILLISECONDS_IN_A_DAY     (R4A_ESP32_HOURS_IN_A_DAY * R4A_ESP32_MILLISECONDS_IN_AN_HOUR)
-
-#define R4A_ESP32_SECONDS_IN_AN_HOUR        (R4A_ESP32_MINUTES_IN_AN_HOUR * R4A_ESP32_SECONDS_IN_A_MINUTE)
-
-//****************************************
-// Dump Buffer API
-//****************************************
-
-// Display a buffer contents in hexadecimal and ASCII
-// Inputs:
-//   offset: Offset of the first byte in the buffer, 0 or buffer address
-//   buffer: Address of the buffer containing the data
-//   length: Length of the buffer in bytes
-//   display: Device used for output
-void r4aDumpBuffer(uint32_t offset,
-                   const uint8_t *buffer,
-                   uint32_t length,
-                   Print * display = &Serial);
 
 //****************************************
 // ESP32 API
@@ -171,141 +140,82 @@ void r4aEsp32GpioDisplayIoMuxRegisters(Print * display = &Serial);
 void r4aEsp32GpioDisplayRegisters(Print * display = &Serial);
 
 //****************************************
-// I2C Bus API
+// ESP32 I2C Bus Class
 //****************************************
 
-typedef struct _R4A_ESP32_I2C
+class R4A_ESP32_I2C_BUS : public R4A_I2C_BUS
 {
-    TwoWire * bus;      // API for the I2C bus
-    volatile int lock;  // Synchronize access to the I2C bus
-} R4A_ESP32_I2C;
+  public:
 
-typedef struct _R4A_ESP32_I2C_DEVICE_DESCRIPTION
-{
-    uint8_t deviceAddress;  // 0 - 0x7f
-    char * displayName;     // Name to display when the device is found
-} R4A_ESP32_I2C_DEVICE_DESCRIPTION;
+    // Create the R4A_ESP32_I2C object and select the TwoWire bus
+    // Inputs:
+    //   busNumber: Number of the I2C bus (0 - 2)
+    //   deviceTable: Address of the table containing the address and device
+    //                descriptions, may be nullptr
+    //   deviceTableEntries: Number of entries in the I2C device table
+    R4A_ESP32_I2C_BUS(int busNumber,
+                      const R4A_I2C_DEVICE_DESCRIPTION * deviceTable,
+                      int deviceTableEntries);
 
-// Enumerate the I2C bus
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   deviceTable: Address of the table containing the address and device
-//                descriptions
-//   deviceTableEntries: Number of entries in the I2C device table, >= 1
-//   display: Device used for output
-void r4aEsp32I2cBusEnumerate(R4A_ESP32_I2C * i2c,
-                             const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
-                             int deviceTableEntries,
-                             Print * display = &Serial);
+    // Delete the R4A_ESP32_I2C object
+    ~R4A_ESP32_I2C_BUS();
 
-// Ping an I2C device and see if it responds
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-// Outputs:
-//   Returns true if device detected, false otherwise
-bool r4aEsp32I2cBusIsDevicePresent(R4A_ESP32_I2C * i2c, uint8_t deviceAddress);
+    // Initialize the I2C bus
+    // Inputs:
+    //   sdaPin: Number of the pin used for the SDA signal
+    //   sclPin: Number of the pin used for the SCL signal
+    //   clockHz: Clock speed for the I2C bus in Hertz
+    //   display: Device used for output
+    void begin(int sdaPin,
+               int sclPin,
+               int clockHz,
+               Print * display = &Serial);
 
-// Read data from an I2C peripheral
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
-//   cmdByteCount: Number of bytes to send from the command buffer
-//   dataBuffer: Address of the buffer to receive the data bytes, may be nullptr
-//   dataByteCount: Size in bytes of the data buffer, maximum receive bytes
-//   debug: A true value enables debugging for the I2C transaction
-//   releaseI2cBus: A value of true releases the I2C bus after the transaction
-//   display: Device used for output
-// Outputs:
-//   Returns the number of bytes read
-size_t r4aEsp32I2cBusRead(R4A_ESP32_I2C * i2c,
-                          uint8_t deviceI2cAddress,
-                          const uint8_t * cmdBuffer, // Does not include I2C address
-                          size_t cmdByteCount,
-                          uint8_t * readBuffer,
-                          size_t readByteCount,
-                          bool debug = false,
-                          bool releaseI2cBus = true,
-                          Print * display = &Serial);
+    // Get the TwoWire pointer
+    // Outputs:
+    //   Returns the TwoWire object address
+    TwoWire * getTwoWire();
 
-// Initialize the I2C bus
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   sdaPin: Number of the pin used for the SDA signal
-//   sclPin: Number of the pin used for the SCL signal
-//   clockHz: Clock speed for the I2C bus in Hertz
-//   deviceTable: Address of the table containing the address and device
-//                descriptions, may be nullptr
-//   deviceTableEntries: Number of entries in the I2C device table
-//   display: Device used for output
-void r4aEsp32I2cBusSetup(R4A_ESP32_I2C * i2c,
-                         int sdaPin,
-                         int sclPin,
-                         int clockHz,
-                         const R4A_ESP32_I2C_DEVICE_DESCRIPTION * deviceTable,
-                         int deviceTableEntries,
-                         Print * display = &Serial);
+    // Read data from an I2C peripheral
+    // Inputs:
+    //   deviceAddress: Device address on the I2C bus (0 - 0x7f)
+    //   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
+    //   cmdByteCount: Number of bytes to send from the command buffer
+    //   dataBuffer: Address of the buffer to receive the data bytes, may be nullptr
+    //   dataByteCount: Size in bytes of the data buffer, maximum receive bytes
+    //   display: Device used for debug output
+    //   releaseI2cBus: A value of true releases the I2C bus after the transaction
+    // Outputs:
+    //   Returns the number of bytes read
+    size_t read(uint8_t deviceI2cAddress,
+                const uint8_t * cmdBuffer, // Does not include I2C address
+                size_t cmdByteCount,
+                uint8_t * readBuffer,
+                size_t readByteCount,
+                Print * display = nullptr,
+                bool releaseI2cBus = true);
 
-// Send data to an I2C peripheral
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
-//   cmdByteCount: Number of bytes to send from the command buffer
-//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
-//   dataByteCount: Number of bytes to send from the data buffer
-//   debug: A true value enables debugging for the I2C transaction
-//   releaseI2cBus: A value of true releases the I2C bus after the transaction
-//   display: Device used for output
-// Outputs:
-//   Returns true upon success, false otherwise
-bool r4aEsp32I2cBusWrite(R4A_ESP32_I2C * i2c,
-                         uint8_t deviceI2cAddress,
-                         const uint8_t * cmdBuffer,
-                         size_t cmdByteCount,
-                         const uint8_t * dataBuffer,
-                         size_t dataByteCount,
-                         bool debug = false,
-                         bool releaseI2cBus = true,
-                         Print * display = &Serial);
+  private:
 
-// Send data to an I2C peripheral
-// Inputs:
-//   i2c: Address of R4A_ESP32_I2C structure
-//   deviceAddress: Device address on the I2C bus (0 - 0x7f)
-//   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
-//   cmdByteCount: Number of bytes to send from the command buffer
-//   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
-//   dataByteCount: Number of bytes to send from the data buffer
-//   debug: A true value enables debugging for the I2C transaction
-//   releaseI2cBus: A value of true releases the I2C bus after the transaction
-//   display: Device used for output
-// Outputs:
-//   Returns true upon success, false otherwise
-bool r4aEsp32I2cBusWriteWithLock(R4A_ESP32_I2C * i2c,
-                                 uint8_t deviceI2cAddress,
-                                 const uint8_t * cmdBuffer,
-                                 size_t cmdByteCount,
-                                 const uint8_t * dataBuffer,
-                                 size_t dataByteCount,
-                                 bool debug = false,
-                                 bool releaseI2cBus = true,
-                                 Print * display = &Serial);
-
-//****************************************
-// Lock API
-//****************************************
-
-// Take out a lock
-// Inputs:
-//   lock: Address of the lock
-void r4aLockAcquire(volatile int * lock);
-
-// Release a lock
-// Inputs:
-//   lock: Address of the lock
-void r4aLockRelease(volatile int * lock);
+    // Send data to an I2C peripheral, entered with the I2C bus lock held
+    // Inputs:
+    //   deviceAddress: Device address on the I2C bus (0 - 0x7f)
+    //   cmdBuffer: Address of the buffer containing the command bytes, may be nullptr
+    //   cmdByteCount: Number of bytes to send from the command buffer
+    //   dataBuffer: Address of the buffer containing the data bytes, may be nullptr
+    //   dataByteCount: Number of bytes to send from the data buffer
+    //   display: Device used for debug output
+    //   releaseI2cBus: A value of true releases the I2C bus after the transaction
+    // Outputs:
+    //   Returns true upon success, false otherwise
+    bool writeWithLock(uint8_t deviceI2cAddress,
+                       const uint8_t * cmdBuffer,
+                       size_t cmdByteCount,
+                       const uint8_t * dataBuffer,
+                       size_t dataByteCount,
+                       Print * display = nullptr,
+                       bool releaseI2cBus = true);
+};
 
 //****************************************
 // NVM API
