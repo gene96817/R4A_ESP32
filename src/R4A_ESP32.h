@@ -11,10 +11,10 @@
 #include <LittleFS.h>           // Built-in, load and store files in flash
 #include <WiFiClient.h>         // Built-in
 
-#include "R4A_Common.h"
-#include "R4A_ESP32_GPIO.h"
-#include "R4A_ESP32_Timer.h"
-#include <R4A_I2C.h>
+#include <R4A_Robot.h>          // Robots-For-All robot support
+#include <R4A_I2C.h>            // Robots-For-All I2C support
+#include "R4A_ESP32_GPIO.h"     // Robots-For-All ESP32 GPIO declarations
+#include "R4A_ESP32_Timer.h"    // Robots-For-All ESP32 Timer declarations
 
 //****************************************
 // Constants
@@ -362,40 +362,6 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parametersCount,
                                 Print * display = &Serial);
-
-//****************************************
-// Stream API
-//****************************************
-
-// Read a line of input from a serial port into a character array
-// Inputs:
-//   port: Address of a HardwareSerial port structure
-//   echo: Specify true to enable echo of input characters and false otherwise
-//   buffer: Address of a string that contains the input line
-// Outputs:
-//   nullptr when the line is not complete
-String * r4aEsp32ReadLine(bool echo, String * buffer, HardwareSerial * port = &Serial);
-
-// Read a line of input from a WiFi client into a character array
-// Inputs:
-//   port: Address of a WiFiClient port structure
-//   echo: Specify true to enable echo of input characters and false otherwise
-//   buffer: Address of a string that contains the input line
-// Outputs:
-//   nullptr when the line is not complete
-String * r4aEsp32ReadLine(bool echo, String * buffer, WiFiClient * port);
-
-//****************************************
-// Stricmp API
-//****************************************
-
-// Compare two strings ignoring case
-// Inputs:
-//   str1: Address of a zero terminated string of characters
-//   str2: Address of a zero terminated string of characters
-// Outputs:
-//   Returns the delta value of the last comparison (str1[x] - str2[x])
-int r4aEsp32Stricmp(const char *str1, const char *str2);
 
 //****************************************
 // Timer API

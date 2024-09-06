@@ -620,7 +620,7 @@ const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_P
     parameter = nullptr;
     for (index = 0; index < parameterCount; index++)
     {
-        if (r4aEsp32Stricmp(parameterTable[index].name, name) == 0)
+        if (r4aStricmp(parameterTable[index].name, name) == 0)
         {
             parameter = &parameterTable[index];
             break;
