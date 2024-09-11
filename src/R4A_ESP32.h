@@ -140,6 +140,14 @@ void r4aEsp32GpioDisplayIoMuxRegisters(Print * display = &Serial);
 void r4aEsp32GpioDisplayRegisters(Print * display = &Serial);
 
 //****************************************
+// Heap support
+//****************************************
+// Display the heap
+// Inputs:
+//   display: Device used for output
+void r4aEsp32HeapDisplay(Print * display = &Serial);
+
+//****************************************
 // ESP32 I2C Bus Class
 //****************************************
 

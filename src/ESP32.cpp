@@ -14,6 +14,28 @@ static uint8_t r4aEsp32GpioPinMode[256];
 static float r4aEsp32VoltageReference;
 
 //*********************************************************************
+// Display heap usage
+void r4aEsp32HeapDisplay(Print * display)
+{
+    display->println("              Size        Free      In Use");
+    display->println("        ----------  ----------  ----------");
+    display->printf("Heap:   %10d  %10d  %10d\r\n",
+                    ESP.getHeapSize(),
+                    ESP.getFreeHeap(),
+                    ESP.getHeapSize() - ESP.getFreeHeap());
+    display->printf("PSRAM:  %10d  %10d  %10d\r\n",
+                    ESP.getPsramSize(),
+                    ESP.getFreePsram(),
+                    ESP.getPsramSize() - ESP.getFreePsram());
+    display->println();
+    display->println("          Lowest Point    Largest Block");
+    display->println("          ------------    -------------");
+    display->printf ("Combined:   %10d       %10d\r\n",
+                    xPortGetMinimumEverFreeHeapSize(),
+                    heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+}
+
+//*********************************************************************
 // Determine if the address is in the EEPROM (Flash)
 bool r4aEsp32IsAddressInEEPROM(void * addr)
 {
