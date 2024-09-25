@@ -89,14 +89,6 @@ void r4aEsp32PartitionTableDisplay(Print * display = &Serial);
 //   Returns the previous mode of operation for the pin
 uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode);
 
-// Repeatedly display a fatal error message
-// Inputs:
-//   errorMessage: Zero terminated string of characters containing the
-//                 error mesage to be displayed
-//   display: Device used for output
-void r4aEsp32ReportFatalError(const char * errorMessage,
-                              Print * display = &Serial);
-
 // Display the voltage
 // Inputs:
 //   adcPin: GPIO pin number for the ADC pin

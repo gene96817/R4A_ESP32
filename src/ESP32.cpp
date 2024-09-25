@@ -152,23 +152,6 @@ uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode)
 }
 
 //*********************************************************************
-// Repeatedly display a fatal error message
-void r4aEsp32ReportFatalError(const char * errorMessage,
-                              Print * display)
-{
-    static uint32_t lastDisplayMsec;
-
-    while (true)
-    {
-        if ((millis() - lastDisplayMsec) >= (15 * R4A_MILLISECONDS_IN_A_SECOND))
-        {
-            lastDisplayMsec = millis();
-            display->printf("ERROR: %s\r\n", errorMessage);
-        }
-    }
-}
-
-//*********************************************************************
 // Display the voltage
 void r4aEsp32VoltageDisplay(int adcPin, float offset, float multiplier, Print * display)
 {

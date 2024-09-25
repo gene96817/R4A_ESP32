@@ -36,7 +36,7 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
     {
     default:
         display->printf("ERROR: Unknown parameter type (%d) for %s\r\n", parameter->type, parameter->name);
-        r4aEsp32ReportFatalError("r4aEsp32NvmParseValue: Invalid parameter type!");
+        r4aReportFatalError("r4aEsp32NvmParseValue: Invalid parameter type!");
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
@@ -158,7 +158,7 @@ void r4aEsp32NvmSetParameterValue(const R4A_ESP32_NVM_PARAMETER * parameter,
     {
     default:
         Serial.printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
-        r4aEsp32ReportFatalError("nvmSetParameterValue: Invalid parameter type!");
+        r4aReportFatalError("nvmSetParameterValue: Invalid parameter type!");
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
@@ -254,7 +254,7 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
     {
     default:
         Serial.printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
-        r4aEsp32ReportFatalError("r4aEsp32NvmWriteParameterValue: Invalid parameter type!");
+        r4aReportFatalError("r4aEsp32NvmWriteParameterValue: Invalid parameter type!");
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
@@ -361,7 +361,7 @@ void r4aEsp32NvmDisplayParameter(const R4A_ESP32_NVM_PARAMETER * parameter,
     {
     default:
         display->printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
-        r4aEsp32ReportFatalError("nvmDisplayParameter: Invalid parameter type!");
+        r4aReportFatalError("nvmDisplayParameter: Invalid parameter type!");
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
