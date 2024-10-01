@@ -580,6 +580,174 @@ bool r4aEsp32NvmGetString(const char ** string, const char ** data, size_t * fil
 }
 
 //*********************************************************************
+// Display all of the parameters
+void r4aEsp32NvmMenuDisplayParameters(const struct _R4A_MENU_ENTRY * menuEntry,
+                                      const char * command,
+                                      Print * display)
+{
+    display->println("Parameters");
+    r4aEsp32NvmDisplayParameters(nvmParameters,
+                                 nvmParameterCount,
+                                 display);
+    display->println();
+}
+
+//*********************************************************************
+// Dump the parameter file
+void r4aEsp32NvmMenuDumpParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
+                                      const char * command,
+                                      Print * display)
+{
+    r4aEsp32NvmDumpParameterFile(parameterFilePath, display);
+}
+
+//*********************************************************************
+// Get default parameters
+void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntry,
+                                         const char * command,
+                                         Print * display)
+{
+    r4aEsp32NvmGetDefaultParameters(nvmParameters, nvmParameterCount);
+}
+
+//*********************************************************************
+// Display the help text with PPP
+void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * align,
+                             Print * display)
+{
+    display->printf("%s pppp: %s%s\r\n",
+                    menuEntry->command, align, menuEntry->helpText);
+}
+
+//*********************************************************************
+// Display the help text with PPPP XXXX
+void r4aEsp32NvmMenuHelpPpppXxxx(const struct _R4A_MENU_ENTRY * menuEntry,
+                                 const char * align,
+                                 Print * display)
+{
+    display->printf("%s pppp xxxx: %s%s\r\n",
+                    menuEntry->command, align, menuEntry->helpText);
+}
+
+//*********************************************************************
+// Clear the parameter
+void r4aEsp32NvmMenuParameterClear(const struct _R4A_MENU_ENTRY * menuEntry,
+                                   const char * command,
+                                   Print * display)
+{
+    // Get the parameter name
+    String line = String(&command[strlen(menuEntry->command)]);
+
+    // Strip white space from the beginning of the name
+    line.trim();
+
+    // Get the parameter name
+    const char * name = line.c_str();
+    r4aEsp32NvmParameterClear(parameterFilePath,
+                              nvmParameters,
+                              nvmParameterCount,
+                              name,
+                              display);
+}
+
+//*********************************************************************
+// Display the parameter
+void r4aEsp32NvmMenuParameterDisplay(const struct _R4A_MENU_ENTRY * menuEntry,
+                                     const char * command,
+                                     Print * display)
+{
+    const R4A_ESP32_NVM_PARAMETER * parameter;
+
+    // Get the parameter name
+    String line = String(&command[strlen(menuEntry->command)]);
+
+    // Strip white space from the beginning of the name
+    line.trim();
+
+    // Get the parameter name
+    const char * name = line.c_str();
+
+    // Get the parameter structure
+    parameter = r4aEsp32NvmParameterLookup(nvmParameters,
+                                           nvmParameterCount,
+                                           name,
+                                           display);
+    if (!parameter)
+        // Unknown parameter
+        display->printf("WARNING: %s is not a parameter!\r\n", name);
+    else
+        r4aEsp32NvmDisplayParameter(parameter, display);
+}
+
+//*********************************************************************
+// Set the parameter value
+void r4aEsp32NvmMenuParameterSet(const struct _R4A_MENU_ENTRY * menuEntry,
+                                 const char * command,
+                                 Print * display)
+{
+    const R4A_ESP32_NVM_PARAMETER * parameter;
+    char * value;
+
+    // Get the parameter name
+    String line = String(&command[strlen(menuEntry->command)]);
+
+    // Strip white space from the beginning of the name
+    line.trim();
+
+    // Copy the remaining portion of the string into a buffer area
+    char cmd[line.length() + 1];
+    strcpy(cmd, line.c_str());
+
+    // Save the parameter name string
+    const char * name = cmd;
+
+    // Skip over the parameter name
+    value = cmd;
+    while (*value && (*value != ' ') && (*value != '\t'))
+        value++;
+
+    // Zero terminate the name and skip over the white space
+    while ((*value == ' ') || (*value == '\t'))
+        *value++ = 0;
+
+    // Determine if a second parameter was specified
+    if (strlen(name) == 0)
+        display->println("No parameter specified");
+    else
+    {
+        // Get the parameter structure
+        parameter = r4aEsp32NvmParameterLookup(nvmParameters,
+                                               nvmParameterCount,
+                                               name,
+                                               display);
+        if (!parameter)
+            // Unknown parameter
+            display->printf("WARNING: %s is not a parameter!\r\n", name);
+        else
+            // Set the string value, may be an empty string
+            // Use nvmParameterClear to set the value to nullptr
+            r4aEsp32NvmParameterSet(parameterFilePath,
+                                    nvmParameters,
+                                    nvmParameterCount,
+                                    parameter,
+                                    value,
+                                    display);
+    }
+}
+
+//*********************************************************************
+// Write the parameters to the parameter file
+void r4aEsp32NvmMenuWriteParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
+                                       const char * command,
+                                       Print * display)
+{
+    r4aEsp32NvmWriteParameters(parameterFilePath,
+                               nvmParameters,
+                               nvmParameterCount,
+                               display);
+}
+//*********************************************************************
 // Clear a parameter by setting its value to zero
 void r4aEsp32NvmParameterClear(const char * filePath,
                                const R4A_ESP32_NVM_PARAMETER * parameterTable,
@@ -837,10 +1005,14 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
     // Attempt to open the file
     File parameterFile = LittleFS.open(filePath, "w");
     if (!parameterFile)
-        display->printf("ERROR: Failed to create file %s!\r\n", filePath);
+    {
+        if (display)
+            display->printf("ERROR: Failed to create file %s!\r\n", filePath);
+    }
     else
     {
-        display->printf("Saving parameters to %s\r\n", filePath);
+        if (display)
+            display->printf("Saving parameters to %s\r\n", filePath);
 
         // Walk the list of parameters
         for (int parameter = 0; parameter < parameterCount; parameter++)
@@ -848,8 +1020,11 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
             if (!r4aEsp32NvmWriteParameterValue(parameterFile,
                                                 &parameterTable[parameter],
                                                 display))
-                display->printf("ERROR: Failed to write parameter %s to file %s!\r\n",
-                                parameterTable[parameter].name, filePath);
+            {
+                if (display)
+                    display->printf("ERROR: Failed to write parameter %s to file %s!\r\n",
+                                    parameterTable[parameter].name, filePath);
+            }
 
         // Done with the file
         parameterFile.close();

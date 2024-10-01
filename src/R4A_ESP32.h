@@ -270,6 +270,10 @@ typedef struct _R4A_ESP32_NVM_PARAMETER
     uint64_t value;
 } R4A_ESP32_NVM_PARAMETER;
 
+extern const char * parameterFilePath; // Path to the parameter file
+extern const R4A_ESP32_NVM_PARAMETER nvmParameters[];
+extern const int nvmParameterCount;
+
 // Clear a parameter by setting its value to zero
 // Inputs:
 //   filePath: Path to the file to be stored in NVM
@@ -333,6 +337,8 @@ const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_P
 //   parameterTable: Address of the first entry in the parameter table
 //   parametersCount: Number of parameters in the table
 //   display: Device used for output
+// Outputs:
+//   Returns true if successful and false upon failure
 bool r4aEsp32NvmReadParameters(const char * filePath,
                                const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                int parametersCount,
@@ -363,6 +369,94 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parametersCount,
                                 Print * display = &Serial);
+
+//****************************************
+// NVM Menu API
+//****************************************
+
+extern const R4A_MENU_ENTRY r4aEsp32NvmMenuTable[]; // Menu table for NVM menu
+#define R4A_ESP32_NVM_MENU_ENTRIES    8             // Length of NVM menu table
+
+// Display all of the parameters
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuDisplayParameters(const struct _R4A_MENU_ENTRY * menuEntry,
+                                      const char * command,
+                                      Print * display);
+
+// Dump the parameter file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuDumpParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
+                                      const char * command,
+                                      Print * display);
+
+// Get default parameters
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntry,
+                                         const char * command,
+                                         Print * display);
+
+// Display the help text with PPP
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   align: Zero terminated string of spaces for alignment
+//   display: Device used for output
+void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * align,
+                             Print * display);
+
+// Display the help text with PPPP XXXX
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   align: Zero terminated string of spaces for alignment
+//   display: Device used for output
+void r4aEsp32NvmMenuHelpPpppXxxx(const struct _R4A_MENU_ENTRY * menuEntry,
+                                 const char * align,
+                                 Print * display);
+
+// Clear the parameter
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuParameterClear(const struct _R4A_MENU_ENTRY * menuEntry,
+                                   const char * command,
+                                   Print * display);
+
+// Display the parameter
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuParameterDisplay(const struct _R4A_MENU_ENTRY * menuEntry,
+                                     const char * command,
+                                     Print * display);
+
+// Set the parameter value
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuParameterSet(const struct _R4A_MENU_ENTRY * menuEntry,
+                                 const char * command,
+                                 Print * display);
+
+// Write the parameters to the parameter file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuWriteParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
+                                       const char * command,
+                                       Print * display);
 
 //****************************************
 // Timer API
