@@ -35,7 +35,8 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
     switch (parameter->type)
     {
     default:
-        display->printf("ERROR: Unknown parameter type (%d) for %s\r\n", parameter->type, parameter->name);
+        if (display)
+            display->printf("ERROR: Unknown parameter type (%d) for %s\r\n", parameter->type, parameter->name);
         r4aReportFatalError("r4aEsp32NvmParseValue: Invalid parameter type!");
         break;
 
@@ -125,7 +126,7 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
     case R4A_ESP32_NVM_PT_P_CHAR:
         length = strlen(valueString) + 1;
         newValue = (char *)malloc(length);
-        if (!newValue)
+        if (!newValue && display)
             display->println("ERROR: Failed to allocate parameter value string!");
         else
         {
@@ -253,7 +254,8 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
     switch (type)
     {
     default:
-        Serial.printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
+        if (display)
+            display->printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
         r4aReportFatalError("r4aEsp32NvmWriteParameterValue: Invalid parameter type!");
         break;
 
@@ -360,79 +362,97 @@ void r4aEsp32NvmDisplayParameter(const R4A_ESP32_NVM_PARAMETER * parameter,
     switch (parameter->type)
     {
     default:
-        display->printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
+        if (display)
+            display->printf("ERROR: Invalid parameter type: %d\r\n", parameter->type);
         r4aReportFatalError("nvmDisplayParameter: Invalid parameter type!");
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
         value.b = *(bool *)(parameter->addr);
-        display->printf("%s: %s\r\n", parameter->name, value.b ? "true" : "false");
+        if (display)
+            display->printf("%s: %s\r\n", parameter->name, value.b ? "true" : "false");
         break;
 
     case R4A_ESP32_NVM_PT_INT8:
         value.i8 = *(int8_t *)(parameter->addr);
-        display->printf("%s: %d\r\n", parameter->name, value.i8);
+        if (display)
+            display->printf("%s: %d\r\n", parameter->name, value.i8);
         break;
 
     case R4A_ESP32_NVM_PT_UINT8:
         value.u8 = *(uint8_t *)(parameter->addr);
-        display->printf("%s: %u\r\n", parameter->name, value.u8);
+        if (display)
+            display->printf("%s: %u\r\n", parameter->name, value.u8);
         break;
 
     case R4A_ESP32_NVM_PT_INT16:
         value.i16 = *(int16_t *)(parameter->addr);
-        display->printf("%s: %d\r\n", parameter->name, value.i16);
+        if (display)
+            display->printf("%s: %d\r\n", parameter->name, value.i16);
         break;
 
     case R4A_ESP32_NVM_PT_UINT16:
         value.u16 = *(uint16_t *)(parameter->addr);
-        display->printf("%s: %u\r\n", parameter->name, value.u16);
+        if (display)
+            display->printf("%s: %u\r\n", parameter->name, value.u16);
         break;
 
     case R4A_ESP32_NVM_PT_INT32:
         value.i32 = *(int32_t *)(parameter->addr);
-        display->printf("%s: %d\r\n", parameter->name, value.i32);
+        if (display)
+            display->printf("%s: %d\r\n", parameter->name, value.i32);
         break;
 
     case R4A_ESP32_NVM_PT_UINT32:
         value.u32 = *(uint32_t *)(parameter->addr);
-        display->printf("%s: %u\r\n", parameter->name, value.u32);
+        if (display)
+            display->printf("%s: %u\r\n", parameter->name, value.u32);
         break;
 
     case R4A_ESP32_NVM_PT_INT64:
         value.i64 = *(int64_t *)(parameter->addr);
-        display->printf("%s: %lld\r\n", parameter->name, value.i64);
+        if (display)
+            display->printf("%s: %lld\r\n", parameter->name, value.i64);
         break;
 
     case R4A_ESP32_NVM_PT_UINT64:
         value.u64 = *(uint64_t *)(parameter->addr);
-        display->printf("%s: %llu\r\n", parameter->name, value.u64);
+        if (display)
+            display->printf("%s: %llu\r\n", parameter->name, value.u64);
         break;
 
     case R4A_ESP32_NVM_PT_FLOAT:
         value.d = (double)(*(float *)(parameter->addr));
-        display->printf("%s: %f\r\n", parameter->name, (float)value.d);
+        if (display)
+            display->printf("%s: %f\r\n", parameter->name, (float)value.d);
         break;
 
     case R4A_ESP32_NVM_PT_DOUBLE:
         value.d = *(double *)(parameter->addr);
-        display->printf("%s: %f\r\n", parameter->name, value.d);
+        if (display)
+            display->printf("%s: %f\r\n", parameter->name, value.d);
         break;
 
     case R4A_ESP32_NVM_PT_NULLPTR:
         value.pv = *(void **)(parameter->addr);
-        if (value.pv)
-            display->printf("%s: %p\r\n", parameter->name, value.pv);
-        else
-            display->printf("%s: nullptr\r\n", parameter->name);
+        if (display)
+        {
+            if (value.pv)
+                display->printf("%s: %p\r\n", parameter->name, value.pv);
+            else
+                display->printf("%s: nullptr\r\n", parameter->name);
+        }
         break;
 
     case R4A_ESP32_NVM_PT_P_CHAR:
         value.pcc = *(const char **)(parameter->addr);
-        if (value.pcc)
-            display->printf("%s: \"%s\"\r\n", parameter->name, value.pcc);
-        else
-            display->printf("%s: nullptr\r\n", parameter->name);
+        if (display)
+        {
+            if (value.pcc)
+                display->printf("%s: \"%s\"\r\n", parameter->name, value.pcc);
+            else
+                display->printf("%s: nullptr\r\n", parameter->name);
+        }
         break;
     }
 }
@@ -463,7 +483,8 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
         // Determine if the file exists
         if (!LittleFS.exists(filePath))
         {
-            display->printf("Parameter file %s not found!\r\n", filePath);
+            if (display)
+                display->printf("Parameter file %s not found!\r\n", filePath);
             break;
         }
 
@@ -471,7 +492,8 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
         parameterFile = LittleFS.open(filePath, "r");
         if (!parameterFile)
         {
-            display->printf("ERROR: Failed to open file %s!\r\n", filePath);
+            if (display)
+                 display->printf("ERROR: Failed to open file %s!\r\n", filePath);
             break;
         }
 
@@ -479,7 +501,8 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
         fileBytes = parameterFile.size();
         if (!fileBytes)
         {
-            display->println("Empty parameter file!");
+            if (display)
+                 display->println("Empty parameter file!");
             break;
         }
 
@@ -487,7 +510,8 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
         nvmData = (uint8_t *)malloc(fileBytes);
         if (!nvmData)
         {
-            display->println("ERROR: Failed to allocate read buffer!");
+            if (display)
+                 display->println("ERROR: Failed to allocate read buffer!");
             break;
         }
 
@@ -495,7 +519,8 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
         bytesRead = parameterFile.read(nvmData, fileBytes);
         if (bytesRead != fileBytes)
         {
-            display->println("ERROR: Failed to read file into memory!");
+            if (display)
+                 display->println("ERROR: Failed to read file into memory!");
             break;
         }
 
@@ -760,8 +785,11 @@ void r4aEsp32NvmParameterClear(const char * filePath,
     // Lookup the parameter
     parameter = r4aEsp32NvmParameterLookup(parameterTable, parameterCount, name, display);
     if (!parameter)
+    {
         // Unknown parameter
-        display->printf("WARNING: %s is not a parameter!\r\n", name);
+        if (display)
+            display->printf("WARNING: %s is not a parameter!\r\n", name);
+    }
     else
     {
         // Clear the parameter
@@ -856,8 +884,9 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
               && r4aEsp32NvmGetString(&valueString, &data, &fileBytes)))
         {
             delta = data - nvmData;
-            display->printf("ERROR: String at offset %d (0x%x) is invalid!\r\n",
-                            delta, delta);
+            if (display)
+                display->printf("ERROR: String at offset %d (0x%x) is invalid!\r\n",
+                                delta, delta);
             validParameters = false;
             break;
         }
@@ -866,8 +895,9 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
         if (sscanf(typeString, "%d", &type) != 1)
         {
             delta = typeString - nvmData;
-            display->printf("ERROR: Type string not a number at offset %d (0x%x)!\r\n",
-                            delta, delta);
+            if (display)
+                display->printf("ERROR: Type string not a number at offset %d (0x%x)!\r\n",
+                                delta, delta);
             validParameters = false;
             break;
         }
@@ -877,7 +907,8 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
         if (!parameter)
         {
             // Unknown parameter, skip this triplet
-            display->printf("WARNING: %s is not a parameter!\r\n", name);
+            if (display)
+                display->printf("WARNING: %s is not a parameter!\r\n", name);
             continue;
         }
 
@@ -886,8 +917,9 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
         if (!r4aEsp32NvmParseValue(parameter, valueString, &value, display))
         {
             delta = valueString - nvmData;
-            display->printf("ERROR: Invalid %s value string at offset %d (0x%x)!\r\n",
-                            name, delta, delta);
+            if (display)
+                display->printf("ERROR: Invalid %s value string at offset %d (0x%x)!\r\n",
+                                name, delta, delta);
             validParameters = false;
             break;
         }
@@ -929,7 +961,8 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
         // Determine if the file exists
         if (!LittleFS.exists(filePath))
         {
-            display->printf("Parameter file %s not found!\r\n", filePath);
+            if (display)
+                display->printf("Parameter file %s not found!\r\n", filePath);
             break;
         }
 
@@ -937,7 +970,8 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
         parameterFile = LittleFS.open(filePath, "r");
         if (!parameterFile)
         {
-            display->printf("ERROR: Failed to open file %s!\r\n", filePath);
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", filePath);
             break;
         }
 
@@ -950,7 +984,8 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
         nvmData = (uint8_t *)malloc(fileBytes);
         if (!nvmData)
         {
-            display->println("ERROR: Failed to allocate read buffer!");
+            if (display)
+                display->println("ERROR: Failed to allocate read buffer!");
             break;
         }
 
@@ -958,11 +993,13 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
         bytesRead = parameterFile.read(nvmData, fileBytes);
         if (bytesRead != fileBytes)
         {
-            display->println("ERROR: Failed to read file into memory!");
+            if (display)
+                display->println("ERROR: Failed to read file into memory!");
             break;
         }
 
-        display->printf("Loading parameters from %s\r\n", filePath);
+        if (display)
+            display->printf("Loading parameters from %s\r\n", filePath);
 
         // Parse the parameters
         if (!r4aEsp32NvmParseParameters(parameterTable,
@@ -978,7 +1015,8 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
             if (parameterTable[index].required
                 && (!(availableParameters[index >> 3] & (1 << (index & 7)))))
             {
-                display->printf("Parameter %s is using the default value\r\n", parameterTable[index].name);
+                if (display)
+                    display->printf("Parameter %s is using the default value\r\n", parameterTable[index].name);
             }
         status = true;
     } while (0);
