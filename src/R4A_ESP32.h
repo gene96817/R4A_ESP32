@@ -317,6 +317,15 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath,
 void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                      int parametersCount);
 
+// Get a set of parameters
+// Inputs:
+//   filePath: Address of the address of the path to the file contained in the NVM
+//   display: Device used for output, may be nullptr
+// Outputs:
+//   Returns true if successful and false upon failure
+bool r4aEsp32NvmGetParameters(const char ** filePath,
+                              Print * display = nullptr);
+
 // Look up a parameter by name
 // Inputs:
 //   parameterTable: Address of the first entry in the parameter table

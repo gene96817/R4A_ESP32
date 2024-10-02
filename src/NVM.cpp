@@ -574,6 +574,75 @@ void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTa
 }
 
 //*********************************************************************
+// Get a set of parameters
+// Returns true if successful and false upon failure
+bool r4aEsp32NvmGetParameters(const char ** filePath,
+                              Print * display)
+{
+    do
+    {
+        // Get the default parameters
+        r4aEsp32NvmGetDefaultParameters(nvmParameters, nvmParameterCount);
+
+        // Verify that the spiffs partition exists
+        if (!r4aEsp32PartitionFind("spiffs"))
+        {
+            r4aEsp32PartitionTableDisplay(&Serial);
+            if (display)
+                display->println("ERROR: Add missing spiffs partition!");
+            break;
+        }
+
+        // Start the file system
+        if (!LittleFS.begin(true)) // Format LittleFS upon failure
+        {
+            if (display)
+                 display->println("Warning: LittleFS not available, using default parameters");
+        }
+
+        // Read the parameters from the file
+        else
+        {
+            if (r4aEsp32NvmReadParameters(*filePath,
+                                          nvmParameters,
+                                          nvmParameterCount))
+                return true;
+
+            // Since the parameters may be corrupt, set the default values again
+            r4aEsp32NvmGetDefaultParameters(nvmParameters, nvmParameterCount);
+
+            // Write the default parameters to the file
+            if (display)
+                display->printf("WARNING: Overwriting parameter file %s with default parameters!\r\n",
+                                *filePath);
+            if (r4aEsp32NvmWriteParameters(*filePath,
+                                           nvmParameters,
+                                           nvmParameterCount))
+            {
+                if (display)
+                    display-printf("ERROR: Failed to write parameters to file %s!\r\n",
+                                   *filePath);
+                break;
+            }
+
+            // Verify the parameter file
+            if (!r4aEsp32NvmReadParameters(*filePath,
+                                           nvmParameters,
+                                           nvmParameterCount))
+            {
+                if (display)
+                    display->printf("ERROR: Failed to read parameters from %s!\r\n",
+                                    *filePath);
+                r4aEsp32NvmGetDefaultParameters(nvmParameters, nvmParameterCount);
+            }
+        }
+    } while (0);
+    if (display)
+        display->println("WARNING: Using default parameters!");
+    return false;
+}
+
+//*********************************************************************
 // Get a string from the parameter file
 bool r4aEsp32NvmGetString(const char ** string, const char ** data, size_t * fileBytes)
 {
