@@ -1035,17 +1035,21 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
 
 //*********************************************************************
 // Write the parameters to a file
-void r4aEsp32NvmWriteParameters(const char * filePath,
+bool r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parameterCount,
                                 Print * display)
 {
+    bool success;
+
     // Attempt to open the file
+    success = true;
     File parameterFile = LittleFS.open(filePath, "w");
     if (!parameterFile)
     {
         if (display)
             display->printf("ERROR: Failed to create file %s!\r\n", filePath);
+        success = false;
     }
     else
     {
@@ -1062,9 +1066,11 @@ void r4aEsp32NvmWriteParameters(const char * filePath,
                 if (display)
                     display->printf("ERROR: Failed to write parameter %s to file %s!\r\n",
                                     parameterTable[parameter].name, filePath);
+                success = false;
             }
 
         // Done with the file
         parameterFile.close();
     }
+    return success;
 }
