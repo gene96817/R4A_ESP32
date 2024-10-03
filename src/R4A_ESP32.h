@@ -125,6 +125,24 @@ void r4aEsp32VoltageSetReference(float maximumVoltage);
 // ESP32 Menu API
 //****************************************
 
+// Display the heap
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32MenuDisplayHeap(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display);
+
+// Display the partitions
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32MenuDisplayPartitions(const struct _R4A_MENU_ENTRY * menuEntry,
+                                   const char * command,
+                                   Print * display);
+
 // Reset the system
 // Inputs:
 //   menuEntry: Address of the object describing the menu entry

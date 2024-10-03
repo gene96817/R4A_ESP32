@@ -233,6 +233,24 @@ void r4aEsp32VoltageSetReference(float maximumVoltage)
 }
 
 //*********************************************************************
+// Display the heap
+void r4aEsp32MenuDisplayHeap(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    r4aEsp32HeapDisplay(display);
+}
+
+//*********************************************************************
+// Display the partitions
+void r4aEsp32MenuDisplayPartitions(const struct _R4A_MENU_ENTRY * menuEntry,
+                                   const char * command,
+                                   Print * display)
+{
+    r4aEsp32PartitionTableDisplay(display);
+}
+
+//*********************************************************************
 // Reset the system
 void r4aEsp32MenuSystemReset(const struct _R4A_MENU_ENTRY * menuEntry,
                              const char * command,
