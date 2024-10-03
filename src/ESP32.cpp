@@ -152,6 +152,14 @@ uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode)
 }
 
 //*********************************************************************
+// System reset
+void r4aEsp32SystemReset()
+{
+    ESP.restart();
+    while (1);
+}
+
+//*********************************************************************
 // Display the voltage
 void r4aEsp32VoltageDisplay(int adcPin, float offset, float multiplier, Print * display)
 {
@@ -222,4 +230,13 @@ float r4aEsp32VoltageGet(int adcPin, float offset, float multiplier, int16_t * a
 void r4aEsp32VoltageSetReference(float maximumVoltage)
 {
     r4aEsp32VoltageReference = maximumVoltage;
+}
+
+//*********************************************************************
+// Reset the system
+void r4aEsp32MenuSystemReset(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    r4aEsp32SystemReset();
 }

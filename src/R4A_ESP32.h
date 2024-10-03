@@ -89,6 +89,9 @@ void r4aEsp32PartitionTableDisplay(Print * display = &Serial);
 //   Returns the previous mode of operation for the pin
 uint8_t r4aEsp32PinMode(uint8_t pin, uint8_t mode);
 
+// System reset
+void r4aEsp32SystemReset();
+
 // Display the voltage
 // Inputs:
 //   adcPin: GPIO pin number for the ADC pin
@@ -117,6 +120,19 @@ float r4aEsp32VoltageGet(int adcPin,
 // Inputs:
 //   maximumVoltage: Maximum voltage represented by the ADC
 void r4aEsp32VoltageSetReference(float maximumVoltage);
+
+//****************************************
+// ESP32 Menu API
+//****************************************
+
+// Reset the system
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32MenuSystemReset(const struct _R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display);
 
 //****************************************
 // GPIO API
@@ -374,7 +390,9 @@ void r4aEsp32NvmParameterSet(const char * filePath,
 //   parameterTable: Address of the first entry in the parameter table
 //   parametersCount: Number of parameters in the table
 //   display: Device used for output
-void r4aEsp32NvmWriteParameters(const char * filePath,
+// Outputs:
+//   Returns true if successful and false upon failure
+bool r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parametersCount,
                                 Print * display = &Serial);
