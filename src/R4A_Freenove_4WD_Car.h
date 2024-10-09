@@ -180,4 +180,17 @@ class R4A_Freenove_4WD_Car
 #define ESP32_WROVER_BLUE_LED_OFF       0
 #define ESP32_WROVER_BLUE_LED_ON        1
 
+//****************************************
+// Line sensors
+//****************************************
+
+// Line sensor bits
+#define LINE_SENSOR_LEFT_SHIFT      0
+#define LINE_SENSOR_CENTER_SHIFT    1
+#define LINE_SENSOR_RIGHT_SHIFT     2
+
+#define LINE_SENSOR_LEFT_MASK       (1 << LINE_SENSOR_LEFT_SHIFT)
+#define LINE_SENSOR_CENTER_MASK     (1 << LINE_SENSOR_CENTER_SHIFT)
+#define LINE_SENSOR_RIGHT_MASK      (1 << LINE_SENSOR_RIGHT_SHIFT)
+
 #endif  // __FREENOVE_4WD_CAR_H__
