@@ -9,8 +9,12 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
+#include <esp32-hal-spi.h>      // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
+#include <WiFi.h>               // Built-in
 #include <WiFiClient.h>         // Built-in
+#include <WiFiMulti.h>          // Built-in, multiple WiFi AP support
+#include <WiFiServer.h>         // Built-in
 
 #include <R4A_Robot.h>          // Robots-For-All robot support
 #include <R4A_I2C.h>            // Robots-For-All I2C support
