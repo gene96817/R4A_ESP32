@@ -181,6 +181,43 @@ class R4A_Freenove_4WD_Car
 #define ESP32_WROVER_BLUE_LED_ON        1
 
 //****************************************
+// I2C bus configuration
+//****************************************
+
+// I2C controller pins
+#define I2C_SDA                 13  // I2C data line
+#define I2C_SCL                 14  // I2C clock line
+
+// I2C addresses
+#define OV2640_I2C_ADDRESS      0x70
+#define PCA9685_I2C_ADDRESS     0x5f
+#define PCF8574_I2C_ADDRESS     0x20
+#define VK16K33_I2C_ADDRESS     0x71
+
+// Description table
+#define USE_I2C_BUS_TABLE   \
+const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =  \
+{   \
+    {OV2640_I2C_ADDRESS,   "OV2640 Camera"},    \
+    {PCA9685_I2C_ADDRESS,  "PCA9685 16-Channel LED controller, motors & servos"},   \
+    {PCF8574_I2C_ADDRESS,  "PCF8574 8-Bit I/O Expander, line tracking"},    \
+    {VK16K33_I2C_ADDRESS,  "VT16K33 16x8 LED controller, LED matrix"},  \
+};  \
+const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);  \
+\
+R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);   \
+    R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);    \
+        R4A_PCA9685_SERVO servoPan(&pca9685, 0, 0, 180);    \
+        R4A_PCA9685_SERVO servoTilt(&pca9685, 1, 2, 150);   \
+        R4A_PCA9685_MOTOR motorBackLeft(&pca9685, 8, 9);    \
+        R4A_PCA9685_MOTOR motorBackRight(&pca9685, 11, 10); \
+        R4A_PCA9685_MOTOR motorFrontRight(&pca9685, 13, 12);    \
+        R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15); \
+    R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);  \
+\
+R4A_I2C_BUS * r4aI2cBus = (R4A_I2C_BUS *)&i2cBus;
+
+//****************************************
 // Line sensors
 //****************************************
 
@@ -192,5 +229,31 @@ class R4A_Freenove_4WD_Car
 #define LINE_SENSOR_LEFT_MASK       (1 << LINE_SENSOR_LEFT_SHIFT)
 #define LINE_SENSOR_CENTER_MASK     (1 << LINE_SENSOR_CENTER_SHIFT)
 #define LINE_SENSOR_RIGHT_MASK      (1 << LINE_SENSOR_RIGHT_SHIFT)
+
+//****************************************
+// Motors
+//****************************************
+
+#define USE_MOTOR_TABLE     \
+R4A_PCA9685_MOTOR * const r4aPca9685MotorTable[] =  \
+{                       \
+    &motorFrontLeft,    \
+    &motorFrontRight,   \
+    &motorBackLeft,     \
+    &motorBackRight     \
+};                      \
+const int r4aPca9685MotorTableEntries = sizeof(r4aPca9685MotorTable) / sizeof(r4aPca9685MotorTable[0]);
+
+//****************************************
+// Servos
+//****************************************
+
+#define USE_SERVO_TABLE     \
+R4A_PCA9685_SERVO * const r4aPca9685ServoTable[] =  \
+{               \
+    &servoPan,  \
+    &servoTilt, \
+};              \
+const int r4aPca9685ServoTableEntries = sizeof(r4aPca9685ServoTable) / sizeof(r4aPca9685ServoTable[0]);
 
 #endif  // __FREENOVE_4WD_CAR_H__
