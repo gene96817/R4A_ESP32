@@ -106,6 +106,19 @@ void ledMenuTurnRight(const R4A_MENU_ENTRY * menuEntry, const char * command, Pr
 }
 
 //*********************************************************************
+// Stop the robot
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void robotMenuStop(const R4A_MENU_ENTRY * menuEntry,
+                   const char * command,
+                   Print * display)
+{
+    robot.stop(millis(), display);
+}
+
+//*********************************************************************
 
 enum MENU_TABLE_INDEX
 {
@@ -160,6 +173,7 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"i",  r4aMenuBoolToggle, (intptr_t)&ignoreBatteryCheck, r4aMenuBoolHelp, 0, "Ignore the battery check"},
     {"nvm",     nullptr,            MTI_NVM,        nullptr,    0,      "Enter the NVM menu"},
     {"r",  r4aEsp32MenuSystemReset, 0,              nullptr,    0,      "System reset"},
+    {"s",       robotMenuStop,      0,              nullptr,    0,      "Stop the robot"},
     {"x",       nullptr,            R4A_MENU_NONE,  nullptr,    0,      "Exit the menu system"},
 };
 #define MAIN_MENU_ENTRIES       sizeof(mainMenuTable) / sizeof(mainMenuTable[0])
