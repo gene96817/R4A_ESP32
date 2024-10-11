@@ -841,6 +841,7 @@ void r4aEsp32NvmMenuWriteParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
                                nvmParameterCount,
                                display);
 }
+
 //*********************************************************************
 // Clear a parameter by setting its value to zero
 void r4aEsp32NvmParameterClear(const char * filePath,
