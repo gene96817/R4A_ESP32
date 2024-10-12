@@ -24,22 +24,6 @@ int blfTimeBefore = 0;  //Record each non-blocking time
 int blfTimeCount = 0;   //Record the number of non-blocking times
 int blfTimeFlag = 0;    //Record the blink time
 
-//*********************************************************************
-// Set the speeds of the motors
-// Start bit, I2C device address, ACK, register address, ACK, 8 data bytes
-// with ACKs and a stop bit, all at 400 KHz
-// 770 uSec = (1+8+1+8+1+((8+1)×32)+1)÷(400×1000)
-// Returns true if successful, false otherwise
-bool blfMotorSetSpeeds(int16_t left, int16_t right, Print * display)
-{
-    // Update motor speeds
-    return motorFrontLeft.speed(left, display)
-           && motorBackLeft.speed(left, display)
-           && motorFrontRight.speed(right, display)
-           && motorBackRight.speed(right, display)
-           && pca9685.writeBufferedRegisters(display);
-}
-
 //****************************************
 // Constants
 //****************************************
@@ -105,21 +89,21 @@ class BLF : public R4A_ROBOT_CHALLENGE
         case 0b010:
         case 0b101:
             // Robot over center of line
-            blfMotorSetSpeeds(BLF_SPEED_LV1,  BLF_SPEED_LV1); // Move Forward
+            robotMotorSetSpeeds(BLF_SPEED_LV1,  BLF_SPEED_LV1); // Move Forward
             break;
 
         //     RcL
         case 0b001:
         case 0b011:
             // Robot over left sensor, need to turn left
-            blfMotorSetSpeeds(-BLF_SPEED_LV3, BLF_SPEED_LV4); // Turn left
+            robotMotorSetSpeeds(-BLF_SPEED_LV3, BLF_SPEED_LV4); // Turn left
             break;
 
         //     RcL
         case 0b100:
         case 0b110:
             // Robot over right sensor, need to turn right
-            blfMotorSetSpeeds(BLF_SPEED_LV4, -BLF_SPEED_LV3); // Turn right
+            robotMotorSetSpeeds(BLF_SPEED_LV4, -BLF_SPEED_LV3); // Turn right
             break;
         }
     }

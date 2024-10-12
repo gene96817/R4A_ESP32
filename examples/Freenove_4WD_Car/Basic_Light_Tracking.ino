@@ -53,15 +53,15 @@ class BLT : public R4A_ROBOT_CHALLENGE
 
         // Is the light on the left side?
         if (lsAdcValue <= (lsAdcReference - BLT_TURN_THRESHOLD))
-            blfMotorSetSpeeds(BLT_SPEED_MEDIUM, BLT_SPEED_FAST);
+            robotMotorSetSpeeds(BLT_SPEED_MEDIUM, BLT_SPEED_FAST);
 
         // Is the light on the right side?
         else if (lsAdcValue >= (lsAdcReference + BLT_TURN_THRESHOLD))
-            blfMotorSetSpeeds(BLT_SPEED_FAST, BLT_SPEED_MEDIUM);
+            robotMotorSetSpeeds(BLT_SPEED_FAST, BLT_SPEED_MEDIUM);
 
         // Go straight
         else
-            blfMotorSetSpeeds(BLT_SPEED_SLOW, BLT_SPEED_SLOW);
+            robotMotorSetSpeeds(BLT_SPEED_SLOW, BLT_SPEED_SLOW);
     }
 
     //****************************************

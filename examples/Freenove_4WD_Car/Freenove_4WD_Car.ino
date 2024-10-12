@@ -69,7 +69,7 @@ extern const int menuTableEntries;
 
 USE_MOTOR_TABLE;
 
-bool blfMotorSetSpeeds(int16_t left, int16_t right, Print * display = nullptr);
+bool robotMotorSetSpeeds(int16_t left, int16_t right, Print * display = nullptr);
 
 //****************************************
 // Robot
