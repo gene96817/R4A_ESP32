@@ -4,16 +4,6 @@
   Menu routines
 **********************************************************************/
 
-//****************************************
-
-// Forward references
-void blfStart(const struct _R4A_MENU_ENTRY * menuEntry,
-              const char * command,
-              Print * display);
-void bltStart(const struct _R4A_MENU_ENTRY * menuEntry,
-              const char * command,
-              Print * display);
-
 //*********************************************************************
 // Display data before the main menu header
 void mainMenuPre(Print * display)
