@@ -26,12 +26,6 @@ const char * parameterFilePath;
 uint32_t pca9685FrequencyHz;
 
 //****************************************
-// TCP port usage
-//****************************************
-
-uint16_t wcsCmdServerPort;  // Telnet protocol
-
-//****************************************
 // Time zone offset
 //****************************************
 
@@ -62,10 +56,6 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     // Multicast Domain Name Server (mDNS) host name prefix for .local
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &mdnsHostName,              "mdnsHostName", R4A_ESP32_NVM_STRING("robot")},
-
-    // Network Ports
-// Required    Type                  Minimum     Maximum        Address                     Name            Default Value
-    {true,  R4A_ESP32_NVM_PT_UINT16, 0,          0xffff,        &wcsCmdServerPort,          "portCommand",  8023},
 
     // NVM parameters
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
