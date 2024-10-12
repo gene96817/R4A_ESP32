@@ -6,9 +6,18 @@
   https://www.amazon.com/gp/product/B08X6PTQFM/ref=ox_sc_act_title_1
 **********************************************************************/
 
+//****************************************
+// Constants
+//****************************************
+
 #define DEBUG_BOOT              0
 #define DEBUG_LOOP_CORE_0       0
 #define DEBUG_LOOP_CORE_1       0
+
+// Servo default starting position
+#define SERVO_PAN_START     90  // Degrees
+
+#define SERVO_TILT_START    15  // Degrees
 
 //****************************************
 // Includes
@@ -112,11 +121,6 @@ R4A_MENU serialMenu(menuTable, menuTableEntries);
 //****************************************
 
 USE_SERVO_TABLE;
-
-// Servo limits and default starting position
-#define SERVO_PAN_START     90  // Degrees
-
-#define SERVO_TILT_START    15  // Degrees
 
 //****************************************
 // SPI support - WS2812 LEDs
@@ -363,8 +367,8 @@ void setupCore0(void *parameter)
         // Initialize the Pan/Tilt servos
         if(DEBUG_BOOT)
             Serial.printf("Calling servoSetup on core %d \r\n", xPortGetCoreID());
-        servoPan.positionSet(SERVO_PAN_START);
-        servoTilt.positionSet(SERVO_TILT_START);
+        servoPan.positionSet(servoPanStartDegrees);
+        servoTilt.positionSet(servoTiltStartDegrees);
     }
 
     // Initialize the PCF8574

@@ -26,6 +26,13 @@ const char * parameterFilePath;
 uint32_t pca9685FrequencyHz;
 
 //****************************************
+// Servos
+//****************************************
+
+uint8_t servoPanStartDegrees;
+uint8_t servoTiltStartDegrees;
+
+//****************************************
 // Time zone offset
 //****************************************
 
@@ -64,6 +71,10 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     // PCA9685
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_UINT16, 24,         1525,          &pca9685FrequencyHz,        "pca9685Hz",    50},
+
+    // Servos
+    {true,  R4A_ESP32_NVM_PT_UINT8,  0,          180,           &servoPanStartDegrees,      "panDegrees",   SERVO_PAN_START},
+    {true,  R4A_ESP32_NVM_PT_UINT8,  0,          180,           &servoTiltStartDegrees,     "tiltDegrees",  SERVO_TILT_START},
 
     // Time zone
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
