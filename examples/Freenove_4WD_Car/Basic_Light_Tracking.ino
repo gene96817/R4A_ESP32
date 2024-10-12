@@ -87,7 +87,7 @@ class BLT : public R4A_ROBOT_CHALLENGE
     }
 
     //****************************************
-    // The robotStop routine calls this routine to stop the motors and
+    // The robot.stop routine calls this routine to stop the motors and
     // perform any other actions.
     void stop()
     {
