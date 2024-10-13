@@ -734,6 +734,9 @@ class R4A_WEB_SERVER
   private:
 
     const uint16_t _port;       // Port number for the web server
+
+  protected:
+
     httpd_handle_t _webServer;  // HTTP server object
 
   public:
@@ -757,6 +760,13 @@ class R4A_WEB_SERVER
                      httpd_err_code_t error,
                      Print * display = nullptr);
 
+    // Register the error handlers
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns true if the all of the error handlers were installed and
+    //   false upon failure
+    virtual bool registerErrorHandlers(Print * display = nullptr);
+
     // Start the web server
     // Inputs:
     //   port: Port number to use for the web server
@@ -777,5 +787,14 @@ class R4A_WEB_SERVER
     //   display: Address of Print object for debug output, may be nullptr
     void update(bool wifiConnected, Print * display = &Serial);
 };
+
+// Handle the web server errors
+// Inputs:
+//   req: httpd_req_t object containing the request from the browser
+//   error: Error detected by the web server
+// Outputs:
+//   Returns status indicating if the response was successfully sent
+//   to the browser
+esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error);
 
 #endif  // __R4A_ESP32_H__

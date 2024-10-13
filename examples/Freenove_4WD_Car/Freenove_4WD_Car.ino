@@ -182,7 +182,26 @@ R4A_SPI * r4aSpi = new R4A_ESP32_SPI();
 // Web server
 //****************************************
 
-R4A_WEB_SERVER webServer(80);
+class WEB_SERVER : public R4A_WEB_SERVER
+{
+  public:
+
+    // Constructor
+    // Inputs:
+    //   port: Port number for the web server
+    WEB_SERVER(uint16_t port = 80) : R4A_WEB_SERVER(port)
+    {
+    }
+
+    // Register the error handlers
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns true if the all of the error handlers were installed and
+    //   false upon failure
+    bool registerErrorHandlers(Print * display = nullptr);
+};
+
+WEB_SERVER webServer(80);
 
 //****************************************
 // WiFi menu support

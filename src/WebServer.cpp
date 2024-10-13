@@ -15,7 +15,7 @@ static R4A_WEB_SERVER * r4aWebServer;
 
 //*********************************************************************
 // Handle the web server errors
-static esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error)
+esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error)
 {
     r4aWebServer->error(req, error, &Serial);
 }
@@ -96,19 +96,8 @@ bool R4A_WEB_SERVER::start(uint16_t port, Print * display)
         }
 
         // Register the error handlers
-        for (int index = 0; index < r4aHttpErrorCount; index++)
-        {
-            error = httpd_register_err_handler(_webServer,
-                                               r4aHttpError[index],
-                                               r4aWebServerError);
-            if (error != ESP_OK)
-            {
-                if (display)
-                    display->printf("ERROR: Failed to register error handler: %s, error: %d!\r\n",
-                                    r4aHttpErrorName[index], error);
-                break;
-            }
-        }
+        if (!registerErrorHandlers(display))
+            break;
 
         // Display the web server path
         Serial.printf("Starting web-server: http://%s:%d%s\r\n",
