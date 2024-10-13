@@ -195,7 +195,7 @@ class R4A_Freenove_4WD_Car
 #define VK16K33_I2C_ADDRESS     0x71
 
 // Description table
-#define USE_I2C_BUS_TABLE   \
+#define USE_I2C_DEVICE_TABLE   \
 const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =  \
 {   \
     {OV2640_I2C_ADDRESS,   "OV2640 Camera"},    \
@@ -203,8 +203,9 @@ const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =  \
     {PCF8574_I2C_ADDRESS,  "PCF8574 8-Bit I/O Expander, line tracking"},    \
     {VK16K33_I2C_ADDRESS,  "VT16K33 16x8 LED controller, LED matrix"},  \
 };  \
-const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);  \
-\
+const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);
+
+#define USE_I2C_BUS_TABLE   \
 R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);   \
     R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);    \
         R4A_PCA9685_SERVO servoPan(&pca9685, 0, 0, 180);    \
