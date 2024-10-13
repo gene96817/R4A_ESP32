@@ -1,5 +1,5 @@
 /**********************************************************************
-  NVM_Menu.ino
+  NVM_Menu.cpp
 
   Robots-For-All (R4A)
   Menu for non-volatile memory (NVM) support
