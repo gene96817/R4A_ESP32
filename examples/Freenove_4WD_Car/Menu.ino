@@ -159,6 +159,7 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     // Command  menuRoutine         menuParam       HelpRoutine align   HelpText
     {"blf",     blfStart,           0,              nullptr,    0,      "Basic line following"},
     {"blt",     bltStart,           0,              nullptr,    0,      "Basic light tracking"},
+    {"c", r4aMenuBoolToggle, (intptr_t)&ov2640Enable, r4aMenuBoolHelp, 0, "Toggle OV2640 camera"},
     {"d",       nullptr,            MTI_DEBUG,      nullptr,    0,      "Enter the debug menu"},
     {"i",  r4aMenuBoolToggle, (intptr_t)&ignoreBatteryCheck, r4aMenuBoolHelp, 0, "Ignore the battery check"},
     {"nvm",     nullptr,            MTI_NVM,        nullptr,    0,      "Enter the NVM menu"},

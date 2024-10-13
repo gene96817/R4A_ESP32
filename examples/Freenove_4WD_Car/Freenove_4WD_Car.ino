@@ -28,11 +28,53 @@
 #include "Parameters.h"
 
 //****************************************
+// OV2640 camera
+//****************************************
+
+class OV2640 : public R4A_OV2640
+{
+  public:
+
+    // Constructor
+    // Inputs:
+    //   i2cBus: R4A_I2C_BUS object address used to access the OV2640 camera
+    //   i2cAddress: I2C address of the OV2640 camera
+    //   pins: R4A_OV2640_PINS object containing the ESP32 GPIO pin numbers
+    //   clockHz: OV2640 clock frequency input
+    OV2640(R4A_I2C_BUS * i2cBus,
+           int i2cAddress,
+           const R4A_OV2640_PINS * pins,
+           uint32_t clockHz)
+        : R4A_OV2640(i2cBus, i2cAddress, pins, clockHz)
+    {
+    }
+
+    // Process the frame buffer
+    // Inputs:
+    //   frameBuffer: Buffer containing the raw image data
+    //   display: Address of Print object for output
+    // Outputs:
+    //   Returns true if the processing was successful and false upon error
+    bool processFrameBuffer(camera_fb_t * frameBuffer,
+                            Print * display);
+};
+
+//****************************************
 // I2C bus configuration
 //****************************************
 
 USE_I2C_DEVICE_TABLE;
-USE_I2C_BUS_TABLE;
+
+R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
+    R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);
+        R4A_PCA9685_SERVO servoPan(&pca9685, 0, 0, 180);
+        R4A_PCA9685_SERVO servoTilt(&pca9685, 1, 2, 150);
+        R4A_PCA9685_MOTOR motorBackLeft(&pca9685, 8, 9);
+        R4A_PCA9685_MOTOR motorBackRight(&pca9685, 11, 10);
+        R4A_PCA9685_MOTOR motorFrontRight(&pca9685, 13, 12);
+        R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
+    R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
+    OV2640 ov2640(&i2cBus, OV2640_I2C_ADDRESS, &r4aOV2640Pins, 20 * 1000 * 1000);
 
 //****************************************
 // Battery macros
@@ -334,6 +376,10 @@ void loop()
         }
     }
 
+    // Process the next image
+    if (ov2640Enable)
+        ov2640.update();
+
     // Process serial commands
     if (DEBUG_LOOP_CORE_1)
         Serial.println("Calling r4aSerialMenu");
@@ -376,6 +422,12 @@ void setupCore0(void *parameter)
     if(DEBUG_BOOT)
         Serial.printf("PCF8574 operating on core %d \r\n", xPortGetCoreID());
     pcf8574.write(0xff);
+
+    //****************************************
+    // OV2640 initialization
+    //****************************************
+
+    ov2640.setup(PIXFORMAT_RGB565);
 
     //****************************************
     // Core 0 completed initialization

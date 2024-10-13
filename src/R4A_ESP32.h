@@ -9,12 +9,14 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
-#include <esp32-hal-spi.h>      // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
 #include <WiFi.h>               // Built-in
 #include <WiFiClient.h>         // Built-in
 #include <WiFiMulti.h>          // Built-in, multiple WiFi AP support
 #include <WiFiServer.h>         // Built-in
+
+#include <esp_camera.h>         // Built-in, needed for OV2640 camera
+#include <esp32-hal-spi.h>      // Built-in
 
 #include <R4A_Robot.h>          // Robots-For-All robot support
 #include <R4A_I2C.h>            // Robots-For-All I2C support
@@ -506,6 +508,101 @@ void r4aEsp32NvmMenuParameterSet(const struct _R4A_MENU_ENTRY * menuEntry,
 void r4aEsp32NvmMenuWriteParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
                                        const char * command,
                                        Print * display);
+
+//****************************************
+// OV2640 API
+//****************************************
+
+typedef struct _R4A_OV2640_PINS
+{
+    // Control pins
+    int pinReset;
+    int pinPowerDown;
+    int pinXCLK;
+
+    // I2C pins
+    int pinI2cClk;
+    int pinI2cData;
+
+    // Frame synchronization
+    int pinVSYNC;   // High at beginning of frame
+    int pinHREF;    // High during each horizontal line
+    int pinPCLK;    // Pixel clock
+
+    // Image data pins
+    int pinY2;
+    int pinY3;
+    int pinY4;
+    int pinY5;
+    int pinY6;
+    int pinY7;
+    int pinY8;
+    int pinY9;
+} R4A_OV2640_PINS;
+
+// OV2640 class declaration
+class R4A_OV2640
+{
+  private:
+
+    const uint32_t _clockHz;        // Input clock frequency for the OV2640
+    R4A_I2C_BUS * const _i2cBus;    // I2C bus to access the OV2640
+    const uint8_t  _i2cAddress;     // Address of the OV2640
+    const R4A_OV2640_PINS * const _pins; // ESP32 GPIO pins for the 0V2640 camera
+
+  public:
+
+    // Constructor
+    // Inputs:
+    //   i2cBus: R4A_I2C_BUS object address used to access the OV2640 camera
+    //   i2cAddress: I2C address of the OV2640 camera
+    //   pins: R4A_OV2640_PINS object containing the ESP32 GPIO pin numbers
+    //   clockHz: OV2640 clock frequency input
+    R4A_OV2640(R4A_I2C_BUS * i2cBus,
+               int i2cAddress,
+               const R4A_OV2640_PINS * pins,
+               uint32_t clockHz)
+        : _i2cBus{i2cBus}, _i2cAddress{i2cAddress & 0x7f}, _pins{pins},
+          _clockHz{clockHz}
+    {
+    }
+
+    // Display a group of registers
+    // Inputs:
+    //   firstRegister: The register address of the first register to be displayed
+    //   bytesToRead: The number of registers to display
+    //   display: Address of Print object for output
+    void displayRegisters(uint8_t firstRegister,
+                          size_t bytesToRead,
+                          Print * display);
+
+    // Dump all of the OV2640 registers in hexadecimal
+    // Inputs:
+    //   display: Address of Print object for output
+    void dumpRegisters(Print * display);
+
+    // Process the frame buffer
+    // Inputs:
+    //   frameBuffer: Buffer containing the raw image data
+    //   display: Address of Print object for output
+    // Outputs:
+    //   Returns true if the processing was successful and false upon error
+    virtual bool processFrameBuffer(camera_fb_t * frameBuffer,
+                                    Print * display);
+
+    // Initialize the camera
+    // Inputs:
+    //   pixelFormat: Pixel format to use for the image
+    //   display: Address of Print object for debug output, may be nullptr
+    bool setup(pixformat_t pixelFormat, Print * display = nullptr);
+
+    // Update the camera processing state
+    // Inputs:
+    //   display: Address of Print object for debug output, may be nullptr
+    void update(Print * display = nullptr);
+};
+
+extern const R4A_OV2640_PINS r4aOV2640Pins; // ESP32 WRover camera pins
 
 //****************************************
 // SPI API

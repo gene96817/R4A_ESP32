@@ -20,6 +20,12 @@ const char * mdnsHostName;
 const char * parameterFilePath;
 
 //****************************************
+// OV2640 camera
+//****************************************
+
+bool ov2640Enable;
+
+//****************************************
 // PCA9685
 //****************************************
 
@@ -67,6 +73,10 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     // NVM parameters
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &parameterFilePath,         "ParamFile",    R4A_ESP32_NVM_STRING("/Parameters.txt")},
+
+    // OV2640 camera
+// Required    Type                  Minimum     Maximum        Address                     Name            Default Value
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &ov2640Enable,              "Camera",       false},
 
     // PCA9685
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
