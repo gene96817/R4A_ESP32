@@ -767,6 +767,13 @@ class R4A_WEB_SERVER
     //   false upon failure
     virtual bool registerErrorHandlers(Print * display = nullptr);
 
+    // Register the URI handlers
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns true if the all of the error handlers were installed and
+    //   false upon failure
+    virtual bool registerUriHandlers(Print * display = nullptr);
+
     // Start the web server
     // Inputs:
     //   port: Port number to use for the web server

@@ -199,6 +199,13 @@ class WEB_SERVER : public R4A_WEB_SERVER
     //   Returns true if the all of the error handlers were installed and
     //   false upon failure
     bool registerErrorHandlers(Print * display = nullptr);
+
+    // Register the URI handlers
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns true if the all of the URI handlers were installed and
+    //   false upon failure
+    bool registerUriHandlers(Print * display = nullptr);
 };
 
 WEB_SERVER webServer(80);

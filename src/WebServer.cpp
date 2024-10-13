@@ -87,13 +87,8 @@ bool R4A_WEB_SERVER::start(uint16_t port, Print * display)
         }
 
         // Register URI handlers
-        error = httpd_register_uri_handler(_webServer, &r4aOV2640JpegPage);
-        if (error != ESP_OK)
-        {
-            if (display)
-                display->printf("ERROR: Failed to register URI handler, error: %d!\r\n", error);
+        if (!registerUriHandlers(display))
             break;
-        }
 
         // Register the error handlers
         if (!registerErrorHandlers(display))
