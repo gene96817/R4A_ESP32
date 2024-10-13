@@ -17,6 +17,7 @@
 
 #include <esp_camera.h>         // Built-in, needed for OV2640 camera
 #include <esp32-hal-spi.h>      // Built-in
+#include <esp_http_server.h>    // Built in, needed for camera web server
 
 #include <R4A_Robot.h>          // Robots-For-All robot support
 #include <R4A_I2C.h>            // Robots-For-All I2C support
@@ -179,6 +180,26 @@ void r4aEsp32GpioDisplayRegisters(Print * display = &Serial);
 // Inputs:
 //   display: Device used for output
 void r4aEsp32HeapDisplay(Print * display = &Serial);
+
+//****************************************
+// HTTP API
+//****************************************
+
+extern const httpd_err_code_t r4aHttpError[];
+extern const int r4aHttpErrorCount;
+extern const char * r4aHttpErrorName[];
+
+typedef struct _R4A_JPEG_CHUNKING_T
+{
+        httpd_req_t *req;
+        size_t length;
+} R4A_JPEG_CHUNKING_T;
+
+typedef struct _R4A_TAG_NAME_T
+{
+    int tag;
+    const char * name;
+} R4A_TAG_NAME_T;
 
 //****************************************
 // ESP32 I2C Bus Class
@@ -590,6 +611,13 @@ class R4A_OV2640
     virtual bool processFrameBuffer(camera_fb_t * frameBuffer,
                                     Print * display);
 
+    // Process the web server's frame buffer
+    // Inputs:
+    //   frameBuffer: Buffer containing the raw image data
+    // Outputs:
+    //   Returns true if the processing was successful and false upon error
+    virtual bool processWebServerFrameBuffer(camera_fb_t * frameBuffer);
+
     // Initialize the camera
     // Inputs:
     //   pixelFormat: Pixel format to use for the image
@@ -602,7 +630,16 @@ class R4A_OV2640
     void update(Print * display = nullptr);
 };
 
+// Return a webpage to the requester containing a JPEG image
+// Inputs:
+//   request: Request from the browser
+esp_err_t r4aOV2640JpegHandler(httpd_req_t *request);
+
+extern bool r4aOv2640JpegDisplayTime;   // Set to true to display the JPEG conversion time
 extern const R4A_OV2640_PINS r4aOV2640Pins; // ESP32 WRover camera pins
+
+#define R4A_OV2640_JPEG_WEB_PAGE    "/jpeg"
+extern const httpd_uri_t r4aOV2640JpegPage; // Page descriptor for the camera image page
 
 //****************************************
 // SPI API
@@ -687,5 +724,58 @@ void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display = &Ser
 // Inputs:
 //   display: Device used for output
 void r4aEsp32TimerDisplayRegs(Print * display = &Serial);
+
+//****************************************
+// Web Server API
+//****************************************
+
+class R4A_WEB_SERVER
+{
+  private:
+
+    const uint16_t _port;       // Port number for the web server
+    httpd_handle_t _webServer;  // HTTP server object
+
+  public:
+
+    // Constructor
+    // Inputs:
+    //   port: Port number for the web server
+    R4A_WEB_SERVER(uint16_t port = 80) : _port{port}
+    {
+    }
+
+    // Process the request error
+    // Inputs:
+    //   req: httpd_req_t object containing the request from the browser
+    //   error: Error detected by the web server
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns status indicating if the response was successfully sent
+    //   to the browser
+    esp_err_t error (httpd_req_t *req,
+                     httpd_err_code_t error,
+                     Print * display = nullptr);
+
+    // Start the web server
+    // Inputs:
+    //   port: Port number to use for the web server
+    //   display: Address of Print object for debug output, may be nullptr
+    // Outputs:
+    //   Returns true if the web server was successfully started and false
+    //   upon failure
+    bool start(uint16_t port, Print * display = nullptr);
+
+    // Stop the web server
+    // Inputs:
+    //   display: Address of Print object for debug output, may be nullptr
+    void stop(Print * display = nullptr);
+
+    // Update the camera processing state
+    // Inputs:
+    //   wifiConnected: True when WiFi has an IP address and false otherwise
+    //   display: Address of Print object for debug output, may be nullptr
+    void update(bool wifiConnected, Print * display = &Serial);
+};
 
 #endif  // __R4A_ESP32_H__

@@ -165,6 +165,7 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"nvm",     nullptr,            MTI_NVM,        nullptr,    0,      "Enter the NVM menu"},
     {"r",  r4aEsp32MenuSystemReset, 0,              nullptr,    0,      "System reset"},
     {"s",       robotMenuStop,      0,              nullptr,    0,      "Stop the robot"},
+    {"w", r4aMenuBoolToggle, (intptr_t)&webServerEnable, r4aMenuBoolHelp, 0, "Toggle web server"},
     {"x",       nullptr,            R4A_MENU_NONE,  nullptr,    0,      "Exit the menu system"},
 };
 #define MAIN_MENU_ENTRIES       sizeof(mainMenuTable) / sizeof(mainMenuTable[0])

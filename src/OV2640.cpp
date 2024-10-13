@@ -11,7 +11,11 @@
 // Locals
 //****************************************
 
+static R4A_OV2640 * r4aOV2640;
+
 uint8_t r4aOV2640PixelFormat = PIXFORMAT_RGB565;
+
+bool r4aOV2640JpegDisplayTime;  // Set to true to display the JPEG conversion time
 
 //*********************************************************************
 // Display a group of registers
@@ -231,6 +235,7 @@ bool R4A_OV2640::setup(pixformat_t pixelFormat, Print * display)
     ov2640Camera->set_agc_gain(ov2640Camera, 30);
     ov2640Camera->set_awb_gain(ov2640Camera, 1);
     ov2640Camera->set_gain_ctrl(ov2640Camera, 1);
+    r4aOV2640 = this;
     return true;
 }
 
@@ -253,3 +258,106 @@ void R4A_OV2640::update(Print * display)
     // Return the frame buffer
     esp_camera_fb_return(frameBuffer);
 }
+
+//*********************************************************************
+// Encode the JPEG image
+size_t r4aOV2640SendJpegChunk(void * arg,
+                              size_t index,
+                              const void* data,
+                              size_t len)
+{
+    R4A_JPEG_CHUNKING_T * chunk = (R4A_JPEG_CHUNKING_T *)arg;
+    if(!index){
+        chunk->length = 0;
+    }
+    if(httpd_resp_send_chunk(chunk->req, (const char *)data, len) != ESP_OK){
+        return 0;
+    }
+    chunk->length += len;
+    return len;
+}
+
+//*********************************************************************
+// JPEG image web page handler
+esp_err_t r4aOV2640JpegHandler(httpd_req_t *request)
+{
+    int64_t endTime;
+    camera_fb_t * frameBuffer;
+    int16_t positionError;
+    int64_t startTime;
+    esp_err_t status;
+
+    do
+    {
+        startTime = esp_timer_get_time();
+        frameBuffer = nullptr;
+        status = ESP_FAIL;
+
+        // Allocate the frame buffer
+        frameBuffer = esp_camera_fb_get();
+        if (!frameBuffer)
+        {
+            Serial.println("ERROR: Failed to capture the image");
+            httpd_resp_send_500(request);
+            break;
+        }
+
+        // Process the frame buffer
+        r4aOV2640->processWebServerFrameBuffer(frameBuffer);
+
+        // Build the response header
+        httpd_resp_set_type(request, "image/jpeg");
+        httpd_resp_set_hdr(request, "Content-Disposition", "inline; filename=capture.jpg");
+        httpd_resp_set_hdr(request, "Access-Control-Allow-Origin", "*");
+
+        // Add the timestamp to the header
+        char timestamp[32];
+        snprintf(timestamp, sizeof(timestamp), "%ld.%06ld",
+                 frameBuffer->timestamp.tv_sec, frameBuffer->timestamp.tv_usec);
+        httpd_resp_set_hdr(request, "X-Timestamp", (const char *)timestamp);
+
+        // Send the captured image
+        if (frameBuffer->format == PIXFORMAT_JPEG)
+        {
+            status = httpd_resp_send(request, (const char *)frameBuffer->buf, frameBuffer->len);
+            if (status != ESP_OK)
+                break;
+        }
+        else
+        {
+            // Break the image into multiple chunks
+            R4A_JPEG_CHUNKING_T jchunk = {request, 0};
+            status = frame2jpg_cb(frameBuffer,
+                                  80,
+                                  r4aOV2640SendJpegChunk,
+                                  &jchunk) ? ESP_OK : ESP_FAIL;
+            if (status != ESP_OK)
+                break;
+            status = httpd_resp_send_chunk(request, NULL, 0);
+            if (status != ESP_OK)
+                break;
+        }
+        endTime = esp_timer_get_time();
+        if (r4aOV2640JpegDisplayTime)
+            Serial.printf("JPG: %u bytes %u mSec", (uint32_t)(frameBuffer->len),
+                          (uint32_t)((endTime - startTime) / 1000));
+        status = ESP_OK;
+    } while (0);
+
+    // Return the frame buffer
+    if (frameBuffer)
+        esp_camera_fb_return(frameBuffer);
+    return status;
+}
+
+//****************************************
+// Constants
+//****************************************
+
+// URI handler structure for GET /jpeg
+const httpd_uri_t r4aOV2640JpegPage = {
+    .uri      = R4A_OV2640_JPEG_WEB_PAGE,
+    .method   = HTTP_GET,
+    .handler  = r4aOV2640JpegHandler,
+    .user_ctx = NULL
+};

@@ -57,6 +57,13 @@ class OV2640 : public R4A_OV2640
     //   Returns true if the processing was successful and false upon error
     bool processFrameBuffer(camera_fb_t * frameBuffer,
                             Print * display);
+
+    // Process the web server's frame buffer
+    // Inputs:
+    //   frameBuffer: Buffer containing the raw image data
+    // Outputs:
+    //   Returns true if the processing was successful and false upon error
+    virtual bool processWebServerFrameBuffer(camera_fb_t * frameBuffer);
 };
 
 //****************************************
@@ -170,6 +177,12 @@ USE_SERVO_TABLE;
 //****************************************
 
 R4A_SPI * r4aSpi = new R4A_ESP32_SPI();
+
+//****************************************
+// Web server
+//****************************************
+
+R4A_WEB_SERVER webServer(80);
 
 //****************************************
 // WiFi menu support
@@ -374,6 +387,9 @@ void loop()
                 Serial.printf("Telnet: %s:%d\r\n", WiFi.localIP().toString().c_str(),
                               telnet.port());
         }
+
+        // Update the web server
+        webServer.update(wifiConnected && ov2640Enable && webServerEnable);
     }
 
     // Process the next image

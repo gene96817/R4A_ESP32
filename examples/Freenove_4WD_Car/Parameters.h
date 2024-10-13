@@ -47,6 +47,12 @@ int8_t timeZoneMinutes;
 int8_t timeZoneSeconds;
 
 //****************************************
+// Web server
+//****************************************
+
+bool webServerEnable;
+
+//****************************************
 // WiFi Access Points
 //****************************************
 
@@ -91,6 +97,10 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     {true,  R4A_ESP32_NVM_PT_INT8,   -12,        12,            &timeZoneHours,             "tzHours",      -10},
     {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &timeZoneMinutes,           "tzMinutes",    0},
     {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &timeZoneSeconds,           "tzSeconds",    0},
+
+    // Web server
+// Required    Type                  Minimum     Maximum        Address                     Name            Default Value
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &webServerEnable,           "WebServer",    false},
 
     // WiFi: Public Access Points (APs)
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
