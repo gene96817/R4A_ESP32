@@ -213,9 +213,7 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);   \
         R4A_PCA9685_MOTOR motorBackRight(&pca9685, 11, 10); \
         R4A_PCA9685_MOTOR motorFrontRight(&pca9685, 13, 12);    \
         R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15); \
-    R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);  \
-\
-R4A_I2C_BUS * r4aI2cBus = (R4A_I2C_BUS *)&i2cBus;
+    R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
 
 //****************************************
 // Line sensors
