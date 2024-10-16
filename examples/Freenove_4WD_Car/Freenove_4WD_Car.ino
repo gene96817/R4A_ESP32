@@ -11,6 +11,7 @@
 //****************************************
 
 //#define USE_GNSS
+//#define USE_NTRIP
 
 #define DEBUG_BOOT              0
 #define DEBUG_LOOP_CORE_0       0
@@ -147,6 +148,64 @@ extern const int menuTableEntries;
 USE_MOTOR_TABLE;
 
 bool robotMotorSetSpeeds(int16_t left, int16_t right, Print * display = nullptr);
+
+//****************************************
+// NTRIP Client
+//****************************************
+
+#ifdef  USE_NTRIP
+// Define the back-off intervals between connection attempts in milliseconds
+const uint32_t r4aNtripClientBbackoffIntervalMsec[] =
+{
+    0,
+    15 * R4A_MILLISECONDS_IN_A_SECOND,
+    30 * R4A_MILLISECONDS_IN_A_SECOND,
+     1 * R4A_MILLISECONDS_IN_A_MINUTE,
+     2 * R4A_MILLISECONDS_IN_A_MINUTE,
+};
+
+const int r4aNtripClientBbackoffCount = sizeof(r4aNtripClientBbackoffIntervalMsec) / sizeof(r4aNtripClientBbackoffIntervalMsec[0]);
+
+class NTRIP_CLIENT : public R4A_NTRIP_CLIENT
+{
+  private:
+
+    // Get the active serial port
+    Print * getSerial()
+    {
+        return &Serial;
+    }
+
+    // Get the I2C bus transaction size
+    uint8_t i2cTransactionSize()
+    {
+#ifdef  USE_GNSS
+        return zedf9p._i2cTransactionSize;
+#else   // USE_GNSS
+        return 32;
+#endif  // USE_GNSS
+    }
+
+    // Push data to the GNSS
+    int pushRawData(uint8_t * buffer, int bytesToPush, Print * display)
+    {
+#ifdef  USE_GNSS
+        return zedf9p.pushRawData(buffer, bytesToPush, display);
+#else   // USE_GNSS
+        return 0;
+#endif  // USE_GNSS
+    }
+
+  public:
+
+    // Constructor
+    NTRIP_CLIENT() : R4A_NTRIP_CLIENT()
+    {
+    }
+};
+
+NTRIP_CLIENT ntrip;
+#endif  // USE_NTRIP
 
 //****************************************
 // Robot
@@ -349,6 +408,13 @@ void setup()
             wifiApCount += 1;
     }
 
+#ifdef  USE_NTRIP
+    // Validate the NTRIP tables
+    if (DEBUG_BOOT)
+        callingRoutine("ntrip.validateTables");
+    ntrip.validateTables();
+#endif  // USE_NTRIP
+
     // Start the WiFi network
     if (wifiApCount)
     {
@@ -457,6 +523,13 @@ void loop()
         if (DEBUG_LOOP_CORE_1)
             callingRoutine("r4aNtpUpdate");
         r4aNtpUpdate(wifiConnected);
+
+#ifdef  USE_NTRIP
+        // Update the NTRIP client state
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("ntrip.update\r\n");
+        ntrip.update(wifiConnected);
+#endif  // USE_NTRIP
 
         // Notify the telnet server of WiFi changes
         if (DEBUG_LOOP_CORE_1)
@@ -597,6 +670,18 @@ void loopCore0()
         zedf9p.i2cPoll();
     }
 #endif  // USE_GNSS
+
+#ifdef  USE_NTRIP
+    // Send navigation data to the GNSS radio
+    if (r4aNtripClientEnable)
+    {
+#ifdef  USE_GNSS
+        if (DEBUG_LOOP_CORE_0)
+            callingRoutine("ntrip.rbRemoveData");
+        ntrip.rbRemoveData(r4aNtripClientDebugRtcm ? &Serial : nullptr);
+#endif  // USE_GNSS
+    }
+#endif  // USE_NTRIP
 
     // Perform the robot challenge
     if (DEBUG_LOOP_CORE_0)
