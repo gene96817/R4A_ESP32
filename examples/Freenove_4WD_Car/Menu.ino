@@ -4,6 +4,26 @@
   Menu routines
 **********************************************************************/
 
+#ifdef  USE_GNSS
+//*********************************************************************
+// Compute point and display point
+void gnssMenuComputePoint(const R4A_MENU_ENTRY * menuEntry,
+                          const char * command,
+                          Print * display)
+{
+    zedf9p.computePoint(display);
+}
+
+//*********************************************************************
+// Display the location
+void gnssMenuDisplayLocation(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    zedf9p.displayLocation(display);
+}
+#endif  // USE_GNSS
+
 //*********************************************************************
 // Display data before the main menu header
 void mainMenuPre(Print * display)
@@ -113,6 +133,9 @@ void robotMenuStop(const R4A_MENU_ENTRY * menuEntry,
 enum MENU_TABLE_INDEX
 {
     MTI_DEBUG = R4A_MENU_MAIN + 1,
+#ifdef  USE_GNSS
+    MTI_GNSS,
+#endif  // USE_GNSS
     MTI_I2C,
     MTI_LED,
     MTI_MOTOR,
@@ -133,6 +156,18 @@ const R4A_MENU_ENTRY debugMenuTable[] =
     {"x",       nullptr,                    R4A_MENU_MAIN,  nullptr,    0,      "Return to the main menu"},
 };
 #define DEBUG_MENU_ENTRIES      sizeof(debugMenuTable) / sizeof(debugMenuTable[0])
+
+#ifdef  USE_GNSS
+// GNSS menu
+const R4A_MENU_ENTRY gnssMenuTable[] =
+{
+    // Command  menuRoutine         menuParam   HelpRoutine     align   HelpText
+    {"l",  gnssMenuDisplayLocation, 0,          nullptr,        0,      "Display location"},
+    {"p",     gnssMenuComputePoint, 0,          nullptr,        0,      "Compute point and display point"},
+    {"x",       nullptr,         R4A_MENU_MAIN, nullptr,        0,      "Return to the main menu"},
+};
+#define GNSS_MENU_ENTRIES       sizeof(gnssMenuTable) / sizeof(gnssMenuTable[0])
+#endif  // USE_GNSS
 
 // LED menu
 const R4A_MENU_ENTRY ledMenuTable[] =
@@ -161,6 +196,9 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"blt",     bltStart,           0,              nullptr,    0,      "Basic light tracking"},
     {"c", r4aMenuBoolToggle, (intptr_t)&ov2640Enable, r4aMenuBoolHelp, 0, "Toggle OV2640 camera"},
     {"d",       nullptr,            MTI_DEBUG,      nullptr,    0,      "Enter the debug menu"},
+#ifdef  USE_GNSS
+    {"g",       nullptr,            MTI_GNSS,       nullptr,    0,      "Enter the GNSS menu"},
+#endif  // USE_GNSS
     {"i",  r4aMenuBoolToggle, (intptr_t)&ignoreBatteryCheck, r4aMenuBoolHelp, 0, "Ignore the battery check"},
     {"nvm",     nullptr,            MTI_NVM,        nullptr,    0,      "Enter the NVM menu"},
     {"r",  r4aEsp32MenuSystemReset, 0,              nullptr,    0,      "System reset"},
@@ -175,6 +213,9 @@ const R4A_MENU_TABLE menuTable[] =
     // menuName         preMenu routine firstEntry          entryCount
     {"Main Menu",       mainMenuPre,    mainMenuTable,      MAIN_MENU_ENTRIES},
     {"Debug Menu",      nullptr,        debugMenuTable,     DEBUG_MENU_ENTRIES},
+#ifdef  USE_GNSS
+    {"GNSS Menu",       nullptr,        gnssMenuTable,      GNSS_MENU_ENTRIES},
+#endif  // USE_GNSS
     {"I2C Menu",        nullptr,        r4aI2cMenuTable,    R4A_I2C_MENU_ENTRIES},
     {"LED Menu",        nullptr,        ledMenuTable,       LED_MENU_ENTRIES},
 //    {"LED Menu",        nullptr,        r4aLEDMenuTable,    R4A_LED_MENU_ENTRIES},

@@ -10,6 +10,8 @@
 // Constants
 //****************************************
 
+//#define USE_GNSS
+
 #define DEBUG_BOOT              0
 #define DEBUG_LOOP_CORE_0       0
 #define DEBUG_LOOP_CORE_1       0
@@ -70,7 +72,20 @@ class OV2640 : public R4A_OV2640
 // I2C bus configuration
 //****************************************
 
-USE_I2C_DEVICE_TABLE;
+// I2C addresses
+#define ZEDF9P_I2C_ADDRESS      0x42
+
+const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =
+{
+    {OV2640_I2C_ADDRESS,   "OV2640 Camera"},
+    {PCA9685_I2C_ADDRESS,  "PCA9685 16-Channel LED controller, motors & servos"},
+    {PCF8574_I2C_ADDRESS,  "PCF8574 8-Bit I/O Expander, line tracking"},
+    {VK16K33_I2C_ADDRESS,  "VT16K33 16x8 LED controller, LED matrix"},
+#ifdef  USE_GNSS
+    {ZEDF9P_I2C_ADDRESS,   "u-blox ZED F9P GNSS receiver"}
+#endif  // USE_GNSS
+};
+const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);
 
 R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
     R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);
@@ -82,6 +97,9 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
         R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
     R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
     OV2640 ov2640(&i2cBus, OV2640_I2C_ADDRESS, &r4aOV2640Pins, 20 * 1000 * 1000);
+#ifdef  USE_GNSS
+    R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
+#endif  // USE_GNSS
 
 //****************************************
 // Battery macros
@@ -417,6 +435,13 @@ void loop()
         digitalWrite(BLUE_LED_BUZZER_PIN, blueLED);
     }
 
+    // Update the location
+#ifdef  USE_GNSS
+    if (DEBUG_LOOP_CORE_1)
+        callingRoutine("zedf9p.update");
+    zedf9p.update(currentMsec);
+#endif  // USE_GNSS
+
     // Update the LEDs
     if (DEBUG_LOOP_CORE_1)
         callingRoutine("car.ledsUpdate");
@@ -507,6 +532,13 @@ void setupCore0(void *parameter)
         callingRoutine("ov2640.setup");
     ov2640.setup(PIXFORMAT_RGB565);
 
+    // Initialize the GPS receiver
+#ifdef  USE_GNSS
+    if(DEBUG_BOOT)
+        callingRoutine("zedf9p.begin");
+    zedf9p.begin();
+#endif  // USE_GNSS
+
     //****************************************
     // Core 0 completed initialization
     //****************************************
@@ -550,9 +582,21 @@ void setupCore0(void *parameter)
 void loopCore0()
 {
     uint32_t currentMsec;
+    static uint32_t lastGnssI2cPollMsec;
 
     // Get the time since boot
     currentMsec = millis();
+
+#ifdef  USE_GNSS
+    // Update the location
+    if ((currentMsec - lastGnssI2cPollMsec) >= r4aZedF9pPollMsec)
+    {
+        lastGnssI2cPollMsec = currentMsec;
+        if (DEBUG_LOOP_CORE_0)
+            callingRoutine("zedf9p.i2cPoll");
+        zedf9p.i2cPoll();
+    }
+#endif  // USE_GNSS
 
     // Perform the robot challenge
     if (DEBUG_LOOP_CORE_0)

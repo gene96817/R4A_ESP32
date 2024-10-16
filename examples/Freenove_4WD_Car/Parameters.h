@@ -64,6 +64,20 @@ const char * wifiPassword4;
 
 const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 {
+#ifdef  USE_GNSS
+    // GPS (GNSS)
+// Required    Type                  Minimum     Maximum        Address                         Name            Default Value
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayAltitude,      "gnssAltitude", false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayTime,          "gnssTime",     false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayFixType,       "gpsDispFix",   false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayHpaLatLong,    "gnssLatLong",  false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplaySiv,           "gnssSIV",      false},
+
+    {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (600 * 1000),  &r4aZedF9pLocationDisplayMsec,  "GnssDispMsec", 1000},
+    {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (60 * 1000),   &r4aZedF9pPollMsec,             "GnssPollMsec", 100},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &r4aZedF9pUnitsFeetInches,      "GnssUseFeet",  true},
+#endif  // USE_GNSS
+
     // Multicast Domain Name Server (mDNS) host name prefix for .local
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &mdnsHostName,              "mdnsHostName", R4A_ESP32_NVM_STRING("robot")},
