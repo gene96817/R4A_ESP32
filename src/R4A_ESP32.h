@@ -523,6 +523,15 @@ void r4aEsp32NvmMenuParameterSet(const struct _R4A_MENU_ENTRY * menuEntry,
                                  const char * command,
                                  Print * display);
 
+// Write a string to the parameter file
+// Inputs:
+//   file: File to which the string is written
+//   string: Address of a zero terminated string of characters
+// Outputs:
+//   Returns true if all of the data was successfully written and false
+//   upon error
+bool r4aEsp32NvmWriteFileString(File &file, const char * string);
+
 // Write the parameters to the parameter file
 // Inputs:
 //   menuEntry: Address of the object describing the menu entry

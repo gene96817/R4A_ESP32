@@ -225,13 +225,13 @@ void r4aEsp32NvmSetParameterValue(const R4A_ESP32_NVM_PARAMETER * parameter,
 
 //*********************************************************************
 // Write a string to the parameter file
-bool r4aEsp32NvmWriteParameterValue(File &parameterFile, const char * string)
+bool r4aEsp32NvmWriteFileString(File &file, const char * string)
 {
     size_t bytesWritten;
     size_t length;
 
     length = strlen(string) + 1;
-    bytesWritten = parameterFile.write((const uint8_t *)string, length);
+    bytesWritten = file.write((const uint8_t *)string, length);
     return (bytesWritten == length);
 }
 
@@ -343,9 +343,9 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
     //  | Name  | Type  | Value |
     //  +-------+-------+-------+
     sprintf(typeString, "%d", type);
-    valid = (r4aEsp32NvmWriteParameterValue(parameterFile, parameter->name)
-        && r4aEsp32NvmWriteParameterValue(parameterFile, typeString)
-        && r4aEsp32NvmWriteParameterValue(parameterFile, data));
+    valid = (r4aEsp32NvmWriteFileString(parameterFile, parameter->name)
+        && r4aEsp32NvmWriteFileString(parameterFile, typeString)
+        && r4aEsp32NvmWriteFileString(parameterFile, data));
     return valid;
 }
 
