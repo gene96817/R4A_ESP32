@@ -39,14 +39,6 @@ uint8_t servoPanStartDegrees;
 uint8_t servoTiltStartDegrees;
 
 //****************************************
-// Time zone offset
-//****************************************
-
-int8_t timeZoneHours;
-int8_t timeZoneMinutes;
-int8_t timeZoneSeconds;
-
-//****************************************
 // Web server
 //****************************************
 
@@ -94,9 +86,9 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 
     // Time zone
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
-    {true,  R4A_ESP32_NVM_PT_INT8,   -12,        12,            &timeZoneHours,             "tzHours",      -10},
-    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &timeZoneMinutes,           "tzMinutes",    0},
-    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &timeZoneSeconds,           "tzSeconds",    0},
+    {true,  R4A_ESP32_NVM_PT_INT8,   -12,        12,            &r4aTimeZoneHours,          "tzHours",      -10},
+    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &r4aTimeZoneMinutes,        "tzMinutes",    0},
+    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &r4aTimeZoneSeconds,        "tzSeconds",    0},
 
     // Web server
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
