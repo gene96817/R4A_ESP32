@@ -227,31 +227,40 @@ void setup()
     // Initialize the USB serial port
     Serial.begin(115200);
     Serial.println();
-    Serial.println("Freenove 4WD Car");
+    Serial.printf("Freenove 4WD Car\r\n");
 
     // Display the core number
     if (DEBUG_BOOT)
+    {
         Serial.printf("setup() running on core %d\r\n", xPortGetCoreID());
+        Serial.flush();
+    }
 
     // Get the parameters
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aEsp32NvmGetParameters");
+        callingRoutine("r4aEsp32NvmGetParameters");
     r4aEsp32NvmGetParameters(&parameterFilePath);
 
     // Set the ADC reference voltage
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aEsp32VoltageSetReference");
+        callingRoutine("r4aEsp32VoltageSetReference");
     r4aEsp32VoltageSetReference(ADC_REFERENCE_VOLTAGE);
 
     // Turn off the buzzer
     if (DEBUG_BOOT)
-        Serial.println("Turning off the buzzer");
+    {
+        Serial.printf("Turning off the buzzer\r\n");
+        Serial.flush();
+    }
     pinMode(BLUE_LED_BUZZER_PIN, OUTPUT);
     digitalWrite(BLUE_LED_BUZZER_PIN, ESP32_WROVER_BLUE_LED_OFF);
 
     // Turn off ESP32 Wrover blue LED when battery power is applied
     if (DEBUG_BOOT)
-        Serial.println("Setting the blue LED");
+    {
+        Serial.printf("Setting the blue LED\r\n");
+        Serial.flush();
+    }
     float batteryVoltage = READ_BATTERY_VOLTAGE(nullptr);
     int blueLED = (batteryVoltage > 2.)
                 ? ESP32_WROVER_BLUE_LED_ON : ESP32_WROVER_BLUE_LED_OFF;
@@ -259,7 +268,7 @@ void setup()
 
     // Start the core 0 task
     if (DEBUG_BOOT)
-        Serial.println("Calling xTaskCreatePinnedToCore");
+        callingRoutine("xTaskCreatePinnedToCore");
     status = xTaskCreatePinnedToCore(
                   setupCore0,   // Function to implement the task
                   "Core 0",     // Name of the task
@@ -271,7 +280,10 @@ void setup()
     if (status != pdPASS)
         r4aReportFatalError("Failed to create the core 0 task!");
     if (DEBUG_BOOT)
-        Serial.println("Core 0 task started");
+    {
+        Serial.printf("Core 0 task started\r\n");
+        Serial.flush();
+    }
 
     // Delay to allow the hardware initialize
     delay(250);
@@ -281,28 +293,40 @@ void setup()
     if (wifiSSID && strlen(wifiSSID))
     {
         if (DEBUG_BOOT)
+        {
             Serial.printf("Calling wifiMulti.addAP(%s, password)\r\n", wifiSSID);
+            Serial.flush();
+        }
         if (wifiMulti.addAP(wifiSSID, wifiPassword))
             wifiApCount += 1;
     }
     if (wifiSSID2 && strlen(wifiSSID2))
     {
         if (DEBUG_BOOT)
+        {
             Serial.printf("Calling wifiMulti.addAP(%s, password2)\r\n", wifiSSID2);
+            Serial.flush();
+        }
         if (wifiMulti.addAP(wifiSSID2, wifiPassword2))
             wifiApCount += 1;
     }
     if (wifiSSID3 && strlen(wifiSSID3))
     {
         if (DEBUG_BOOT)
+        {
             Serial.printf("Calling wifiMulti.addAP(%s, password3)\r\n", wifiSSID3);
+            Serial.flush();
+        }
         if (wifiMulti.addAP(wifiSSID3, wifiPassword3))
             wifiApCount += 1;
     }
     if (wifiSSID2 && strlen(wifiSSID4))
     {
         if (DEBUG_BOOT)
+        {
             Serial.printf("Calling wifiMulti.addAP(%s, password4)\r\n", wifiSSID4);
+            Serial.flush();
+        }
         if (wifiMulti.addAP(wifiSSID4, wifiPassword4))
             wifiApCount += 1;
     }
@@ -311,12 +335,13 @@ void setup()
     if (wifiApCount)
     {
         Serial.printf("Waiting for WiFi to start on core %d \r\n", xPortGetCoreID());
+        Serial.flush();
         wifiMulti.run();
     }
 
     // Initialize the NTP client
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aNtpSetup");
+        callingRoutine("r4aNtpSetup");
     r4aNtpSetup(-10 * R4A_SECONDS_IN_AN_HOUR, true);
 
     // Initialize the SPI controller for the WD2812 LEDs
@@ -325,17 +350,17 @@ void setup()
 
     // Turn off all of the 3 color LEDs
     if (DEBUG_BOOT)
-        Serial.println("Calling car.ledsOff");
+        callingRoutine("car.ledsOff");
     car.ledsOff();
 
     // Reduce the LED intensity
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aLEDSetIntensity");
+        callingRoutine("r4aLEDSetIntensity");
     r4aLEDSetIntensity(1);
 
     // Set the initial LED values
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aLEDUpdate");
+        callingRoutine("r4aLEDUpdate");
     r4aLEDUpdate(true);
 
     //****************************************
@@ -344,11 +369,14 @@ void setup()
 
     // Wait for the other core to finish initialization
     if (DEBUG_BOOT)
-        Serial.println("Waiting for setupCore0 to complete");
+    {
+        Serial.printf("Waiting for setupCore0 to complete\r\n");
+        Serial.flush();
+    }
     while (!core0Initialized)
         delayMicroseconds(1);
     if (DEBUG_BOOT)
-        Serial.println("Calling r4aNtpSetup");
+        callingRoutine("r4aNtpSetup");
 
     //****************************************
     // Core 1 completed initialization
@@ -356,7 +384,10 @@ void setup()
 
     // Finished with the initialization
     if (DEBUG_BOOT)
-        Serial.println("setup complete");
+    {
+        Serial.printf("setup complete\r\n");
+        Serial.flush();
+    }
     core1Initialized = true;
 
     //****************************************
@@ -379,7 +410,7 @@ void loop()
     {
         lastBatteryCheckMsec = currentMsec;
         if (DEBUG_LOOP_CORE_1)
-            Serial.println("Calling READ_BATTERY_VOLTAGE");
+            callingRoutine("READ_BATTERY_VOLTAGE");
         float batteryVoltage = READ_BATTERY_VOLTAGE(nullptr);
         int blueLED = (batteryVoltage > 2.)
                     ? ESP32_WROVER_BLUE_LED_ON : ESP32_WROVER_BLUE_LED_OFF;
@@ -388,7 +419,7 @@ void loop()
 
     // Update the LEDs
     if (DEBUG_LOOP_CORE_1)
-        Serial.println("Calling car.ledsUpdate");
+        callingRoutine("car.ledsUpdate");
     car.ledsUpdate(currentMsec);
 
     // Determine if WiFi is enabled
@@ -399,12 +430,12 @@ void loop()
 
         // Check for NTP updates
         if (DEBUG_LOOP_CORE_1)
-            Serial.println("Calling r4aNtpUpdate");
+            callingRoutine("r4aNtpUpdate");
         r4aNtpUpdate(wifiConnected);
 
         // Notify the telnet server of WiFi changes
         if (DEBUG_LOOP_CORE_1)
-            Serial.println("Calling telnet.update");
+            callingRoutine("telnet.update");
         telnet.update(wifiConnected);
         if (previousConnected != wifiConnected)
         {
@@ -415,6 +446,8 @@ void loop()
         }
 
         // Update the web server
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("webServer.update");
         webServer.update(wifiConnected && ov2640Enable && webServerEnable);
     }
 
@@ -424,7 +457,7 @@ void loop()
 
     // Process serial commands
     if (DEBUG_LOOP_CORE_1)
-        Serial.println("Calling r4aSerialMenu");
+        callingRoutine("r4aSerialMenu");
     r4aSerialMenu(&serialMenu);
 }
 
@@ -434,41 +467,44 @@ void setupCore0(void *parameter)
 {
     // Display the core number
     if (DEBUG_BOOT)
+    {
         Serial.printf("setupCore0() running on core %d\r\n", xPortGetCoreID());
+        Serial.flush();
+    }
 
     // Allow I2C devices time to power up
     delay(100);
 
-    // Initialize I2C
-    if(DEBUG_BOOT)
-        Serial.printf("Calling i2cBusSetup on core %d \r\n", xPortGetCoreID());
-
     // Setup and enumerate the I2C devices
+    if(DEBUG_BOOT)
+        callingRoutine("i2cBus.begin");
     i2cBus.begin(I2C_SDA,
                  I2C_SCL,
                  R4A_I2C_FAST_MODE_HZ);
 
     // Initialize the PCA9685
     if(DEBUG_BOOT)
-        Serial.printf("PCA9685 operating on core %d \r\n", xPortGetCoreID());
+        callingRoutine("pca9685.begin");
     if (pca9685.begin())
     {
         // Initialize the Pan/Tilt servos
         if(DEBUG_BOOT)
-            Serial.printf("Calling servoSetup on core %d \r\n", xPortGetCoreID());
+            callingRoutine("servoPan.positionSet");
         servoPan.positionSet(servoPanStartDegrees);
+        if(DEBUG_BOOT)
+            callingRoutine("servoTilt.positionSet");
         servoTilt.positionSet(servoTiltStartDegrees);
     }
 
     // Initialize the PCF8574
     if(DEBUG_BOOT)
-        Serial.printf("PCF8574 operating on core %d \r\n", xPortGetCoreID());
+        callingRoutine("pcf8574.write");
     pcf8574.write(0xff);
 
-    //****************************************
-    // OV2640 initialization
-    //****************************************
-
+    // Initialize the camera
+    delay(500);
+    if(DEBUG_BOOT)
+        callingRoutine("ov2640.setup");
     ov2640.setup(PIXFORMAT_RGB565);
 
     //****************************************
@@ -476,7 +512,10 @@ void setupCore0(void *parameter)
     //****************************************
 
     if (DEBUG_BOOT)
-        Serial.println("setupCore0 complete");
+    {
+        Serial.printf("setupCore0 complete\r\n");
+        Serial.flush();
+    }
 
     // Finished with the initialization
     core0Initialized = true;
@@ -486,14 +525,17 @@ void setupCore0(void *parameter)
     //****************************************
 
     if (DEBUG_BOOT)
-        Serial.println("Waiting for setup to complete");
+    {
+        Serial.printf("Waiting for setup to complete\r\n");
+        Serial.flush();
+    }
 
     // Wait for the other core to finish initialization
     while (!core1Initialized)
         delayMicroseconds(1);
 
     if(DEBUG_BOOT)
-        Serial.printf("Calling loopCore0 on core %d \r\n", xPortGetCoreID());
+        callingRoutine("loopCore0");
 
     //****************************************
     // Execute loopCore0 forever
@@ -514,6 +556,14 @@ void loopCore0()
 
     // Perform the robot challenge
     if (DEBUG_LOOP_CORE_0)
-        Serial.println("Calling robot.update");
+        callingRoutine("robot.update");
     robot.update(currentMsec);
+}
+
+//*********************************************************************
+// Display the name of the next routine that will be executed
+void callingRoutine(const char * name)
+{
+    Serial.printf("Calling %s on core %d\r\n", name, xPortGetCoreID());
+    Serial.flush();
 }
