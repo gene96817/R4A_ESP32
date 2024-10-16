@@ -706,6 +706,7 @@ void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntr
 
 //*********************************************************************
 // Display the help text with PPP
+[[deprecated("Use r4aMenuHelpSuffix instead.")]]
 void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
                              const char * align,
                              Print * display)
@@ -716,6 +717,7 @@ void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
 
 //*********************************************************************
 // Display the help text with PPPP XXXX
+[[deprecated("Use r4aMenuHelpSuffix instead.")]]
 void r4aEsp32NvmMenuHelpPpppXxxx(const struct _R4A_MENU_ENTRY * menuEntry,
                                  const char * align,
                                  Print * display)

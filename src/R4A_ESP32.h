@@ -481,6 +481,7 @@ void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntr
 //   menuEntry: Address of the object describing the menu entry
 //   align: Zero terminated string of spaces for alignment
 //   display: Device used for output
+[[deprecated("Use r4aMenuHelpSuffix instead.")]]
 void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
                              const char * align,
                              Print * display);
@@ -490,6 +491,7 @@ void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
 //   menuEntry: Address of the object describing the menu entry
 //   align: Zero terminated string of spaces for alignment
 //   display: Device used for output
+[[deprecated("Use r4aMenuHelpSuffix instead.")]]
 void r4aEsp32NvmMenuHelpPpppXxxx(const struct _R4A_MENU_ENTRY * menuEntry,
                                  const char * align,
                                  Print * display);

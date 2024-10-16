@@ -175,20 +175,20 @@ const R4A_MENU_ENTRY gnssMenuTable[] =
 // LED menu
 const R4A_MENU_ENTRY ledMenuTable[] =
 {
-    // Command  menuRoutine         menuParam   HelpRoutine     align   HelpText
-    {"b",       ledMenuBackup,      0,          nullptr,        0,      "Toggle backup lights"},                             // 0
-    {"c3",      r4aLEDMenuColor3,   0,  r4aLEDMenuHelpllcccc,   12,      "Specify the LED ll color cccccc (RGB in hex)"},    // 1
-    {"c4",      r4aLEDMenuColor4,   0,  r4aLEDMenuHelpllcccc,   12,      "Specify the LED ll color cccccccc (RGBW in hex)"}, // 2
-    {"d",       r4aLEDMenuDisplay,  0,          nullptr,        0,      "Display the LED status"},
-    {"h",       ledMenuHeadlights,  0,          nullptr,        0,      "Toggle headlights"},                                // 3
-    {"i",      r4aLEDMenuIntensity, 0,       r4aLEDMenuHelpiii, 4,      "Specify the LED intensity iii (0 - 255)"},          // 4
-    {"l",       ledMenuTurnLeft,    0,          nullptr,        0,      "Turn left"},                                        // 5
-    {"o",       ledMenuTurnOff,     0,          nullptr,        0,      "Stop the turn signal blinking"},                    // 6
-    {"off",     ledMenuOff,         0,          nullptr,        0,      "Turn off all the LEDs"},                            // 7
-    {"r",       ledMenuTurnRight,   0,          nullptr,        0,      "Turn right"},                                       // 8
-    {"s",       ledMenuBrake,       0,          nullptr,        0,      "Toggle brake lights"},                              // 9
-    {"x",       nullptr,         R4A_MENU_MAIN, nullptr,        0,      "Return to the main menu"},                          // 10
-};                                                                                                                           // 11
+    // Command  menuRoutine         menuParam               HelpRoutine         align   HelpText
+    {"b",       ledMenuBackup,      0,                      nullptr,            0,      "Toggle backup lights"},
+    {"c3",      r4aLEDMenuColor3,   (intptr_t)"ll rrggbb",  r4aMenuHelpSuffix,  9,      "Specify the LED ll color rrggbb (RGB in hex)"},
+    {"c4",      r4aLEDMenuColor4,  (intptr_t)"ll wwrrggbb", r4aMenuHelpSuffix,  11,     "Specify the LED ll color cccccccc (RGBW in hex)"},
+    {"d",       r4aLEDMenuDisplay,  0,                      nullptr,            0,      "Display the LED status"},
+    {"h",       ledMenuHeadlights,  0,                      nullptr,            0,      "Toggle headlights"},
+    {"i",      r4aLEDMenuIntensity, (intptr_t)"iii",        r4aMenuHelpSuffix,  4,      "Specify the LED intensity iii (0 - 255)"},
+    {"l",       ledMenuTurnLeft,    0,                      nullptr,            0,      "Turn left"},
+    {"o",       ledMenuTurnOff,     0,                      nullptr,            0,      "Stop the turn signal blinking"},
+    {"off",     ledMenuOff,         0,                      nullptr,            0,      "Turn off all the LEDs"},
+    {"r",       ledMenuTurnRight,   0,                      nullptr,            0,      "Turn right"},
+    {"s",       ledMenuBrake,       0,                      nullptr,            0,      "Toggle brake lights"},
+    {"x",       nullptr,            R4A_MENU_MAIN,          nullptr,            0,      "Return to the main menu"},
+};
 #define LED_MENU_ENTRIES      sizeof(ledMenuTable) / sizeof(ledMenuTable[0])
 
 // Main menu
