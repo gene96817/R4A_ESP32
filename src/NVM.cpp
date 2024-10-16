@@ -733,13 +733,10 @@ void r4aEsp32NvmMenuParameterClear(const struct _R4A_MENU_ENTRY * menuEntry,
                                    Print * display)
 {
     // Get the parameter name
-    String line = String(&command[strlen(menuEntry->command)]);
-
-    // Strip white space from the beginning of the name
-    line.trim();
-
-    // Get the parameter name
+    String line = r4aMenuGetParameters(menuEntry, command);
     const char * name = line.c_str();
+
+    // Clear the parameter
     r4aEsp32NvmParameterClear(parameterFilePath,
                               nvmParameters,
                               nvmParameterCount,
@@ -756,15 +753,10 @@ void r4aEsp32NvmMenuParameterDisplay(const struct _R4A_MENU_ENTRY * menuEntry,
     const R4A_ESP32_NVM_PARAMETER * parameter;
 
     // Get the parameter name
-    String line = String(&command[strlen(menuEntry->command)]);
-
-    // Strip white space from the beginning of the name
-    line.trim();
-
-    // Get the parameter name
+    String line = r4aMenuGetParameters(menuEntry, command);
     const char * name = line.c_str();
 
-    // Get the parameter structure
+    // Display the parameter
     parameter = r4aEsp32NvmParameterLookup(nvmParameters,
                                            nvmParameterCount,
                                            name,
@@ -786,10 +778,7 @@ void r4aEsp32NvmMenuParameterSet(const struct _R4A_MENU_ENTRY * menuEntry,
     char * value;
 
     // Get the parameter name
-    String line = String(&command[strlen(menuEntry->command)]);
-
-    // Strip white space from the beginning of the name
-    line.trim();
+    String line = r4aMenuGetParameters(menuEntry, command);
 
     // Copy the remaining portion of the string into a buffer area
     char cmd[line.length() + 1];
