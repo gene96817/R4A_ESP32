@@ -50,20 +50,6 @@ void R4A_ESP32_I2C_BUS::begin(int sdaPin,
 }
 
 //*********************************************************************
-// Get the TwoWire pointer
-//
-// Warning: Using the I2C bus outside of these routines will break the
-// I2C controller synchronization leading to hangs, crashes and unspecified
-// behavior!
-//
-// Outputs:
-//   Returns the TwoWire object address
-TwoWire * R4A_ESP32_I2C_BUS::getTwoWire()
-{
-    return _i2cBus;
-}
-
-//*********************************************************************
 // Read data from an I2C peripheral
 // Return the number of bytes read
 size_t R4A_ESP32_I2C_BUS::read(uint8_t deviceI2cAddress,
