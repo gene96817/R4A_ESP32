@@ -7,6 +7,23 @@
 
 #include "R4A_ESP32.h"
 
+const char * r4aEsp32NvmTypeTable[] =
+{
+    "nullptr",      //  0
+    "bool",         //  1
+    "int8_t",       //  2
+    "uint8_t",      //  3
+    "int16_t",      //  4
+    "uint16_t",     //  5
+    "int32_t",      //  6
+    "uint32_t",     //  7
+    "int64_t",      //  8
+    "uint64_t",     //  9
+    "float",        // 10
+    "double",       // 11
+    "const char *", // 12
+};
+
 //*********************************************************************
 // Support routines
 //*********************************************************************
@@ -23,14 +40,20 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
                            R4A_ESP32_NVM_VALUE * value,
                            Print * display)
 {
+    bool goodMaxValue;
+    bool goodMinValue;
     int length;
     int maximum;
     int minimum;
     char * newValue;
+    bool uintValue;
     bool valid;
 
     // Determine the parameter type
     valid = false;
+    goodMaxValue = true;
+    goodMinValue = true;
+    uintValue = true;
     value->u64 = 0;
     switch (parameter->type)
     {
@@ -58,40 +81,71 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
             switch (parameter->type)
             {
             case R4A_ESP32_NVM_PT_BOOL:
-                valid = (value->u64 >= parameter->minimum) && (value->u64 <= parameter->maximum);
+                goodMaxValue = (value->u64 <= parameter->maximum);
+                goodMinValue = (value->u64 >= parameter->minimum);
                 break;
 
             case R4A_ESP32_NVM_PT_INT8:
-                valid = (value->i64 >= (int64_t)parameter->minimum) && (value->i64 <= (int64_t)parameter->maximum);
+                goodMaxValue = (value->i64 <= (int64_t)parameter->maximum);
+                goodMinValue = (value->i64 >= (int64_t)parameter->minimum);
+                uintValue = false;
                 break;
 
             case R4A_ESP32_NVM_PT_UINT8:
-                valid = (value->u64 >= parameter->minimum) && (value->u64 <= parameter->maximum);
+                goodMaxValue = (value->u64 <= parameter->maximum);
+                goodMinValue = (value->u64 >= parameter->minimum);
                 break;
 
             case R4A_ESP32_NVM_PT_INT16:
-                valid = (value->i64 >= (int64_t)parameter->minimum) && (value->i64 <= (int64_t)parameter->maximum);
+                goodMaxValue = (value->i64 <= (int64_t)parameter->maximum);
+                goodMinValue = (value->i64 >= (int64_t)parameter->minimum);
+                uintValue = false;
                 break;
 
             case R4A_ESP32_NVM_PT_UINT16:
-                valid = (value->u64 >= parameter->minimum) && (value->u64 <= parameter->maximum);
+                goodMaxValue = (value->u64 <= parameter->maximum);
+                goodMinValue = (value->u64 >= parameter->minimum);
                 break;
 
             case R4A_ESP32_NVM_PT_INT32:
-                valid = (value->i64 >= (int64_t)parameter->minimum) && (value->i64 <= (int64_t)parameter->maximum);
+                goodMaxValue = (value->i64 <= (int64_t)parameter->maximum);
+                goodMinValue = (value->i64 >= (int64_t)parameter->minimum);
+                uintValue = false;
                 break;
 
             case R4A_ESP32_NVM_PT_UINT32:
-                valid = (value->u64 >= parameter->minimum) && (value->u64 <= parameter->maximum);
+                goodMaxValue = (value->u64 <= parameter->maximum);
+                goodMinValue = (value->u64 >= parameter->minimum);
                 break;
 
             case R4A_ESP32_NVM_PT_INT64:
-                valid = (value->i64 >= (int64_t)parameter->minimum) && (value->i64 <= (int64_t)parameter->maximum);
+                goodMaxValue = (value->i64 <= (int64_t)parameter->maximum);
+                goodMinValue = (value->i64 >= (int64_t)parameter->minimum);
+                uintValue = false;
                 break;
 
             case R4A_ESP32_NVM_PT_UINT64:
-                valid = (value->u64 >= parameter->minimum) && (value->u64 <= parameter->maximum);
+                goodMaxValue = (value->u64 <= parameter->maximum);
+                goodMinValue = (value->u64 >= parameter->minimum);
                 break;
+            }
+            valid = goodMinValue & goodMaxValue;
+            if (!valid)
+            {
+                if (display && (!goodMaxValue))
+                {
+                    if (uintValue)
+                        display->printf("ERROR: Bad maximum value: %lld > %lld\r\n", value->u64, parameter->maximum);
+                    else
+                        display->printf("ERROR: Bad maximum value: %lld < %lld\r\n", value->i64, (int64_t)parameter->maximum);
+                }
+                if (display && (!goodMinValue))
+                {
+                    if (uintValue)
+                        display->printf("ERROR: Bad minimum value: %lld > %lld\r\n", value->u64, parameter->minimum);
+                    else
+                        display->printf("ERROR: Bad minimum value: %lld < %lld\r\n", value->i64, (int64_t)parameter->minimum);
+                }
             }
         }
         break;
@@ -112,7 +166,16 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
                 // Store the value as a double in the value structure
                 maximum = ((double)parameter->maximum) / R4A_ESP32_NVM_FLOAT_CONV;
                 minimum = ((double)parameter->minimum) / R4A_ESP32_NVM_FLOAT_CONV;
-                valid = (value->d >= minimum) && (value->d <= maximum);
+                goodMaxValue = (value->d <= maximum);
+                goodMinValue = (value->d >= minimum);
+                valid = goodMinValue & goodMaxValue;
+                if (!valid)
+                {
+                    if (display && (!goodMaxValue))
+                        display->printf("ERROR: Bad maximum value: %f > %f\r\n", value->d, maximum);
+                    if (display && (!goodMinValue))
+                        display->printf("ERROR: Bad minimum value: %f > %f\r\n", value->d, minimum);
+                }
                 break;
            }
         }
@@ -239,7 +302,8 @@ bool r4aEsp32NvmWriteFileString(File &file, const char * string)
 // Write the parameter value
 bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
                                     const R4A_ESP32_NVM_PARAMETER * parameter,
-                                    Print * display)
+                                    Print * display,
+                                    bool debug)
 {
     const char * data;
     uint8_t type;
@@ -260,72 +324,106 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
         break;
 
     case R4A_ESP32_NVM_PT_BOOL:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(bool *)(parameter->addr));
         value.b = *(bool *)(parameter->addr);
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_INT8:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(int8_t *)(parameter->addr));
         value.i64 = (int64_t)(*(int8_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_UINT8:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(uint8_t *)(parameter->addr));
         value.u64 = (uint64_t)(*(uint8_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_INT16:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(int16_t *)(parameter->addr));
         value.i64 = (int64_t)(*(int16_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_UINT16:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(uint16_t *)(parameter->addr));
         value.u16 = (uint64_t)(*(uint16_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_INT32:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(int32_t *)(parameter->addr));
         value.i64 = (int64_t)(*(int32_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_UINT32:
+        if (display && debug)
+            display->printf("%s: %d\r\n", parameter->name, *(uint32_t *)(parameter->addr));
         value.u32 = (uint64_t)(*(uint32_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_UINT64:
-    case R4A_ESP32_NVM_PT_INT64:
+        if (display && debug)
+            display->printf("%s: %lld\r\n", parameter->name, *(uint64_t *)(parameter->addr));
         value.u64 = *(uint64_t *)(parameter->addr);
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
+    case R4A_ESP32_NVM_PT_INT64:
+        if (display && debug)
+            display->printf("%s: %lld\r\n", parameter->name, *(int64_t *)(parameter->addr));
+        value.u64 = *(int64_t *)(parameter->addr);
+        sprintf(valueString, "0x%016llx", value.u64);
+        data = valueString;
+        break;
+
     case R4A_ESP32_NVM_PT_FLOAT:
+        if (display && debug)
+            display->printf("%s: %f\r\n", parameter->name, *(float *)(parameter->addr));
         value.d = ((double)(*(float *)(parameter->addr))) * R4A_ESP32_NVM_FLOAT_CONV;
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_DOUBLE:
+        if (display && debug)
+            display->printf("%s: %f\r\n", parameter->name, *(double *)(parameter->addr));
         value.d = (*(double *)(parameter->addr)) * R4A_ESP32_NVM_FLOAT_CONV;
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
         break;
 
     case R4A_ESP32_NVM_PT_NULLPTR:
+        if (display && debug)
+            display->printf("%s: %p\r\n", parameter->name, *(const char **)(parameter->addr));
         data = "nullptr";
         type = R4A_ESP32_NVM_PT_NULLPTR;
         break;
 
     case R4A_ESP32_NVM_PT_P_CHAR:
+        value.pcc = *(const char **)(parameter->addr);
+        if (display && debug)
+            display->printf("%s: %p%s%s\r\n", parameter->name,
+                            value.pcc, value.pcc ? ": " : "",
+                            value.pcc ? value.pcc : "");
         value.pcc = *(const char **)(parameter->addr);
         if (value.pcc)
             data = value.pcc;
@@ -346,6 +444,10 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
     valid = (r4aEsp32NvmWriteFileString(parameterFile, parameter->name)
         && r4aEsp32NvmWriteFileString(parameterFile, typeString)
         && r4aEsp32NvmWriteFileString(parameterFile, data));
+    if (display && debug)
+        display->printf("%s (type %s): '%s' %s\r\n", parameter->name,
+                        r4aEsp32NvmTypeTable[parameter->type], data,
+                        valid ? "(valid)" : "(write failed)");
     return valid;
 }
 
@@ -577,7 +679,8 @@ void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTa
 // Get a set of parameters
 // Returns true if successful and false upon failure
 bool r4aEsp32NvmGetParameters(const char ** filePath,
-                              Print * display)
+                              Print * display,
+                              bool debug)
 {
     do
     {
@@ -593,6 +696,13 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
             break;
         }
 
+        // Display the default parameters
+        if (debug && display)
+        {
+            display->printf("\r\nDefault parameters\r\n");
+            r4aEsp32NvmDisplayParameters(nvmParameters, nvmParameterCount, display);
+        }
+
         // Start the file system
         if (!LittleFS.begin(true)) // Format LittleFS upon failure
         {
@@ -605,8 +715,25 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
         {
             if (r4aEsp32NvmReadParameters(*filePath,
                                           nvmParameters,
-                                          nvmParameterCount))
+                                          nvmParameterCount,
+                                          display))
+            {
+                // Display the loaded parameters
+                if (debug && display)
+                {
+                    display->printf("\r\nUpdated parameters\r\n");
+                    r4aEsp32NvmDisplayParameters(nvmParameters, nvmParameterCount, display);
+                }
                 return true;
+            }
+
+            // Display the default parameters
+            if (debug && display)
+            {
+                r4aEsp32NvmDumpParameterFile(*filePath, display);
+                display->printf("\r\nCurrent parameters may be corrupt\r\n");
+                r4aEsp32NvmDisplayParameters(nvmParameters, nvmParameterCount, display);
+            }
 
             // Since the parameters may be corrupt, set the default values again
             r4aEsp32NvmGetDefaultParameters(nvmParameters, nvmParameterCount);
@@ -615,9 +742,9 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
             if (display)
                 display->printf("WARNING: Overwriting parameter file %s with default parameters!\r\n",
                                 *filePath);
-            if (r4aEsp32NvmWriteParameters(*filePath,
-                                           nvmParameters,
-                                           nvmParameterCount))
+            if (!r4aEsp32NvmWriteParameters(*filePath,
+                                            nvmParameters,
+                                            nvmParameterCount))
             {
                 if (display)
                     display-printf("ERROR: Failed to write parameters to file %s!\r\n",
@@ -638,7 +765,16 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
         }
     } while (0);
     if (display)
+    {
         display->println("WARNING: Using default parameters!");
+
+        // Display the default parameters
+        if (debug && display)
+        {
+            display->printf("\r\nDefault parameters\r\n");
+            r4aEsp32NvmDisplayParameters(nvmParameters, nvmParameterCount, display);
+        }
+    }
     return false;
 }
 
@@ -889,12 +1025,13 @@ const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_P
 
 //*********************************************************************
 // Set a parameter value
-void r4aEsp32NvmParameterSet(const char * filePath,
+bool r4aEsp32NvmParameterSet(const char * filePath,
                              const R4A_ESP32_NVM_PARAMETER * parameterTable,
                              int parameterCount,
                              const R4A_ESP32_NVM_PARAMETER * parameter,
                              const char * valueString,
-                             Print * display)
+                             Print * display,
+                             bool debug)
 {
     R4A_ESP32_NVM_VALUE value;
 
@@ -905,8 +1042,13 @@ void r4aEsp32NvmParameterSet(const char * filePath,
         r4aEsp32NvmSetParameterValue(parameter, value.u64);
 
         // Write the parameters to the file
-        r4aEsp32NvmWriteParameters(filePath, parameterTable, parameterCount, display);
+        return r4aEsp32NvmWriteParameters(filePath,
+                                          parameterTable,
+                                          parameterCount,
+                                          display,
+                                          debug);
     }
+    return false;
 }
 
 //*********************************************************************
@@ -1099,18 +1241,18 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
 bool r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parameterCount,
-                                Print * display)
+                                Print * display,
+                                bool debug)
 {
     bool success;
 
     // Attempt to open the file
-    success = true;
+    success = false;
     File parameterFile = LittleFS.open(filePath, "w");
     if (!parameterFile)
     {
         if (display)
             display->printf("ERROR: Failed to create file %s!\r\n", filePath);
-        success = false;
     }
     else
     {
@@ -1118,17 +1260,21 @@ bool r4aEsp32NvmWriteParameters(const char * filePath,
             display->printf("Saving parameters to %s\r\n", filePath);
 
         // Walk the list of parameters
+        success = true;
         for (int parameter = 0; parameter < parameterCount; parameter++)
+        {
             // Save the parameter value
-            if (!r4aEsp32NvmWriteParameterValue(parameterFile,
-                                                &parameterTable[parameter],
-                                                display))
+            success = r4aEsp32NvmWriteParameterValue(parameterFile,
+                                                     &parameterTable[parameter],
+                                                     display,
+                                                     debug);
+            if (!success)
             {
                 if (display)
                     display->printf("ERROR: Failed to write parameter %s to file %s!\r\n",
                                     parameterTable[parameter].name, filePath);
-                success = false;
             }
+        }
 
         // Done with the file
         parameterFile.close();

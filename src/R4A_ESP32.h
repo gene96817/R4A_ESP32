@@ -382,10 +382,12 @@ void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTa
 // Inputs:
 //   filePath: Address of the address of the path to the file contained in the NVM
 //   display: Device used for output, may be nullptr
+//   debug:   Set to true to enable parameter debugging
 // Outputs:
 //   Returns true if successful and false upon failure
 bool r4aEsp32NvmGetParameters(const char ** filePath,
-                              Print * display = nullptr);
+                              Print * display = nullptr,
+                              bool debug = false);
 
 // Look up a parameter by name
 // Inputs:
@@ -422,12 +424,13 @@ bool r4aEsp32NvmReadParameters(const char * filePath,
 //   parameter: Address of the specified parameter in the table
 //   valueString: Character string containing the new value
 //   display: Device used for output
-void r4aEsp32NvmParameterSet(const char * filePath,
+bool r4aEsp32NvmParameterSet(const char * filePath,
                              const R4A_ESP32_NVM_PARAMETER * parameterTable,
                              int parameterCount,
                              const R4A_ESP32_NVM_PARAMETER * parameter,
                              const char * valueString,
-                             Print * display = &Serial);
+                             Print * display = &Serial,
+                             bool debug = false);
 
 // Write the parameters to a file
 // Inputs:
@@ -440,7 +443,8 @@ void r4aEsp32NvmParameterSet(const char * filePath,
 bool r4aEsp32NvmWriteParameters(const char * filePath,
                                 const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 int parametersCount,
-                                Print * display = &Serial);
+                                Print * display = &Serial,
+                                bool debug = false);
 
 //****************************************
 // NVM Menu API
