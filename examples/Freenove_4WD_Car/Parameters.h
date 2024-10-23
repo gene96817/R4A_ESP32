@@ -68,11 +68,16 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     // GPS (GNSS)
 // Required    Type                  Minimum     Maximum        Address                         Name            Default Value
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayAltitude,      "gnssAltitude", false},
-    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayTime,          "gnssTime",     false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayAltitudeStdDev,"gnssAltStdDev",false},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayFixType,       "gpsDispFix",   false},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayHorizAcc,      "gnssHorizAcc", false},
-    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayLatLong,       "gnssLatLong",  false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayHorizAccStdDev,"gnssHaStdDev", false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayLatitude,      "gnssLatLtude", false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,    (void *)&r4aZedF9pDisplayLatitudeStdDev, "gnssLatStdDev",false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayLongitude,     "gnssLongitude",false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,   (void *)&r4aZedF9pDisplayLongitudeStdDev, "gnssLongStdDev",false},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplaySiv,           "gnssSIV",      false},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayTime,          "gnssTime",     false},
 
     {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (600 * 1000),  &r4aZedF9pLocationDisplayMsec,  "GnssDispMsec", 1000},
     {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (60 * 1000),   &r4aZedF9pPollMsec,             "GnssPollMsec", 100},

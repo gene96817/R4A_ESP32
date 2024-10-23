@@ -122,6 +122,13 @@ volatile bool core0Initialized;
 volatile bool core1Initialized;
 
 //****************************************
+// GNSS - Global Navigation Satellite System
+//****************************************
+
+#define GNSS_POINTS_PER_SECOND      1
+#define GNSS_POINTS_TO_AVERAGE      (10 * GNSS_POINTS_PER_SECOND)   // 10 Seconds
+
+//****************************************
 // Light Sensor
 //****************************************
 
@@ -505,7 +512,7 @@ void loop()
 #ifdef  USE_ZED_F9P
     if (DEBUG_LOOP_CORE_1)
         callingRoutine("zedf9p.update");
-    zedf9p.update(currentMsec);
+    zedf9p.update(currentMsec, nullptr);
 #endif  // USE_ZED_F9P
 
     // Update the LEDs

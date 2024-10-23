@@ -6,12 +6,69 @@
 
 #ifdef  USE_ZED_F9P
 //*********************************************************************
+// Display the computed point
+// Inputs:
+//   parameter: Callback parameter passed to computeWayPoint
+//   comment: Text to display at the start of the line
+//   latitude: Latitude in degrees
+//   longitude: Longitude in degrees
+//   altitude: Altitude in meters
+//   horizontalAccuracy: Accuracy in meters
+//   satellitesInView: The number of satellites feeding the GNSS receiver
+//   latitudeStdDev: Latitude standard deviation in degrees
+//   longitudeStdDev: Longitude standard deviation in degrees
+//   altitudeStdDev: Altitude standard deviation in meters
+//   horizontalAccuracyStdDev: Horizontal accuracy standard deviation in meters
+//   display: Device used for output, passed to computeWayPoint
+void gnssDisplayPoint(intptr_t parameter,
+                      const char * comment,
+                      double latitude,
+                      double latitudeStdDev,
+                      double longitude,
+                      double longitudeStdDev,
+                      double altitude,
+                      double altitudeStdDev,
+                      double horizontalAccuracy,
+                      double horizontalAccuracyStdDev,
+                      uint8_t satellitesInView,
+                      Print * display)
+{
+    zedf9p.displayLocation(comment,
+                           latitude,
+                           0,
+                           longitude,
+                           0,
+                           altitude,
+                           0,
+                           horizontalAccuracy,
+                           0,
+                           satellitesInView,
+                           true,    // unitsFeetInches,
+                           false,   // displayTime,
+                           true,    // displaySiv,
+                           true,    // displayLatitude,
+                           false,   // displayLatStdDev,
+                           true,    // displayLongitude,
+                           false,   // displayLongStdDev,
+                           true,    // displayHorizAcc,
+                           false,   // displayHorizAccStdDev,
+                           false,   // displayAltitude,
+                           false,   // displayAltitudeStdDev,
+                           false,   // displayFixType,
+                           display);
+}
+
+//*********************************************************************
 // Compute point and display point
 void gnssMenuComputePoint(const R4A_MENU_ENTRY * menuEntry,
                           const char * command,
                           Print * display)
 {
-    zedf9p.computePoint(display);
+    zedf9p.computePoint(gnssDisplayPoint,
+                        0,
+                        GNSS_POINTS_TO_AVERAGE,
+                        "Location",
+                        display);
 }
 
 //*********************************************************************
@@ -20,7 +77,16 @@ void gnssMenuDisplayLocation(const R4A_MENU_ENTRY * menuEntry,
                              const char * command,
                              Print * display)
 {
-    zedf9p.displayLocation(display);
+    zedf9p.displayLocation("Location: ",
+                           true,    // unitsFeetInches,
+                           false,   // displayTime,
+                           true,    // displaySiv,
+                           true,    // displayLatitude
+                           true,    // displayLongitude
+                           true,    // displayHorizAcc,
+                           false,   // displayAltitude,
+                           false,   // displayFixType,
+                           display);
 }
 #endif  // USE_ZED_F9P
 
