@@ -443,15 +443,17 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
         break;
     }
 
-    // Write the parameter to the file as a triplet of three strings:
+    //  +-------+---+-------+---+-------+---+-------+---+
+    //  | Name  | 0 | Type  | 0 | Value | 0 | CR/LF | 0 |
+    //  +-------+---+-------+---+-------+---+-------+---+
     //
-    //  +-------+-------+-------+
-    //  | Name  | Type  | Value |
-    //  +-------+-------+-------+
+    // Write the parameter to the file as a triplet of three strings
+    // followed by CR and LF
     sprintf(typeString, "%d", type);
     valid = (r4aEsp32NvmWriteFileString(parameterFile, parameter->name)
         && r4aEsp32NvmWriteFileString(parameterFile, typeString)
-        && r4aEsp32NvmWriteFileString(parameterFile, data));
+        && r4aEsp32NvmWriteFileString(parameterFile, data)
+        && r4aEsp32NvmWriteFileString(parameterFile, "\r\n"));
     if (display && debug)
         display->printf("%s (type %s): '%s' %s\r\n", parameter->name,
                         r4aEsp32NvmTypeTable[parameter->type], data,
@@ -1068,6 +1070,7 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                 uint8_t * availableParameters,
                                 Print * display)
 {
+    const char * crLfString;
     const char * data;
     size_t delta;
     int index;
@@ -1084,15 +1087,20 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
     validParameters = false;
     while (fileBytes)
     {
-        // Read the parameter triplet of strings from the file:
+        //  +-------+---+-------+---+-------+---+-------+---+
+        //  | Name  | 0 | Type  | 0 | Value | 0 | CR/LF | 0 |
+        //  +-------+---+-------+---+-------+---+-------+---+
         //
-        //  +-------+-------+-------+
-        //  | Name  | Type  | Value |
-        //  +-------+-------+-------+
+        // Read the parameter triplet of strings followed by CR and LF
+        // from the file
         validParameters = true;
         if (!(r4aEsp32NvmGetString(&name, &data, &fileBytes)
               && r4aEsp32NvmGetString(&typeString, &data, &fileBytes)
-              && r4aEsp32NvmGetString(&valueString, &data, &fileBytes)))
+              && r4aEsp32NvmGetString(&valueString, &data, &fileBytes)
+              && r4aEsp32NvmGetString(&crLfString, &data, &fileBytes)
+              && (crLfString[0] == '\r')
+              && (crLfString[1] == '\n')
+              && (crLfString[2] == 0)))
         {
             delta = data - nvmData;
             if (display)
