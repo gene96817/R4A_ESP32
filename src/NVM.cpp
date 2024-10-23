@@ -1011,6 +1011,29 @@ void r4aEsp32NvmParameterClear(const char * filePath,
 }
 
 //*********************************************************************
+// Look up a parameter by address
+const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                                           int parameterCount,
+                                                           void * address,
+                                                           Print * display)
+{
+    int index;
+    const R4A_ESP32_NVM_PARAMETER * parameter;
+
+    // Look up the parameter
+    parameter = nullptr;
+    for (index = 0; index < parameterCount; index++)
+    {
+        if (parameterTable[index].addr == address)
+        {
+            parameter = &parameterTable[index];
+            break;
+        }
+    }
+    return parameter;
+}
+
+//*********************************************************************
 // Look up a parameter by name
 const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                                            int parameterCount,

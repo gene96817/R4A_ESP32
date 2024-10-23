@@ -389,6 +389,20 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
                               Print * display = nullptr,
                               bool debug = false);
 
+// Look up a parameter by address
+// Inputs:
+//   parameterTable: Address of the first entry in the parameter table
+//   parameterCount: Number of entries in the parameter table
+//   address: Address of the parameter value
+//   display: Device used for output
+// Outputs:
+//   Returns the address of the found entry in the parameter table or
+//   nullptr if the parameter was not found
+const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                                                           int parameterCount,
+                                                           void * address,
+                                                           Print * display);
+
 // Look up a parameter by name
 // Inputs:
 //   parameterTable: Address of the first entry in the parameter table
