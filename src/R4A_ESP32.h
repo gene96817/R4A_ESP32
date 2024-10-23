@@ -432,6 +432,25 @@ bool r4aEsp32NvmParameterSet(const char * filePath,
                              Print * display = &Serial,
                              bool debug = false);
 
+// Write a string to the parameter file
+// Inputs:
+//   file: File to which the string is written
+//   string: Address of a zero terminated string of characters
+// Outputs:
+//   Returns true if all of the data was successfully written and false
+//   upon error
+bool r4aEsp32NvmWriteFileString(File &file, const char * string);
+
+// Write a string to the parameter file
+// Inputs:
+//   file: File to which the string is written
+//   string: Address of a zero terminated string of characters
+//   length: Length of the string in bytes
+// Outputs:
+//   Returns true if all of the data was successfully written and false
+//   upon error
+bool r4aEsp32NvmWriteFileString(File &file, const char * string, size_t length);
+
 // Write the parameters to a file
 // Inputs:
 //   filePath: Path to the file to be stored in NVM
