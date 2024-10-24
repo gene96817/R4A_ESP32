@@ -4,6 +4,8 @@
   OV2640 camera support routines
 **********************************************************************/
 
+#ifdef  USE_OV2640
+
 //*********************************************************************
 // Process the frame buffer
 // Inputs:
@@ -27,3 +29,5 @@ bool OV2640::processWebServerFrameBuffer(camera_fb_t * frameBuffer)
 {
     return true;
 }
+
+#endif  // USE_OV2640

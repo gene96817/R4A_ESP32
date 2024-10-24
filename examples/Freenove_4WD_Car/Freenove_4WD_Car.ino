@@ -11,6 +11,7 @@
 //****************************************
 
 //#define USE_NTRIP
+//#define USE_OV2640
 //#define USE_ZED_F9P
 
 #define DEBUG_BOOT              0
@@ -34,6 +35,7 @@
 // OV2640 camera
 //****************************************
 
+#ifdef  USE_OV2640
 class OV2640 : public R4A_OV2640
 {
   public:
@@ -69,6 +71,8 @@ class OV2640 : public R4A_OV2640
     virtual bool processWebServerFrameBuffer(camera_fb_t * frameBuffer);
 };
 
+#endif  // USE_OV2640
+
 //****************************************
 // I2C bus configuration
 //****************************************
@@ -97,7 +101,9 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
         R4A_PCA9685_MOTOR motorFrontRight(&pca9685, 13, 12);
         R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
     R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
+#ifdef  USE_OV2640
     OV2640 ov2640(&i2cBus, OV2640_I2C_ADDRESS, &r4aOV2640Pins, 20 * 1000 * 1000);
+#endif  // USE_OV2640
 #ifdef  USE_ZED_F9P
     R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
 #endif  // USE_ZED_F9P
@@ -562,8 +568,10 @@ void loop()
     }
 
     // Process the next image
+#ifdef  USE_OV2640
     if (ov2640Enable)
         ov2640.update();
+#endif  // USE_OV2640
 
     // Process serial commands
     if (DEBUG_LOOP_CORE_1)
@@ -617,10 +625,12 @@ void setupCore0(void *parameter)
     pcf8574.write(0xff);
 
     // Initialize the camera
+#ifdef USE_OV2640
     delay(500);
     if(DEBUG_BOOT)
         callingRoutine("ov2640.setup");
     ov2640.setup(PIXFORMAT_RGB565);
+#endif  // USE_OV2640
 
     // Initialize the GPS receiver
 #ifdef  USE_ZED_F9P

@@ -34,10 +34,16 @@ bool WEB_SERVER::registerUriHandlers(Print * display)
 
     do
     {
+#ifdef  USE_OV2640
         // Add the jpeg camera image page
         error = httpd_register_uri_handler(_webServer, &r4aOV2640JpegPage);
         if (error != ESP_OK)
+        {
+            if (display)
+                display->printf("ERROR: Failed to register JPEG handler, error: %d!\r\n", error);
             break;
+        }
+#endif  // USE_OV2640
 
         // Successfully registered the handlers
         return true;
