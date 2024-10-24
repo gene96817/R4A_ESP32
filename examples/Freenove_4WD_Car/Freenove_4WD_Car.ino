@@ -102,6 +102,8 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
     R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
 #endif  // USE_ZED_F9P
 
+bool zedf9pPresent;
+
 //****************************************
 // Battery macros
 //****************************************
@@ -187,20 +189,20 @@ class NTRIP_CLIENT : public R4A_NTRIP_CLIENT
     uint8_t i2cTransactionSize()
     {
 #ifdef  USE_ZED_F9P
-        return zedf9p._i2cTransactionSize;
-#else   // USE_ZED_F9P
-        return 32;
+        if (zedf9pPresent)
+            return zedf9p._i2cTransactionSize;
 #endif  // USE_ZED_F9P
+        return 32;
     }
 
     // Push data to the GNSS
     int pushRawData(uint8_t * buffer, int bytesToPush, Print * display)
     {
 #ifdef  USE_ZED_F9P
-        return zedf9p.pushRawData(buffer, bytesToPush, display);
-#else   // USE_ZED_F9P
-        return 0;
+        if (zedf9pPresent)
+            return zedf9p.pushRawData(buffer, bytesToPush, display);
 #endif  // USE_ZED_F9P
+        return bytesToPush;
     }
 
   public:
@@ -510,9 +512,12 @@ void loop()
 
     // Update the location
 #ifdef  USE_ZED_F9P
-    if (DEBUG_LOOP_CORE_1)
-        callingRoutine("zedf9p.update");
-    zedf9p.update(currentMsec, nullptr);
+    if (zedf9pPresent)
+    {
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("zedf9p.update");
+        zedf9p.update(currentMsec, nullptr);
+    }
 #endif  // USE_ZED_F9P
 
     // Update the LEDs
@@ -587,6 +592,11 @@ void setupCore0(void *parameter)
                  I2C_SCL,
                  R4A_I2C_FAST_MODE_HZ);
 
+    // Determine which devices are present
+    if(DEBUG_BOOT)
+        callingRoutine("i2cBus.isDevicePresent");
+    zedf9pPresent = i2cBus.isDevicePresent(ZEDF9P_I2C_ADDRESS);
+
     // Initialize the PCA9685
     if(DEBUG_BOOT)
         callingRoutine("pca9685.begin");
@@ -614,9 +624,13 @@ void setupCore0(void *parameter)
 
     // Initialize the GPS receiver
 #ifdef  USE_ZED_F9P
-    if(DEBUG_BOOT)
-        callingRoutine("zedf9p.begin");
-    zedf9p.begin();
+    if (zedf9pPresent)
+    {
+        if(DEBUG_BOOT)
+            callingRoutine("zedf9p.begin");
+        Serial.printf("Initializing the ZED-F9P GNSS receiver\r\n");
+        zedf9p.begin();
+    }
 #endif  // USE_ZED_F9P
 
     //****************************************
@@ -669,12 +683,15 @@ void loopCore0()
 
 #ifdef  USE_ZED_F9P
     // Update the location
-    if ((currentMsec - lastGnssI2cPollMsec) >= r4aZedF9pPollMsec)
+    if (zedf9pPresent)
     {
-        lastGnssI2cPollMsec = currentMsec;
-        if (DEBUG_LOOP_CORE_0)
-            callingRoutine("zedf9p.i2cPoll");
-        zedf9p.i2cPoll();
+        if ((currentMsec - lastGnssI2cPollMsec) >= r4aZedF9pPollMsec)
+        {
+            lastGnssI2cPollMsec = currentMsec;
+            if (DEBUG_LOOP_CORE_0)
+                callingRoutine("zedf9p.i2cPoll");
+            zedf9p.i2cPoll();
+        }
     }
 #endif  // USE_ZED_F9P
 
@@ -682,11 +699,9 @@ void loopCore0()
     // Send navigation data to the GNSS radio
     if (r4aNtripClientEnable)
     {
-#ifdef  USE_ZED_F9P
         if (DEBUG_LOOP_CORE_0)
             callingRoutine("ntrip.rbRemoveData");
         ntrip.rbRemoveData(r4aNtripClientDebugRtcm ? &Serial : nullptr);
-#endif  // USE_ZED_F9P
     }
 #endif  // USE_NTRIP
 
