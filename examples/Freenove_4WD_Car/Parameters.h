@@ -49,6 +49,7 @@ uint8_t servoTiltStartDegrees;
 // Web server
 //****************************************
 
+bool webServerDebug;
 bool webServerEnable;
 
 //****************************************
@@ -149,6 +150,7 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 
     // Web server
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &webServerDebug,            "WebDebug",     false},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &webServerEnable,           "WebServer",    false},
 
     // WiFi: Public Access Points (APs)

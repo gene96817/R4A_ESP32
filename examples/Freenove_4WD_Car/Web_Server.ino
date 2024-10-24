@@ -6,7 +6,7 @@
 
 //*********************************************************************
 // Register the error handlers
-bool WEB_SERVER::registerErrorHandlers(Print * display)
+bool WEB_SERVER::registerErrorHandlers()
 {
     esp_err_t error;
 
@@ -17,9 +17,9 @@ bool WEB_SERVER::registerErrorHandlers(Print * display)
                                            r4aWebServerError);
         if (error != ESP_OK)
         {
-            if (display)
-                display->printf("ERROR: Failed to register error handler: %s, error: %d!\r\n",
-                                r4aHttpErrorName[index], error);
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Failed to register error handler: %s, error: %d!\r\n",
+                                          r4aHttpErrorName[index], error);
             return false;
         }
     }
@@ -28,7 +28,7 @@ bool WEB_SERVER::registerErrorHandlers(Print * display)
 
 //*********************************************************************
 // Register the URI handlers
-bool WEB_SERVER::registerUriHandlers(Print * display)
+bool WEB_SERVER::registerUriHandlers()
 {
     esp_err_t error;
 
@@ -39,8 +39,8 @@ bool WEB_SERVER::registerUriHandlers(Print * display)
         error = httpd_register_uri_handler(_webServer, &r4aOV2640JpegPage);
         if (error != ESP_OK)
         {
-            if (display)
-                display->printf("ERROR: Failed to register JPEG handler, error: %d!\r\n", error);
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Failed to register JPEG handler, error: %d!\r\n", error);
             break;
         }
 #endif  // USE_OV2640
@@ -50,7 +50,7 @@ bool WEB_SERVER::registerUriHandlers(Print * display)
     } while (0);
 
     // Display the error message
-    if (display)
-        display->printf("ERROR: Failed to register URI handler, error: %d!\r\n", error);
+    if (r4aWebServerDebug)
+        r4aWebServerDebug->printf("ERROR: Failed to register URI handler, error: %d!\r\n", error);
     return false;
 }

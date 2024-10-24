@@ -8,6 +8,12 @@
 #include "R4A_ESP32.h"
 
 //****************************************
+// Globals
+//****************************************
+
+Print * r4aWebServerDebug;
+
+//****************************************
 // Locals
 //****************************************
 
@@ -17,14 +23,12 @@ static R4A_WEB_SERVER * r4aWebServer;
 // Handle the web server errors
 esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error)
 {
-    r4aWebServer->error(req, error, &Serial);
+    return r4aWebServer->error(req, error);
 }
 
 //*********************************************************************
 // Handle the web server errors
-esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req,
-                                 httpd_err_code_t error,
-                                 Print * display)
+esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
 {
     const R4A_TAG_NAME_T methodName[] =
     {
@@ -53,12 +57,13 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req,
     httpd_resp_send_err(req, error, line);
 
     // Display the error locally
-    if (display)
+    if (r4aWebServerDebug)
     {
         if (!method)
             method = "Unknown";
-        display->printf("Request: %s(%d) %s\r\n", method, req->method, req->uri);
-        display->printf("%s\r\n", r4aHttpErrorName[error]);
+        r4aWebServerDebug->printf("Request: %s(%d) %s\r\n",
+                                  method, req->method, req->uri);
+        r4aWebServerDebug->printf("%s\r\n", r4aHttpErrorName[error]);
     }
 
     return ESP_OK;
@@ -66,7 +71,7 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req,
 
 //*********************************************************************
 // Start the web server
-bool R4A_WEB_SERVER::start(uint16_t port, Print * display)
+bool R4A_WEB_SERVER::start(uint16_t port)
 {
     esp_err_t error;
 
@@ -80,24 +85,24 @@ bool R4A_WEB_SERVER::start(uint16_t port, Print * display)
         error = httpd_start(&_webServer, &config);
         if (error != ESP_OK)
         {
-            if (display)
-                display->printf("ERROR: Failed to start the web server, error: %d!\r\n",
-                                error);
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Failed to start the web server, error: %d!\r\n",
+                                          error);
             break;
         }
 
         // Register URI handlers
-        if (!registerUriHandlers(display))
+        if (!registerUriHandlers())
             break;
 
         // Register the error handlers
-        if (!registerErrorHandlers(display))
+        if (!registerErrorHandlers())
             break;
 
         // Display the web server path
-        Serial.printf("Starting web-server: http://%s:%d%s\r\n",
+        Serial.printf("Starting web-server: http://%s:%d\r\n",
                       WiFi.localIP().toString().c_str(),
-                      port, R4A_OV2640_JPEG_WEB_PAGE);
+                      port);
 
         // Successful server initialization
         r4aWebServer = this;
@@ -113,11 +118,11 @@ bool R4A_WEB_SERVER::start(uint16_t port, Print * display)
 
 //*********************************************************************
 // Stop the web server
-void R4A_WEB_SERVER::stop(Print * display)
+void R4A_WEB_SERVER::stop()
 {
     if (_webServer)
     {
-        if (display)
+        if (r4aWebServerDebug)
             Serial.println("Stopping the web-server");
 
         // Stop the web server
@@ -134,8 +139,7 @@ void R4A_WEB_SERVER::stop(Print * display)
 // Update the camera processing state
 // Inputs:
 //   wifiConnected: True when WiFi has an IP address and false otherwise
-//   display: Address of Print object for debug output, may be nullptr
-void R4A_WEB_SERVER::update(bool wifiConnected, Print * display)
+void R4A_WEB_SERVER::update(bool wifiConnected)
 {
     uint32_t currentMsec;
     camera_fb_t * frameBuffer;
@@ -143,9 +147,9 @@ void R4A_WEB_SERVER::update(bool wifiConnected, Print * display)
 
     // Start the web server if necessary
     if ((!_webServer) && wifiConnected)
-        start(_port, display);
+        start(_port);
 
     // Stop the web server if necessary
     if (_webServer && (!wifiConnected))
-        stop(display);
+        stop();
 }

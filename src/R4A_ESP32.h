@@ -871,48 +871,42 @@ class R4A_WEB_SERVER
     // Inputs:
     //   req: httpd_req_t object containing the request from the browser
     //   error: Error detected by the web server
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns status indicating if the response was successfully sent
     //   to the browser
-    esp_err_t error (httpd_req_t *req,
-                     httpd_err_code_t error,
-                     Print * display = nullptr);
+    esp_err_t error (httpd_req_t *req, httpd_err_code_t error);
 
     // Register the error handlers
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns true if the all of the error handlers were installed and
     //   false upon failure
-    virtual bool registerErrorHandlers(Print * display = nullptr);
+    virtual bool registerErrorHandlers();
 
     // Register the URI handlers
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns true if the all of the error handlers were installed and
     //   false upon failure
-    virtual bool registerUriHandlers(Print * display = nullptr);
+    virtual bool registerUriHandlers();
 
     // Start the web server
     // Inputs:
     //   port: Port number to use for the web server
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns true if the web server was successfully started and false
     //   upon failure
-    bool start(uint16_t port, Print * display = nullptr);
+    bool start(uint16_t port);
 
     // Stop the web server
     // Inputs:
-    //   display: Address of Print object for debug output, may be nullptr
-    void stop(Print * display = nullptr);
+    void stop();
 
     // Update the camera processing state
     // Inputs:
     //   wifiConnected: True when WiFi has an IP address and false otherwise
-    //   display: Address of Print object for debug output, may be nullptr
-    void update(bool wifiConnected, Print * display = &Serial);
+    void update(bool wifiConnected);
 };
+
+extern Print * r4aWebServerDebug;   // Address of a Print object for web server debugging
 
 // Handle the web server errors
 // Inputs:

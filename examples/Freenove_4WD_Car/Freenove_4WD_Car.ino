@@ -288,18 +288,16 @@ class WEB_SERVER : public R4A_WEB_SERVER
     }
 
     // Register the error handlers
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns true if the all of the error handlers were installed and
     //   false upon failure
-    bool registerErrorHandlers(Print * display = nullptr);
+    bool registerErrorHandlers();
 
     // Register the URI handlers
-    //   display: Address of Print object for debug output, may be nullptr
     // Outputs:
     //   Returns true if the all of the URI handlers were installed and
     //   false upon failure
-    bool registerUriHandlers(Print * display = nullptr);
+    bool registerUriHandlers();
 };
 
 WEB_SERVER webServer(80);
@@ -345,6 +343,9 @@ void setup()
         callingRoutine("r4aEsp32NvmGetParameters");
     r4aEsp32NvmGetParameters(&parameterFilePath);
 
+    // Enable web server debugging
+    r4aWebServerDebug = webServerDebug ? &Serial : nullptr;
+
     // Set the ADC reference voltage
     if (DEBUG_BOOT)
         callingRoutine("r4aEsp32VoltageSetReference");
@@ -369,6 +370,9 @@ void setup()
     int blueLED = (batteryVoltage > 2.)
                 ? ESP32_WROVER_BLUE_LED_ON : ESP32_WROVER_BLUE_LED_OFF;
     digitalWrite(BLUE_LED_BUZZER_PIN, blueLED);
+
+    // Delay to allow the hardware initialize
+    delay(1000);
 
     // Start the core 0 task
     if (DEBUG_BOOT)
@@ -528,6 +532,11 @@ void loop()
                 Serial.printf("Telnet: %s:%d\r\n", WiFi.localIP().toString().c_str(),
                               telnet.port());
         }
+
+        // Update the web server
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("webServer.update");
+        webServer.update(wifiConnected && webServerEnable);
     }
 
     // Process the next image
