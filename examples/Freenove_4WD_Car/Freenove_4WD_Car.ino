@@ -29,6 +29,8 @@
 
 #include <R4A_Freenove_4WD_Car.h>   // Freenove 4WD Car configuration
 
+#define DOWNLOAD_AREA       "/nvm/"
+
 #include "Parameters.h"
 
 //****************************************
@@ -286,6 +288,11 @@ class WEB_SERVER : public R4A_WEB_SERVER
     WEB_SERVER(uint16_t port = 80) : R4A_WEB_SERVER(port)
     {
     }
+
+    // Update the configuration
+    // Inputs:
+    //   config: Address of the HTTP config object
+    void configUpdate(httpd_config_t * config);
 
     // Register the error handlers
     // Outputs:

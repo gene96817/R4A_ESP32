@@ -152,6 +152,7 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &webServerDebug,            "WebDebug",     false},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &webServerEnable,           "WebServer",    false},
+    {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &r4aWebServerNvmArea,       "WebNvmArea",   R4A_ESP32_NVM_STRING(DOWNLOAD_AREA)},
 
     // WiFi: Public Access Points (APs)
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value

@@ -867,6 +867,11 @@ class R4A_WEB_SERVER
     {
     }
 
+    // Update the configuration
+    // Inputs:
+    //   config: Address of the HTTP config object
+    virtual void configUpdate(httpd_config_t * config);
+
     // Process the request error
     // Inputs:
     //   req: httpd_req_t object containing the request from the browser
@@ -875,6 +880,12 @@ class R4A_WEB_SERVER
     //   Returns status indicating if the response was successfully sent
     //   to the browser
     esp_err_t error (httpd_req_t *req, httpd_err_code_t error);
+
+    // Download a file from the robot to the browser
+    //   request: Address of a HTTP request object
+    // Outputs:
+    //   Returns the file download status
+    esp_err_t fileDownload(httpd_req_t *request);
 
     // Register the error handlers
     // Outputs:
@@ -907,6 +918,16 @@ class R4A_WEB_SERVER
 };
 
 extern Print * r4aWebServerDebug;   // Address of a Print object for web server debugging
+extern const char * r4aWebServerDownloadArea;   // Directory path for the download area
+extern const char * r4aWebServerNvmArea;   // Directory path for the NVM download area
+
+// Check for extension
+// Inputs:
+//   path: Zero terminated string containing the file's path
+//   extension: Zero terminated string containing the extension for comparison
+// Outputs:
+//   Returns true if the extension matches and false otherwise
+bool webServerCheckExtension(const char * path, const char * extension);
 
 // Handle the web server errors
 // Inputs:
@@ -916,6 +937,12 @@ extern Print * r4aWebServerDebug;   // Address of a Print object for web server 
 //   Returns status indicating if the response was successfully sent
 //   to the browser
 esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error);
+
+// Download a file from the robot to the browser
+//   request: Address of a HTTP request object
+// Outputs:
+//   Returns the file download status
+esp_err_t r4aWebServerFileDownload(httpd_req_t *request);
 
 //****************************************
 // WiFi API

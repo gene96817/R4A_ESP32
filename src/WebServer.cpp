@@ -12,6 +12,8 @@
 //****************************************
 
 Print * r4aWebServerDebug;
+const char * r4aWebServerDownloadArea;
+const char * r4aWebServerNvmArea;
 
 //****************************************
 // Locals
@@ -20,10 +22,36 @@ Print * r4aWebServerDebug;
 static R4A_WEB_SERVER * r4aWebServer;
 
 //*********************************************************************
+// Check for extension
+bool r4aWebServerCheckExtension(const char * path, const char * extension)
+{
+    int extensionLength;
+    int pathLength;
+
+    // Get the lengths
+    pathLength = strlen(path);
+    extensionLength = strlen(extension);
+
+    // Check for extension
+    return ((pathLength >= extensionLength)
+        && (strcmp(&path[pathLength - extensionLength], extension) == 0));
+}
+
+//*********************************************************************
 // Handle the web server errors
 esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error)
 {
     return r4aWebServer->error(req, error);
+}
+
+//*********************************************************************
+// Download a file from the robot to the browser
+//   request: Address of a HTTP request object
+// Outputs:
+//   Returns the file download status
+esp_err_t r4aWebServerFileDownload(httpd_req_t *request)
+{
+    return r4aWebServer->fileDownload(request);
 }
 
 //*********************************************************************
@@ -70,6 +98,130 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
 }
 
 //*********************************************************************
+// Download a file from the robot to the browser
+//   request: Address of a HTTP request object
+// Outputs:
+//   Returns the file download status
+esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
+{
+    uint8_t * buffer;
+    const size_t bufferLength = 8192;
+    size_t bytesRead;
+    const char * dataType;
+    const char * chunk;
+    File file;
+    const char * path;
+    esp_err_t status;
+
+    do
+    {
+        // Get the file name
+        path = request->uri;
+
+        // Remove the download prefix
+        if (strncmp(r4aWebServerNvmArea, path, strlen(r4aWebServerNvmArea)) != 0)
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Not a file download request\r\n");
+            httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Not a file download request");
+            break;
+        }
+        path = &path[strlen(r4aWebServerNvmArea) - 1];
+
+        // Determine if the file exists
+        if (LittleFS.exists(path) == false)
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: File does not exist!\r\n");
+            httpd_resp_send_err(request, HTTPD_404_NOT_FOUND, "File does not exist");
+            break;
+        }
+
+        // Determine the data type
+        dataType = nullptr;
+        if (r4aWebServerCheckExtension(path, ".txt")
+            || r4aWebServerCheckExtension(path, ".log"))
+            dataType = "text/plain";
+        if (!dataType)
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Unknowo file type!\r\n");
+            httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Unknown file type");
+            break;
+        }
+
+        // Allocate the buffer
+        buffer = (uint8_t *)malloc(bufferLength);
+        if (!buffer)
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Failed to allocate the data buffer\r\n");
+            httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to allocate data buffer");
+            break;
+        }
+
+        // Open the file
+        file = LittleFS.open(path, FILE_READ);
+        if (!file)
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: Failed to open file %s\r\n", path);
+            httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to open existing file");
+            break;
+        }
+
+        // Verify that the file is not a directory
+        if (file.isDirectory())
+        {
+            if (r4aWebServerDebug)
+                r4aWebServerDebug->printf("ERROR: File %d is a directory!\r\n", path);
+            httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Unable to download a directory");
+            break;
+        }
+
+        // Send the file contents to the browser
+        do
+        {
+            // Read data from the file
+            bytesRead = file.read(buffer, bufferLength);
+
+            // Send a partial response
+            if (bytesRead > 0)
+                status = httpd_resp_send_chunk(request, (char *)buffer, bytesRead);
+            else
+                status = httpd_resp_send_chunk(request, NULL, 0);
+
+            // Process the error
+            if (status != ESP_OK)
+            {
+                if (r4aWebServerDebug)
+                    r4aWebServerDebug->printf("ERROR: Failed to send %d data bytes to browser\r\n", bytesRead);
+                httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to send data to browser");
+                break;
+            }
+        } while (bytesRead > 0);
+
+        // Free the data buffer
+        free(buffer);
+
+        // Close the file
+        file.close();
+        return ESP_OK;
+    } while (0);
+
+    // Close the file if necessary
+    if (file)
+        file.close();
+
+    // Free the data buffer
+    if (buffer)
+        free(buffer);
+
+    // Failed to access the requested page
+    return ESP_FAIL;
+}
+
+//*********************************************************************
 // Start the web server
 bool R4A_WEB_SERVER::start(uint16_t port)
 {
@@ -82,6 +234,10 @@ bool R4A_WEB_SERVER::start(uint16_t port)
     // Start the httpd server
     do
     {
+        // Update the configuration
+        configUpdate(&config);
+
+        // Start the web server
         error = httpd_start(&_webServer, &config);
         if (error != ESP_OK)
         {
