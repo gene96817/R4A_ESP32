@@ -10,8 +10,8 @@
 // Constants
 //****************************************
 
-//#define USE_GNSS
 //#define USE_NTRIP
+//#define USE_ZED_F9P
 
 #define DEBUG_BOOT              0
 #define DEBUG_LOOP_CORE_0       0
@@ -82,9 +82,9 @@ const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =
     {PCA9685_I2C_ADDRESS,  "PCA9685 16-Channel LED controller, motors & servos"},
     {PCF8574_I2C_ADDRESS,  "PCF8574 8-Bit I/O Expander, line tracking"},
     {VK16K33_I2C_ADDRESS,  "VT16K33 16x8 LED controller, LED matrix"},
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     {ZEDF9P_I2C_ADDRESS,   "u-blox ZED F9P GNSS receiver"}
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 };
 const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);
 
@@ -98,9 +98,9 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
         R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
     R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
     OV2640 ov2640(&i2cBus, OV2640_I2C_ADDRESS, &r4aOV2640Pins, 20 * 1000 * 1000);
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 
 //****************************************
 // Battery macros
@@ -179,21 +179,21 @@ class NTRIP_CLIENT : public R4A_NTRIP_CLIENT
     // Get the I2C bus transaction size
     uint8_t i2cTransactionSize()
     {
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
         return zedf9p._i2cTransactionSize;
-#else   // USE_GNSS
+#else   // USE_ZED_F9P
         return 32;
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
     }
 
     // Push data to the GNSS
     int pushRawData(uint8_t * buffer, int bytesToPush, Print * display)
     {
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
         return zedf9p.pushRawData(buffer, bytesToPush, display);
-#else   // USE_GNSS
+#else   // USE_ZED_F9P
         return 0;
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
     }
 
   public:
@@ -502,11 +502,11 @@ void loop()
     }
 
     // Update the location
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     if (DEBUG_LOOP_CORE_1)
         callingRoutine("zedf9p.update");
     zedf9p.update(currentMsec);
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 
     // Update the LEDs
     if (DEBUG_LOOP_CORE_1)
@@ -606,11 +606,11 @@ void setupCore0(void *parameter)
     ov2640.setup(PIXFORMAT_RGB565);
 
     // Initialize the GPS receiver
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     if(DEBUG_BOOT)
         callingRoutine("zedf9p.begin");
     zedf9p.begin();
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 
     //****************************************
     // Core 0 completed initialization
@@ -660,7 +660,7 @@ void loopCore0()
     // Get the time since boot
     currentMsec = millis();
 
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     // Update the location
     if ((currentMsec - lastGnssI2cPollMsec) >= r4aZedF9pPollMsec)
     {
@@ -669,17 +669,17 @@ void loopCore0()
             callingRoutine("zedf9p.i2cPoll");
         zedf9p.i2cPoll();
     }
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 
 #ifdef  USE_NTRIP
     // Send navigation data to the GNSS radio
     if (r4aNtripClientEnable)
     {
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
         if (DEBUG_LOOP_CORE_0)
             callingRoutine("ntrip.rbRemoveData");
         ntrip.rbRemoveData(r4aNtripClientDebugRtcm ? &Serial : nullptr);
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
     }
 #endif  // USE_NTRIP
 

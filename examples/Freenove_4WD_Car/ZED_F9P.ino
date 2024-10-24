@@ -4,7 +4,7 @@
   Support for the u-blox ZED-F9P GNSS receiver
 **********************************************************************/
 
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
 //*********************************************************************
 // Store horizontal position data
 // Inputs:
@@ -22,4 +22,4 @@ void r4aZedF9pStorePVTdata(UBX_NAV_PVT_data_t * ubxDataStruct)
 {
     zedf9p.storePVTdata(ubxDataStruct);
 }
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P

@@ -64,7 +64,7 @@ const char * wifiPassword4;
 
 const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 {
-#ifdef  USE_GNSS
+#ifdef  USE_ZED_F9P
     // GPS (GNSS)
 // Required    Type                  Minimum     Maximum        Address                         Name            Default Value
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,     (void *)&r4aZedF9pDisplayAltitude,      "gnssAltitude", false},
@@ -77,7 +77,7 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (600 * 1000),  &r4aZedF9pLocationDisplayMsec,  "GnssDispMsec", 1000},
     {true,  R4A_ESP32_NVM_PT_UINT32, 0,          (60 * 1000),   &r4aZedF9pPollMsec,             "GnssPollMsec", 100},
     {true,  R4A_ESP32_NVM_PT_BOOL,   0,          1,             &r4aZedF9pUnitsFeetInches,      "GnssUseFeet",  true},
-#endif  // USE_GNSS
+#endif  // USE_ZED_F9P
 
     // Multicast Domain Name Server (mDNS) host name prefix for .local
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
