@@ -11,7 +11,7 @@
 //****************************************
 
 //#define USE_NTRIP
-//#define USE_OV2640
+#define USE_OV2640
 //#define USE_ZED_F9P
 
 #define DEBUG_BOOT              0
@@ -108,6 +108,7 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
     R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
 #endif  // USE_ZED_F9P
 
+bool ov2640Present;
 bool zedf9pPresent;
 
 //****************************************
@@ -569,7 +570,7 @@ void loop()
 
     // Process the next image
 #ifdef  USE_OV2640
-    if (ov2640Enable)
+    if (ov2640Present && ov2640Enable)
         ov2640.update();
 #endif  // USE_OV2640
 
@@ -603,6 +604,7 @@ void setupCore0(void *parameter)
     // Determine which devices are present
     if(DEBUG_BOOT)
         callingRoutine("i2cBus.isDevicePresent");
+    ov2640Present = i2cBus.isDevicePresent(OV2640_I2C_ADDRESS);
     zedf9pPresent = i2cBus.isDevicePresent(ZEDF9P_I2C_ADDRESS);
 
     // Initialize the PCA9685
@@ -626,10 +628,13 @@ void setupCore0(void *parameter)
 
     // Initialize the camera
 #ifdef USE_OV2640
-    delay(500);
-    if(DEBUG_BOOT)
-        callingRoutine("ov2640.setup");
-    ov2640.setup(PIXFORMAT_RGB565);
+    if (ov2640Present)
+    {
+        if(DEBUG_BOOT)
+            callingRoutine("ov2640.setup");
+        Serial.printf("Initializing the OV2640 camera\r\n");
+        ov2640.setup(PIXFORMAT_RGB565);
+    }
 #endif  // USE_OV2640
 
     // Initialize the GPS receiver
