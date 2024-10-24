@@ -371,6 +371,12 @@ void r4aEsp32NvmDisplayParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable
 void r4aEsp32NvmDumpParameterFile(const char * filePath,
                                   Print * display = &Serial);
 
+// Display the contents of the file
+// Inputs:
+//   filePath: Name of the file to dump
+//   display: Device used for output
+void r4aEsp32NvmFileCat(String filePath, Print * display);
+
 // Get the default set of parameters
 // Inputs:
 //   parameterTable: Address of the first entry in the parameter table
@@ -484,7 +490,7 @@ bool r4aEsp32NvmWriteParameters(const char * filePath,
 //****************************************
 
 extern const R4A_MENU_ENTRY r4aEsp32NvmMenuTable[]; // Menu table for NVM menu
-#define R4A_ESP32_NVM_MENU_ENTRIES    8             // Length of NVM menu table
+#define R4A_ESP32_NVM_MENU_ENTRIES    9             // Length of NVM menu table
 
 // Display all of the parameters
 // Inputs:
@@ -503,6 +509,15 @@ void r4aEsp32NvmMenuDisplayParameters(const struct _R4A_MENU_ENTRY * menuEntry,
 void r4aEsp32NvmMenuDumpParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
                                       const char * command,
                                       Print * display);
+
+// Display the contents of the file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileCat(const R4A_MENU_ENTRY * menuEntry,
+                            const char * command,
+                            Print * display);
 
 // Get default parameters
 // Inputs:

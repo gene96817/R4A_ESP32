@@ -649,6 +649,59 @@ void r4aEsp32NvmDumpParameterFile(const char * filePath, Print * display)
 }
 
 //*********************************************************************
+// Display the contents of the file
+// Inputs:
+//   filePath: Name of the file to dump
+//   display: Device used for output
+void r4aEsp32NvmFileCat(String filePath, Print * display)
+{
+    int bytesRead;
+    size_t bytesToRead;
+    size_t bytesWritten;
+    uint8_t data[256];
+    File file;
+    size_t length;
+    const char * path;
+
+    // Locate the comment
+    path = filePath.c_str();
+
+    // Attempt to open the file
+    do
+    {
+        file = LittleFS.open(path, FILE_READ);
+        if (!file)
+        {
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", path);
+            break;
+        }
+
+        // Get the file size
+        length = file.size();
+        do
+        {
+            // Read the file
+            bytesToRead = sizeof(data);
+            bytesRead = file.read(data, bytesToRead);
+            if(bytesRead < 0)
+            {
+                display->printf("ERROR: Error reading from file %s\r\n", path);
+                break;
+            }
+
+            // Display the data
+            display->write(data, bytesRead);
+            length -= bytesRead;
+        } while (length > 0);
+    } while (0);
+
+    // Done with the file
+    if (file)
+        file.close();
+}
+
+//*********************************************************************
 // Get the default set of parameters
 void r4aEsp32NvmGetDefaultParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
                                      int parameterCount)
@@ -839,6 +892,27 @@ void r4aEsp32NvmMenuDumpParameterFile(const struct _R4A_MENU_ENTRY * menuEntry,
                                       Print * display)
 {
     r4aEsp32NvmDumpParameterFile(parameterFilePath, display);
+}
+
+//*********************************************************************
+// Display the contents of the file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileCat(const R4A_MENU_ENTRY * menuEntry,
+                            const char * command,
+                            Print * display)
+{
+    String fileName;
+    String filePath;
+
+    // Build the file path
+    fileName = r4aMenuGetParameters(menuEntry, command);
+    filePath = String("/") + fileName;
+
+    // Display the file contents
+    r4aEsp32NvmFileCat(filePath, display);
 }
 
 //*********************************************************************
