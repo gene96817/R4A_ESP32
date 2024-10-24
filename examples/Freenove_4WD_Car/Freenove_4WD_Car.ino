@@ -109,6 +109,7 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
 #endif  // USE_ZED_F9P
 
 bool ov2640Present;
+bool vk16k33Present;
 bool zedf9pPresent;
 
 //****************************************
@@ -605,6 +606,7 @@ void setupCore0(void *parameter)
     if(DEBUG_BOOT)
         callingRoutine("i2cBus.isDevicePresent");
     ov2640Present = i2cBus.isDevicePresent(OV2640_I2C_ADDRESS);
+    vk16k33Present = i2cBus.isDevicePresent(VK16K33_I2C_ADDRESS);
     zedf9pPresent = i2cBus.isDevicePresent(ZEDF9P_I2C_ADDRESS);
 
     // Initialize the PCA9685
