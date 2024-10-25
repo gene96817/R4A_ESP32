@@ -1137,6 +1137,52 @@ void r4aEsp32NvmMenuFileList(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Move (rename) a file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileMove(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    File destFile;
+    char * destFileName;
+    String destFilePath;
+    const char * destPath;
+    String parameters;
+    File srcFile;
+    const char * srcFileName;
+    String srcFilePath;
+    const char * srcPath;
+
+    do
+    {
+        // Separate the strings
+        parameters = r4aMenuGetParameters(menuEntry, command);
+        srcFileName = parameters.c_str();
+        destFileName = strstr(srcFileName, " ");
+        *destFileName++ = 0;
+
+        // Get the source file name
+        srcFilePath = String("/") + String(srcFileName);
+        srcPath = srcFilePath.c_str();
+
+        // Get the destination file name
+        destFilePath = String("/") + String(destFileName);
+        destPath = destFilePath.c_str();
+
+        // Rename the file
+        if (LittleFS.rename(srcPath, destPath) == false)
+        {
+            if (display)
+                display->printf("ERROR: Failed to rename file %s!\r\n", srcFilePath);
+            break;
+        }
+    } while (0);
+}
+
+//*********************************************************************
 // Remove the file
 // Inputs:
 //   menuEntry: Address of the object describing the menu entry
