@@ -1075,6 +1075,38 @@ void r4aEsp32NvmMenuFileList(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Remove the file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileRemove(const R4A_MENU_ENTRY * menuEntry,
+                               const char * command,
+                               Print * display)
+{
+    static String fileName;
+    String filePath;
+    const char * name;
+    bool removed;
+
+    // Get the file name
+    fileName = r4aMenuGetParameters(menuEntry, command);
+    filePath = String("/") + fileName;
+    name = filePath.c_str();
+
+    // Delete the file
+    removed = LittleFS.remove(name);
+    if (display)
+    {
+        // Display the results
+        if (removed)
+            display->printf("File %s removed\r\n", name);
+        else
+            display->printf("File %s not found\r\n", name);
+    }
+}
+
+//*********************************************************************
 // Get default parameters
 void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntry,
                                          const char * command,
