@@ -916,6 +916,104 @@ void r4aEsp32NvmMenuFileCat(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Copy the file contents to a new file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    int bytesRead;
+    size_t bytesToRead;
+    int bytesWritten;
+    uint8_t data[256];
+    File destFile;
+    char * destFileName;
+    String destFilePath;
+    const char * destPath;
+    size_t length;
+    String parameters;
+    File srcFile;
+    const char * srcFileName;
+    String srcFilePath;
+    const char * srcPath;
+
+    do
+    {
+        // Separate the strings
+        parameters = r4aMenuGetParameters(menuEntry, command);
+        srcFileName = parameters.c_str();
+        destFileName = strstr(srcFileName, " ");
+        *destFileName++ = 0;
+
+        // Get the source file name
+        srcFilePath = String("/") + String(srcFileName);
+        srcPath = srcFilePath.c_str();
+
+        // Attempt to open the source file
+        length = 0;
+        srcFile = LittleFS.open(srcPath, FILE_READ);
+        if (!srcFile)
+        {
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", srcFilePath);
+            break;
+        }
+
+        // Get the destination file name
+        destFilePath = String("/") + String(destFileName);
+        destPath = destFilePath.c_str();
+
+        // Attempt to open the destination file
+        destFile = LittleFS.open(destPath, FILE_WRITE);
+        if (!destFile)
+        {
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", destFilePath);
+            break;
+        }
+
+        // Get the file size
+        length = srcFile.size();
+        do
+        {
+            // Read the source file
+            bytesToRead = sizeof(data);
+            bytesRead = srcFile.read(data, bytesToRead);
+            if(bytesRead < 0)
+            {
+                display->printf("ERROR: Error reading from file %s\r\n", srcFilePath);
+                break;
+            }
+
+            // Write the data to the destination file
+            bytesWritten = destFile.write(data, bytesRead);
+            if(bytesWritten < bytesRead)
+            {
+                display->printf("ERROR: Error writing to file %s\r\n", destFilePath);
+                break;
+            }
+
+            // Account for the data read
+            length -= bytesRead;
+        } while (length > 0);
+    } while (0);
+
+    // Done with the files
+    if (destFile)
+        destFile.close();
+    if (srcFile)
+        srcFile.close();
+
+    // Delete the destination file if necessary
+    if (length)
+        if (!LittleFS.remove(destPath))
+            display->printf("ERROR: Failed to delete file %s!r\r\n", destPath);
+}
+
+//*********************************************************************
 // Get default parameters
 void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntry,
                                          const char * command,
