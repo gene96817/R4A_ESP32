@@ -490,7 +490,7 @@ bool r4aEsp32NvmWriteParameters(const char * filePath,
 //****************************************
 
 extern const R4A_MENU_ENTRY r4aEsp32NvmMenuTable[]; // Menu table for NVM menu
-#define R4A_ESP32_NVM_MENU_ENTRIES    12            // Length of NVM menu table
+#define R4A_ESP32_NVM_MENU_ENTRIES    13            // Length of NVM menu table
 
 // Display all of the parameters
 // Inputs:
@@ -525,6 +525,15 @@ void r4aEsp32NvmMenuFileCat(const R4A_MENU_ENTRY * menuEntry,
 //   command: Zero terminated command string
 //   display: Device used for output
 void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display);
+
+// Dump the file contents
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileDump(const R4A_MENU_ENTRY * menuEntry,
                              const char * command,
                              Print * display);
 

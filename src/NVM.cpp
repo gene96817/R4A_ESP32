@@ -1014,6 +1014,68 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Dump the file contents
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileDump(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    int bytesRead;
+    size_t bytesToRead;
+    uint8_t data[256];
+    File file;
+    String fileName;
+    String filePath;
+    size_t length;
+    size_t offset;
+    const char * path;
+
+    do
+    {
+        // Get the file name
+        fileName = r4aMenuGetParameters(menuEntry, command);
+        filePath = String("/") + fileName;
+        path = filePath.c_str();
+
+        // Attempt to open the file
+        file = LittleFS.open(path, FILE_READ);
+        if (!file)
+        {
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", filePath);
+            break;
+        }
+
+        // Get the file size
+        length = file.size();
+        offset = 0;
+        do
+        {
+            // Read the file
+            bytesToRead = sizeof(data);
+            bytesRead = file.read(data, bytesToRead);
+            if(bytesRead < 0)
+            {
+                display->printf("ERROR: Error reading from file %s\r\n", filePath);
+                break;
+            }
+
+            // Display the data
+            r4aDumpBuffer(offset, data, bytesRead);
+            length -= bytesRead;
+            offset += bytesRead;
+        } while (length > 0);
+    } while (0);
+
+    // Done with the file
+    if (file)
+        file.close();
+}
+
+//*********************************************************************
 // List the contents of the current directory
 // Inputs:
 //   menuEntry: Address of the object describing the menu entry
