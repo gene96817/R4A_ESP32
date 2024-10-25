@@ -1014,6 +1014,67 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// List the contents of the current directory
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuFileList(const R4A_MENU_ENTRY * menuEntry,
+                             const char * command,
+                             Print * display)
+{
+    File rootDir;
+    bool directory;
+    File file;
+    bool headerDisplayed;
+    const char * name;
+    size_t size;
+
+    // Start at the beginning of the directory
+    rootDir = LittleFS.open("/", FILE_READ);
+    if (rootDir)
+    {
+        // List the contents of the directory
+        headerDisplayed = false;
+        while (1)
+        {
+            // Open the next file
+            file = rootDir.openNextFile();
+            if (!file)
+            {
+                if (headerDisplayed == false)
+                    display->printf("No files found\r\n");
+                break;
+            }
+
+            // Get the file attributes
+            name = file.name();
+            size = file.size();
+            directory = file.isDirectory();
+
+            // Done with this file
+            file.close();
+
+            // Display the attributes
+            if (headerDisplayed == false)
+            {
+                headerDisplayed = true;
+                display->printf("      Size   Dir   File Name\r\n");
+                //                        1                  1         2
+                //               1234567890   123   12345678901234567890
+                display->printf("----------   ---   --------------------\r\n");
+            }
+
+            // Display the file attributes
+            display->printf("%10d   %s   %s\r\n", size, directory ? "Dir" : "   ", name);
+        }
+
+        // Close the directory
+        close(rootDir);
+    }
+}
+
+//*********************************************************************
 // Get default parameters
 void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntry,
                                          const char * command,
