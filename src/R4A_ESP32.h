@@ -9,6 +9,7 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
+#include <HTTPClient.h>         // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
 #include <WiFi.h>               // Built-in
 #include <WiFiClient.h>         // Built-in
@@ -490,7 +491,7 @@ bool r4aEsp32NvmWriteParameters(const char * filePath,
 //****************************************
 
 extern const R4A_MENU_ENTRY r4aEsp32NvmMenuTable[]; // Menu table for NVM menu
-#define R4A_ESP32_NVM_MENU_ENTRIES    13            // Length of NVM menu table
+#define R4A_ESP32_NVM_MENU_ENTRIES    14            // Length of NVM menu table
 
 // Display all of the parameters
 // Inputs:
@@ -573,6 +574,15 @@ void r4aEsp32NvmMenuGetDefaultParameters(const struct _R4A_MENU_ENTRY * menuEntr
 void r4aEsp32NvmMenuHelpPppp(const struct _R4A_MENU_ENTRY * menuEntry,
                              const char * align,
                              Print * display);
+
+// Download a file from a web server
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuHttpFileGet(const R4A_MENU_ENTRY * menuEntry,
+                                const char * command,
+                                Print * display);
 
 // Display the help text with PPPP XXXX
 // Inputs:

@@ -1200,6 +1200,94 @@ void r4aEsp32NvmMenuHelpPpppXxxx(const struct _R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Download a file from a web server
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32NvmMenuHttpFileGet(const R4A_MENU_ENTRY * menuEntry,
+                                const char * command,
+                                Print * display)
+{
+    int bytesWritten;
+    File file;
+    const char * fileName;
+    HTTPClient http;
+    int httpStatus;
+    size_t length;
+    const char * path;
+    String payload;
+    const char * url;
+    String urlString;
+
+    do
+    {
+        // Get the URL
+        length = 0;
+        urlString = r4aMenuGetParameters(menuEntry, command);
+        url = urlString.c_str();
+
+        // Get the web page
+        http.begin(url);
+        httpStatus = http.GET();
+        if (httpStatus <= 0)
+        {
+            if (display)
+                display->printf("ERROR: HTTP GET failed, error: %s\r\n",
+                                http.errorToString(httpStatus).c_str());
+            break;
+        }
+
+        // Get the file name
+        path = url;
+        while (1)
+        {
+            fileName = strstr(path, "/");
+            if (fileName == nullptr)
+                break;
+            path = &fileName[1];
+        }
+
+        // Build the file path
+        if (strlen(path))
+            path -= 1;
+        else
+            path = "/index.html";
+
+
+        // Attempt to open the destination file
+        file = LittleFS.open(path, FILE_WRITE);
+        if (!file)
+        {
+            if (display)
+                display->printf("ERROR: Failed to open file %s!\r\n", path);
+            break;
+        }
+
+        // Determine the response length
+        payload = http.getString();
+        length = payload.length();
+
+        // Write the data to the destination file
+        bytesWritten = file.write((uint8_t *)payload.c_str(), length);
+        length -= bytesWritten;
+        if(length > 0)
+            display->printf("ERROR: Error writing to file %s\r\n", path);
+    } while (0);
+
+    // Done with the files
+    if (file)
+        file.close();
+
+    // Delete the file if necessary
+    if (length)
+        LittleFS.remove(path);
+
+    // Done with the HTTP client
+    http.end();
+}
+
+//*********************************************************************
 // Clear the parameter
 void r4aEsp32NvmMenuParameterClear(const struct _R4A_MENU_ENTRY * menuEntry,
                                    const char * command,

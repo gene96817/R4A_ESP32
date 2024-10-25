@@ -25,6 +25,7 @@ const R4A_MENU_ENTRY r4aEsp32NvmMenuTable[] =
     {"rm",      r4aEsp32NvmMenuFileRemove,      (intptr_t)"ffff",   r4aMenuHelpSuffix,  4,      "Remove file ffff"},                    //  8
     {"s",       r4aEsp32NvmMenuParameterSet, (intptr_t)"pppp ssss", r4aMenuHelpSuffix,  9,      "Set parameter pppp value to xxxx"},    //  9
     {"w",    r4aEsp32NvmMenuWriteParameterFile, 0,          nullptr,                    0,      "Write the parameter file"},            // 10
+    {"wget",    r4aEsp32NvmMenuHttpFileGet,     (intptr_t)"url",    r4aMenuHelpSuffix,  3,      "Get a file from a web server"},        // 11
     {"x",       nullptr,                     R4A_MENU_MAIN, nullptr,                    0,      "Exit the menu system"},                // 11
     {"z",       r4aEsp32NvmMenuParameterClear,  (intptr_t)"pppp",   r4aMenuHelpSuffix,  4,      "Zero the parameter"},                  // 12
 };                                                                                                                                      // 13
