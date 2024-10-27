@@ -326,6 +326,7 @@ const R4A_MENU_ENTRY wayPointMenuTable[] =
     // Command  menuRoutine                 menuParam               HelpRoutine         align   HelpText
     {"a",       r4aEsp32WpMenuAddPoint,     (intptr_t)"comment",    r4aMenuHelpSuffix,  7,      "Add a point to the file"},
     {"f",       r4aEsp32WpMenuFileName,     (intptr_t)"nnnn",       r4aMenuHelpSuffix,  4,      "Set waypoint file name"},
+    {"p",       r4aEsp32WpMenuPrintFile,    0,                      nullptr,            0,      "Print the waypoint file contents"},
     {"x",       nullptr,                    R4A_MENU_MAIN,          nullptr,            0,      "Exit the menu system"},
 };
 #define WAYPOINT_MENU_ENTRIES  sizeof(wayPointMenuTable) / sizeof(wayPointMenuTable[0])
