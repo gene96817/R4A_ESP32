@@ -325,9 +325,16 @@ const R4A_MENU_ENTRY wayPointMenuTable[] =
 {
     // Command  menuRoutine                 menuParam               HelpRoutine         align   HelpText
     {"a",       r4aEsp32WpMenuAddPoint,     (intptr_t)"comment",    r4aMenuHelpSuffix,  7,      "Add a point to the file"},
+    {"cat",     r4aEsp32NvmMenuFileCat,     (intptr_t)"ffff",       r4aMenuHelpSuffix,  4,      "Display the contents of file ffff"},
+    {"cp",      r4aEsp32NvmMenuFileCopy,    (intptr_t)"src dest",   r4aMenuHelpSuffix,  8,      "Copy src file to dest file"},
     {"dp",      r4aEsp32WpMenuDisplayPoint, 0,                      nullptr,            0,      "Display the next waypoint"},
+    {"dump",    r4aEsp32NvmMenuFileDump,    (intptr_t)"ffff",       r4aMenuHelpSuffix,  4,      "Dump the contents of file ffff"},
     {"f",       r4aEsp32WpMenuFileName,     (intptr_t)"nnnn",       r4aMenuHelpSuffix,  4,      "Set waypoint file name"},
+    {"ls",      r4aEsp32NvmMenuFileList,    0,                      nullptr,            0,      "List the NVM directory"},
+    {"mv",      r4aEsp32NvmMenuFileMove,    (intptr_t)"src dest",   r4aMenuHelpSuffix,  8,      "Rename a file"},
     {"p",       r4aEsp32WpMenuPrintFile,    0,                      nullptr,            0,      "Print the waypoint file contents"},
+    {"rm",      r4aEsp32NvmMenuFileRemove,  (intptr_t)"ffff",       r4aMenuHelpSuffix,  4,      "Remove file ffff"},
+    {"wget",    r4aEsp32NvmMenuHttpFileGet, (intptr_t)"url",        r4aMenuHelpSuffix,  3,      "Get a file from a web server"},
     {"x",       nullptr,                    R4A_MENU_MAIN,          nullptr,            0,      "Exit the menu system"},
 };
 #define WAYPOINT_MENU_ENTRIES  sizeof(wayPointMenuTable) / sizeof(wayPointMenuTable[0])
