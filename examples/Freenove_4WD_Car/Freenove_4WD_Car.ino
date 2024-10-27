@@ -24,6 +24,13 @@
 #define SERVO_TILT_START    15  // Degrees
 
 //****************************************
+// GNSS - Global Navigation Satellite System
+//****************************************
+
+#define GNSS_POINTS_PER_SECOND      1
+#define GNSS_POINTS_TO_AVERAGE      (10 * GNSS_POINTS_PER_SECOND)   // 10 Seconds
+
+//****************************************
 // Includes
 //****************************************
 
@@ -132,13 +139,6 @@ bool zedf9pPresent;
 
 volatile bool core0Initialized;
 volatile bool core1Initialized;
-
-//****************************************
-// GNSS - Global Navigation Satellite System
-//****************************************
-
-#define GNSS_POINTS_PER_SECOND      1
-#define GNSS_POINTS_TO_AVERAGE      (10 * GNSS_POINTS_PER_SECOND)   // 10 Seconds
 
 //****************************************
 // Light Sensor

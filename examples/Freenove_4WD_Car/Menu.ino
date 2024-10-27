@@ -5,6 +5,7 @@
 **********************************************************************/
 
 #ifdef  USE_ZED_F9P
+
 //*********************************************************************
 // Display the computed point
 // Inputs:
@@ -224,6 +225,37 @@ void wifiMenuRestart(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Display data before the waypoint menu header
+void wpMenuPre(Print * display)
+{
+#ifdef  USE_ZED_F9P
+    zedf9p.displayLocation(nullptr, // comment
+                           zedf9p._latitude,
+                           0.,      // latitudeStdDev
+                           zedf9p._longitude,
+                           0.,      // longitudeStdDev
+                           zedf9p._altitude,
+                           0.,      // altitudeStdDev
+                           zedf9p._horizontalAccuracy,
+                           0.,      // horizontalAccuracyStdDev
+                           zedf9p._satellitesInView,
+                           true,    // unitsFeetInches
+                           false,   // displayTime
+                           true,    // displaySiv
+                           true,    // displayLatitude
+                           false,   // displayLatStdDev
+                           true,    // displayLongitude
+                           false,   // displayLongStdDev
+                           true,    // displayHorizAcc
+                           false,   // displayHorizAccStdDev
+                           false,   // displayAltitude
+                           false,   // displayAltitudeStdDev
+                           false,   // displayFixType
+                           display);
+#endif  // USE_ZED_F9P
+}
+
+//*********************************************************************
 
 enum MENU_TABLE_INDEX
 {
@@ -239,6 +271,7 @@ enum MENU_TABLE_INDEX
 #endif  // USE_NTRIP
     MTI_NVM,
     MTI_SERVO,
+    MTI_WAY_POINT,
 };
 
 // Debug menu
@@ -286,6 +319,17 @@ const R4A_MENU_ENTRY ledMenuTable[] =
 };
 #define LED_MENU_ENTRIES      sizeof(ledMenuTable) / sizeof(ledMenuTable[0])
 
+// Way Point menu
+#ifdef  USE_ZED_F9P
+const R4A_MENU_ENTRY wayPointMenuTable[] =
+{
+    // Command  menuRoutine                 menuParam               HelpRoutine         align   HelpText
+    {"a",       r4aEsp32WpMenuAddPoint,     (intptr_t)"comment",    r4aMenuHelpSuffix,  7,      "Add a point to the file"},
+    {"x",       nullptr,                    R4A_MENU_MAIN,          nullptr,            0,      "Exit the menu system"},
+};
+#define WAYPOINT_MENU_ENTRIES  sizeof(wayPointMenuTable) / sizeof(wayPointMenuTable[0])
+#endif  // USE_ZED_F9P
+
 // Main menu
 const R4A_MENU_ENTRY mainMenuTable[] =
 {
@@ -309,6 +353,7 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"s",       robotMenuStop,      0,              nullptr,    0,      "Stop the robot"},
     {"w", r4aMenuBoolToggle, (intptr_t)&webServerEnable, r4aMenuBoolHelp, 0, "Toggle web server"},
     {"wd",     wifiMenuDebug, (intptr_t)&wifiDebug, r4aMenuBoolHelp, 0, "Toggle WiFi debugging"},
+    {"wp",      nullptr,            MTI_WAY_POINT,  nullptr,    0,      "Enter the waypoint menu"},
     {"wr",      wifiMenuRestart,    0,              nullptr,    0,      "Restart WiFi"},
     {"x",       nullptr,            R4A_MENU_NONE,  nullptr,    0,      "Exit the menu system"},
 };
@@ -331,5 +376,8 @@ const R4A_MENU_TABLE menuTable[] =
 #endif  // USE_NTRIP
     {"NVM Menu",        nullptr,      r4aEsp32NvmMenuTable, R4A_ESP32_NVM_MENU_ENTRIES},
     {"Servo Menu",      nullptr,  r4aPca9685ServoMenuTable, R4A_PCA9685_SERVO_MENU_ENTRIES},
+#ifdef  USE_ZED_F9P
+    {"Waypoint Menu",   wpMenuPre,      wayPointMenuTable,  WAYPOINT_MENU_ENTRIES},
+#endif  // USE_ZED_F9P
 };
 const int menuTableEntries = sizeof(menuTable) / sizeof(menuTable[0]);

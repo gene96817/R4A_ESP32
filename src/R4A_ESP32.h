@@ -858,6 +858,22 @@ void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display = &Ser
 void r4aEsp32TimerDisplayRegs(Print * display = &Serial);
 
 //****************************************
+// Waypoint API
+//****************************************
+
+extern int r4aEsp32WpPointsToAverage;      // Number of points to average
+extern const char * r4aEsp32WpFileName;    // Waypoint file name
+
+// Add a point to the waypoint file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32WpMenuAddPoint(const R4A_MENU_ENTRY * menuEntry,
+                            const char * command,
+                            Print * display);
+
+//****************************************
 // Web Server API
 //****************************************
 
