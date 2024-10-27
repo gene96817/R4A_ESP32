@@ -425,19 +425,6 @@ const R4A_ESP32_NVM_PARAMETER * r4aEsp32NvmParameterLookup(const R4A_ESP32_NVM_P
                                                            const char * name,
                                                            Print * display = &Serial);
 
-// Read the parameters from a file
-// Inputs:
-//   filePath: Path to the file contained in the NVM
-//   parameterTable: Address of the first entry in the parameter table
-//   parametersCount: Number of parameters in the table
-//   display: Device used for output
-// Outputs:
-//   Returns true if successful and false upon failure
-bool r4aEsp32NvmReadParameters(const char * filePath,
-                               const R4A_ESP32_NVM_PARAMETER * parameterTable,
-                               int parametersCount,
-                               Print * display = &Serial);
-
 // Set a parameter value
 // Inputs:
 //   filePath: Path to the file to be stored in NVM
@@ -453,6 +440,32 @@ bool r4aEsp32NvmParameterSet(const char * filePath,
                              const char * valueString,
                              Print * display = &Serial,
                              bool debug = false);
+
+// Read a line from the file
+// Inputs:
+//   file: Address of the File object
+//   line: Address of the buffer to receive the zero terminated line
+//   lineLength: Number of bytes in the buffer
+//   display: Device used for output, passed to computeWayPoint
+// Outputs:
+//   Returns true if the line was successfully read
+bool r4aEsp32NvmReadLine(File * file,
+                uint8_t * line,
+                size_t lineLength,
+                Print * display);
+
+// Read the parameters from a file
+// Inputs:
+//   filePath: Path to the file contained in the NVM
+//   parameterTable: Address of the first entry in the parameter table
+//   parametersCount: Number of parameters in the table
+//   display: Device used for output
+// Outputs:
+//   Returns true if successful and false upon failure
+bool r4aEsp32NvmReadParameters(const char * filePath,
+                               const R4A_ESP32_NVM_PARAMETER * parameterTable,
+                               int parametersCount,
+                               Print * display = &Serial);
 
 // Write a string to the parameter file
 // Inputs:

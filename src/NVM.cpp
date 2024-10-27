@@ -1640,6 +1640,53 @@ bool r4aEsp32NvmParseParameters(const R4A_ESP32_NVM_PARAMETER * parameterTable,
 }
 
 //*********************************************************************
+// Read a line from the file
+// Inputs:
+//   file: Address of the File object
+//   line: Address of the buffer to receive the zero terminated line
+//   lineLength: Number of bytes in the buffer
+//   display: Device used for output, passed to computeWayPoint
+// Outputs:
+//   Returns true if the line was successfully read
+bool r4aEsp32NvmReadLine(File * file,
+                uint8_t * line,
+                size_t lineLength,
+                Print * display)
+{
+    size_t bytesAvailable;
+    uint8_t data;
+    uint8_t * lineEnd;
+
+    // Walk the data in the file until the buffer is full
+    lineEnd = &line[lineLength - 1];
+    while (line < lineEnd)
+    {
+        // Determine if there is more data in the file
+        bytesAvailable = file->available();
+        if (bytesAvailable == 0)
+            break;
+
+        // Read the next character from the file
+        data = file->read();
+
+        // Check for the end of the line
+        if (data)
+        {
+            *line++ = data;
+            if (data == '\n')
+            {
+                // Zero terminate the string of characters
+                *line = 0;
+                return true;
+            }
+        }
+    }
+
+    // Failed to find the end of the line
+    return false;
+}
+
+//*********************************************************************
 // Read the parameters from a file
 bool r4aEsp32NvmReadParameters(const char * filePath,
                                const R4A_ESP32_NVM_PARAMETER * parameterTable,
