@@ -364,6 +364,9 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"w", r4aMenuBoolToggle, (intptr_t)&webServerEnable, r4aMenuBoolHelp, 0, "Toggle web server"},
     {"wd",     wifiMenuDebug, (intptr_t)&wifiDebug, r4aMenuBoolHelp, 0, "Toggle WiFi debugging"},
     {"wp",      nullptr,            MTI_WAY_POINT,  nullptr,    0,      "Enter the waypoint menu"},
+#ifdef  USE_ZED_F9P
+    {"wpf",     wpfStart,           0,              nullptr,    0,      "Waypoint following"},
+#endif  // USE_ZED_F9P
     {"wr",      wifiMenuRestart,    0,              nullptr,    0,      "Restart WiFi"},
     {"x",       nullptr,            R4A_MENU_NONE,  nullptr,    0,      "Exit the menu system"},
 };

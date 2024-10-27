@@ -46,6 +46,12 @@ uint8_t servoPanStartDegrees;
 uint8_t servoTiltStartDegrees;
 
 //****************************************
+// Waypoints
+//****************************************
+
+const char * wpLogFileName;
+
+//****************************************
 // Web server
 //****************************************
 
@@ -152,6 +158,7 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
     {true,  R4A_ESP32_NVM_PT_UINT32, 0,          0xffffffff,    &r4aEsp32WpPointsToAverage, "wpPtCnt",      GNSS_POINTS_TO_AVERAGE},
     {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &r4aEsp32WpFileName,        "wpFile",       R4A_ESP32_NVM_STRING("Waypoints.txt")},
+    {true,  R4A_ESP32_NVM_PT_P_CHAR, 0,          0,             &wpLogFileName,             "wpLogFile",    R4A_ESP32_NVM_STRING("Waypoints.log")},
 
     // Web server
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
