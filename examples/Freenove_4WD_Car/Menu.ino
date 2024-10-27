@@ -294,6 +294,7 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"blt",     bltStart,           0,              nullptr,    0,      "Basic light tracking"},
 #ifdef  USE_OV2640
     {"c", r4aMenuBoolToggle, (intptr_t)&ov2640Enable, r4aMenuBoolHelp, 0, "Toggle OV2640 camera"},
+    {"clf",     clfStart,           0,              nullptr,    0,      "Camera line following"},
 #endif  // USE_OV2640
     {"d",       nullptr,            MTI_DEBUG,      nullptr,    0,      "Enter the debug menu"},
 #ifdef  USE_ZED_F9P

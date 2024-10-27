@@ -8,6 +8,13 @@
 #define __PARAMETERS_H__
 
 //****************************************
+// Camera Line Following (CLF)
+//****************************************
+
+uint8_t clfPanStartDegrees;
+uint8_t clfTiltStartDegrees;
+
+//****************************************
 // mDNS
 //****************************************
 
@@ -66,6 +73,10 @@ const char * wifiPassword4;
 
 const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
 {
+    // Camera Line Following (CLF)
+    {true,  R4A_ESP32_NVM_PT_UINT8,  0,          180,           &clfPanStartDegrees,            "clfPanDeg",    10},
+    {true,  R4A_ESP32_NVM_PT_UINT8,  0,          180,           &servoTiltStartDegrees,         "clfTiltDeg",   90},
+
 #ifdef  USE_ZED_F9P
     // GPS (GNSS)
 // Required    Type                  Minimum     Maximum        Address                         Name            Default Value
