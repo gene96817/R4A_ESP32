@@ -305,12 +305,22 @@ class WEB_SERVER : public R4A_WEB_SERVER
 WEB_SERVER webServer(80);
 
 //****************************************
-// WiFi menu support
+// WiFi support
 //****************************************
 
-uint8_t wifiApCount;
-WiFiMulti wifiMulti;
 R4A_TELNET_SERVER telnet(menuTable, menuTableEntries);
+
+const R4A_SSID_PASSWORD r4aWifiSsidPassword[]
+{
+    {wifiSSID, wifiPassword},
+    {wifiSSID2, wifiPassword2},
+    {wifiSSID3, wifiPassword3},
+    {wifiSSID4, wifiPassword4},
+};
+const int r4aWifiSsidPasswordEntries = sizeof(r4aWifiSsidPassword)
+                                     / sizeof(r4aWifiSsidPassword[0]);
+
+R4A_WIFI wifi(nullptr, nullptr);
 
 //*********************************************************************
 // Entry point for the application
@@ -379,51 +389,15 @@ void setup()
         Serial.flush();
     }
 
-    // Delay to allow the hardware initialize
-    delay(250);
-
-    // Set the WiFi access point credentials
-    wifiApCount = 0;
-    if (wifiSSID && strlen(wifiSSID))
+    // Start WiFi if enabled
+    if (DEBUG_BOOT)
     {
-        if (DEBUG_BOOT)
-        {
-            Serial.printf("Calling wifiMulti.addAP(%s, password)\r\n", wifiSSID);
-            Serial.flush();
-        }
-        if (wifiMulti.addAP(wifiSSID, wifiPassword))
-            wifiApCount += 1;
+        Serial.printf("Calling wifiBegin\r\n");
+        Serial.flush();
     }
-    if (wifiSSID2 && strlen(wifiSSID2))
-    {
-        if (DEBUG_BOOT)
-        {
-            Serial.printf("Calling wifiMulti.addAP(%s, password2)\r\n", wifiSSID2);
-            Serial.flush();
-        }
-        if (wifiMulti.addAP(wifiSSID2, wifiPassword2))
-            wifiApCount += 1;
-    }
-    if (wifiSSID3 && strlen(wifiSSID3))
-    {
-        if (DEBUG_BOOT)
-        {
-            Serial.printf("Calling wifiMulti.addAP(%s, password3)\r\n", wifiSSID3);
-            Serial.flush();
-        }
-        if (wifiMulti.addAP(wifiSSID3, wifiPassword3))
-            wifiApCount += 1;
-    }
-    if (wifiSSID2 && strlen(wifiSSID4))
-    {
-        if (DEBUG_BOOT)
-        {
-            Serial.printf("Calling wifiMulti.addAP(%s, password4)\r\n", wifiSSID4);
-            Serial.flush();
-        }
-        if (wifiMulti.addAP(wifiSSID4, wifiPassword4))
-            wifiApCount += 1;
-    }
+    if (wifiDebug)
+        wifi._debug = &Serial;
+    wifi.begin(mdnsHostName);
 
 #ifdef  USE_NTRIP
     // Validate the NTRIP tables
@@ -431,14 +405,6 @@ void setup()
         callingRoutine("ntrip.validateTables");
     ntrip.validateTables();
 #endif  // USE_NTRIP
-
-    // Start the WiFi network
-    if (wifiApCount)
-    {
-        Serial.printf("Waiting for WiFi to start on core %d \r\n", xPortGetCoreID());
-        Serial.flush();
-        wifiMulti.run();
-    }
 
     // Initialize the NTP client
     if (DEBUG_BOOT)
@@ -533,11 +499,11 @@ void loop()
         callingRoutine("car.ledsUpdate");
     car.ledsUpdate(currentMsec);
 
-    // Determine if WiFi is enabled
-    if (wifiApCount)
+    // Determine if WiFi station mode is configured
+    if (r4aWifiSsidPasswordEntries)
     {
         // Determine if WiFi is connected
-        wifiConnected = (WiFi.status() == WL_CONNECTED);
+        wifiConnected = wifi._connected;
 
         // Check for NTP updates
         if (DEBUG_LOOP_CORE_1)
@@ -562,11 +528,6 @@ void loop()
                 Serial.printf("Telnet: %s:%d\r\n", WiFi.localIP().toString().c_str(),
                               telnet.port());
         }
-
-        // Update the web server
-        if (DEBUG_LOOP_CORE_1)
-            callingRoutine("webServer.update");
-        webServer.update(wifiConnected && ov2640Enable && webServerEnable);
     }
 
     // Process the next image

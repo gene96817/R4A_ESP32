@@ -94,7 +94,7 @@ void gnssMenuDisplayLocation(const R4A_MENU_ENTRY * menuEntry,
 // Display data before the main menu header
 void mainMenuPre(Print * display)
 {
-    if (wifiApCount)
+    if (r4aWifiSsidPasswordEntries)
         r4aNtpDisplayDateTime(display);
     DISPLAY_BATTERY_VOLTAGE(display);
 }
@@ -195,6 +195,35 @@ void robotMenuStop(const R4A_MENU_ENTRY * menuEntry,
 }
 
 //*********************************************************************
+// Toggle WiFi debugging
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void wifiMenuDebug(const R4A_MENU_ENTRY * menuEntry,
+                   const char * command,
+                   Print * display)
+{
+    r4aMenuBoolToggle(menuEntry, command, display);
+    wifi._debug = wifiDebug ? &Serial : nullptr;
+}
+
+//*********************************************************************
+// Restart the WiFi station
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void wifiMenuRestart(const R4A_MENU_ENTRY * menuEntry,
+                     const char * command,
+                     Print * display)
+{
+    wifi.stationStop();
+    delay(5 * 1000);
+    wifi.stationStart();
+}
+
+//*********************************************************************
 
 enum MENU_TABLE_INDEX
 {
@@ -278,6 +307,8 @@ const R4A_MENU_ENTRY mainMenuTable[] =
     {"r",  r4aEsp32MenuSystemReset, 0,              nullptr,    0,      "System reset"},
     {"s",       robotMenuStop,      0,              nullptr,    0,      "Stop the robot"},
     {"w", r4aMenuBoolToggle, (intptr_t)&webServerEnable, r4aMenuBoolHelp, 0, "Toggle web server"},
+    {"wd",     wifiMenuDebug, (intptr_t)&wifiDebug, r4aMenuBoolHelp, 0, "Toggle WiFi debugging"},
+    {"wr",      wifiMenuRestart,    0,              nullptr,    0,      "Restart WiFi"},
     {"x",       nullptr,            R4A_MENU_NONE,  nullptr,    0,      "Exit the menu system"},
 };
 #define MAIN_MENU_ENTRIES       sizeof(mainMenuTable) / sizeof(mainMenuTable[0])

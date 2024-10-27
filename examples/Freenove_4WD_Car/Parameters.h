@@ -48,6 +48,8 @@ bool webServerEnable;
 // WiFi Access Points
 //****************************************
 
+bool wifiDebug;
+
 // Public access point SSID and password
 const char * wifiSSID;
 const char * wifiPassword;

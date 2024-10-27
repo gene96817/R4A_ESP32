@@ -18,6 +18,7 @@
 
 #include <esp_camera.h>         // Built-in, needed for OV2640 camera
 #include <esp32-hal-spi.h>      // Built-in
+#include "ESPmDNS.h"            // Built-in
 #include <esp_http_server.h>    // Built in, needed for camera web server
 
 #include <R4A_Robot.h>          // Robots-For-All robot support
@@ -921,5 +922,94 @@ class R4A_WEB_SERVER
 //   Returns status indicating if the response was successfully sent
 //   to the browser
 esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error);
+
+//****************************************
+// WiFi API
+//****************************************
+
+// Entry in the SSID and password table r4aSsidPassword
+typedef struct _R4A_SSID_PASSWORD
+{
+    const char * ssid;      // ID of access point
+    const char * password;  // Password for the access point
+} R4A_SSID_PASSWORD;
+
+// List of known access points (APs)
+extern const R4A_SSID_PASSWORD r4aWifiSsidPassword[];
+extern const int r4aWifiSsidPasswordEntries;
+
+// Class to simplify WiFi handling
+class R4A_WIFI
+{
+  private:
+
+    const char * _hostName;     // Name of this host
+
+    // Connect to an access point
+    // Inputs:
+    //   apCount: Number of access points found during the scan
+    // Outputs:
+    //   Returns the channel number of the access point to which the connection
+    //   attempt was made
+    uint8_t connect(uint8_t apCount);
+
+    // Verify the WiFi tables
+    void verifyTables();
+
+    // Handle the WiFi event
+    // Inputs:
+    //   event: Arduino ESP32 event number found on
+    //          https://github.com/espressif/arduino-esp32
+    //          in libraries/Network/src/NetworkEvents.h
+    //   info: Additional data about the event
+    void wifiEvent(arduino_event_id_t event, arduino_event_info_t info);
+
+  public:
+
+    volatile bool _connected;     // True if the station has an IP address
+    volatile Print * _debug;      // Display debugging data
+    volatile Print * _display;    // Display WiFi IP address and loss
+    volatile bool _mdnsAvailable; // True when the mDNS address translation is available
+
+    // Constructor
+    // Inputs:
+    //   display: Print object to display WiFi startup summary
+    //   debug: Print object to display WiFi debugging messages
+    R4A_WIFI(Print * display, Print * debug)
+        : _connected{false}, _display{display}, _debug{debug}, _hostName{nullptr},
+          _mdnsAvailable{false}
+    {
+    }
+
+    // Setup WiFi
+    // Inputs:
+    //   hostName: Zero terminated string of characters
+    void begin(const char * hostName);
+
+    // Handle the WiFi event
+    void event(arduino_event_id_t event, arduino_event_info_t info);
+
+    // Get the mDNS host name
+    // Outputs:
+    //   Returns the address of a zero terminated string of characters or nullptr
+    const char * hostNameGet();
+
+    // Set the mDNS host name
+    // Inputs:
+    //   hostName: Zero terminated string of characters
+    // Outputs:
+    //   Returns true if the host name was successfully set
+    bool hostNameSet(const char * hostName);
+
+    // Start the Wifi station
+    // Outputs:
+    //   Returns true if the WiFi station was started
+    bool stationStart();
+
+    // Stop the WiFi station
+    // Outputs:
+    //   Returns true if the WiFi station was stopped
+    bool stationStop();
+};
 
 #endif  // __R4A_ESP32_H__
