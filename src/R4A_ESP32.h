@@ -873,6 +873,15 @@ void r4aEsp32WpMenuAddPoint(const R4A_MENU_ENTRY * menuEntry,
                             const char * command,
                             Print * display);
 
+// Display a point from the waypoint file
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32WpMenuDisplayPoint(const R4A_MENU_ENTRY * menuEntry,
+                                const char * command,
+                                Print * display);
+
 // Set the waypoint file name
 // Inputs:
 //   menuEntry: Address of the object describing the menu entry
@@ -890,6 +899,30 @@ void r4aEsp32WpMenuFileName(const R4A_MENU_ENTRY * menuEntry,
 void r4aEsp32WpMenuPrintFile(const R4A_MENU_ENTRY * menuEntry,
                              const char * command,
                              Print * display);
+
+// Read a from the waypoint file
+// Inputs:
+//   file: Address of tha address of the waypoint file object
+//   fileSize: Address of the value to receive the file size
+//   latitude: Address to receive latitude in degrees
+//   longitude: Address to receive longitude in degrees
+//   altitude: Address to receive altitude in meters
+//   horizontalAccuracy: Address to receive horizontal accuracy in meters
+//   horizontalAccuracyStdDev: Address to receive horizontal accuracy standard deviation in meters
+//   satellitesInView: Address to receive the number of satellites feeding the GNSS receiver
+//   display: Device used for output, passed to computeWayPoint
+// Outputs:
+//   Returns true if the point was found and false when no more points
+//   are available
+bool r4aEsp32WpReadPoint(File * file,
+                         double * latitude,
+                         double * longitude,
+                         double * altitude,
+                         double * horizontalAccuracy,
+                         double * horizontalAccuracyStdDev,
+                         uint8_t * satellitesInView,
+                         String * comment,
+                         Print * display);
 
 //****************************************
 // Web Server API
