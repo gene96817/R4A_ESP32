@@ -143,3 +143,34 @@ void r4aEsp32WpMenuAddPoint(const R4A_MENU_ENTRY * menuEntry,
     else
         display->printf("ERROR: GNSS not initialized!\r\n");
 }
+
+//*********************************************************************
+// Set the waypoint file name
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32WpMenuFileName(const R4A_MENU_ENTRY * menuEntry,
+                            const char * command,
+                            Print * display)
+{
+    String fileName;
+    const R4A_ESP32_NVM_PARAMETER * parameter;
+
+    // Locate the file name
+    fileName = r4aMenuGetParameters(menuEntry, command);
+
+    // Locate the parameter description
+    parameter = r4aEsp32NvmParameterLookup(nvmParameters,
+                                           nvmParameterCount,
+                                           &r4aEsp32WpFileName,
+                                           display);
+    // Set the file name
+    r4aEsp32NvmParameterSet(parameterFilePath,
+                            nvmParameters,
+                            nvmParameterCount,
+                            parameter,
+                            fileName.c_str(),
+                            display);
+}
+

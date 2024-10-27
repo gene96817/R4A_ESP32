@@ -873,6 +873,15 @@ void r4aEsp32WpMenuAddPoint(const R4A_MENU_ENTRY * menuEntry,
                             const char * command,
                             Print * display);
 
+// Set the waypoint file name
+// Inputs:
+//   menuEntry: Address of the object describing the menu entry
+//   command: Zero terminated command string
+//   display: Device used for output
+void r4aEsp32WpMenuFileName(const R4A_MENU_ENTRY * menuEntry,
+                            const char * command,
+                            Print * display);
+
 //****************************************
 // Web Server API
 //****************************************
