@@ -344,6 +344,7 @@ const R4A_MENU_ENTRY wayPointMenuTable[] =
 const R4A_MENU_ENTRY mainMenuTable[] =
 {
     // Command  menuRoutine         menuParam       HelpRoutine align   HelpText
+    {"alf",     alfStart,           0,              nullptr,    0,      "Advanced line following"},
     {"blf",     blfStart,           0,              nullptr,    0,      "Basic line following"},
     {"blt",     bltStart,           0,              nullptr,    0,      "Basic light tracking"},
 #ifdef  USE_OV2640
