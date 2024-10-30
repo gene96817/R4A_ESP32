@@ -31,6 +31,14 @@
 #define GNSS_POINTS_TO_AVERAGE      (10 * GNSS_POINTS_PER_SECOND)   // 10 Seconds
 
 //****************************************
+// Forward routine declarations
+//****************************************
+
+void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
+              const char * command,
+              Print * display);
+
+//****************************************
 // Includes
 //****************************************
 
