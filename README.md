@@ -19,7 +19,8 @@ ESP32 specific support code including:
 
 Examples include:
 
-- [Freenove 4WD Car](https://www.amazon.com/dp/B08X6PTQFM?ref=ppx_yo2ov_dt_b_fed_asin_title) - Example showing the library support.  Features include:
+- [Freenove 4WD Car](https://www.amazon.com/dp/B08X6PTQFM?ref=ppx_yo2ov_dt_b_fed_asin_title) - Example
+showing the library support.  Features include:
   - Basic light following
   - Basic line following
   - Shell for:
