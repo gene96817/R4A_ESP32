@@ -149,10 +149,10 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     {true,  R4A_ESP32_NVM_PT_UINT8,  0,          180,           &servoTiltStartDegrees,     "tiltDegrees",  SERVO_TILT_START},
 
     // Time zone
-// Required    Type                  Minimum     Maximum        Address                     Name            Default Value
-    {true,  R4A_ESP32_NVM_PT_INT8,   -12,        12,            &r4aTimeZoneHours,          "tzHours",      -10},
-    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &r4aTimeZoneMinutes,        "tzMinutes",    0},
-    {true,  R4A_ESP32_NVM_PT_INT8,   -59,        59,            &r4aTimeZoneSeconds,        "tzSeconds",    0},
+// Required    Type                  Minimum        Maximum    Address                     Name            Default Value
+    {true,  R4A_ESP32_NVM_PT_INT8,   (uint64_t)-12, 12,        &r4aTimeZoneHours,          "tzHours",      (uint64_t)-10},
+    {true,  R4A_ESP32_NVM_PT_INT8,   (uint64_t)-59, 59,        &r4aTimeZoneMinutes,        "tzMinutes",    0},
+    {true,  R4A_ESP32_NVM_PT_INT8,   (uint64_t)-59, 59,        &r4aTimeZoneSeconds,        "tzSeconds",    0},
 
     // Waypoints
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value
