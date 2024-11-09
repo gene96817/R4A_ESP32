@@ -324,12 +324,12 @@ WEB_SERVER webServer(80);
 
 R4A_TELNET_SERVER telnet(menuTable, menuTableEntries);
 
-const R4A_SSID_PASSWORD r4aWifiSsidPassword[]
+const R4A_SSID_PASSWORD r4aWifiSsidPassword[] =
 {
-    {wifiSSID, wifiPassword},
-    {wifiSSID2, wifiPassword2},
-    {wifiSSID3, wifiPassword3},
-    {wifiSSID4, wifiPassword4},
+    {&wifiSSID,  &wifiPassword},
+    {&wifiSSID2, &wifiPassword2},
+    {&wifiSSID3, &wifiPassword3},
+    {&wifiSSID4, &wifiPassword4},
 };
 const int r4aWifiSsidPasswordEntries = sizeof(r4aWifiSsidPassword)
                                      / sizeof(r4aWifiSsidPassword[0]);

@@ -101,16 +101,16 @@ uint8_t R4A_WIFI::connect(uint8_t apCount)
             for (authIndex = 0; authIndex < r4aWifiSsidPasswordEntries; authIndex++)
             {
                 // Determine if this authorization matches the AP's SSID
-                if (r4aWifiSsidPassword[authIndex].ssid
-                    && strlen(r4aWifiSsidPassword[authIndex].ssid)
-                    && (strcmp(apSsid, r4aWifiSsidPassword[authIndex].ssid) == 0)
+                if (*r4aWifiSsidPassword[authIndex].ssid
+                    && strlen(*r4aWifiSsidPassword[authIndex].ssid)
+                    && (strcmp(apSsid, *r4aWifiSsidPassword[authIndex].ssid) == 0)
                     && ((type == WIFI_AUTH_OPEN)
-                        || (r4aWifiSsidPassword[authIndex].password
-                            && (strlen(r4aWifiSsidPassword[authIndex].password)))))
+                        || (*r4aWifiSsidPassword[authIndex].password
+                            && (strlen(*r4aWifiSsidPassword[authIndex].password)))))
                 {
                     // A match was found, save it and stop looking
-                    apName = r4aWifiSsidPassword[authIndex].ssid;
-                    apPassword = r4aWifiSsidPassword[authIndex].password;
+                    apName = *r4aWifiSsidPassword[authIndex].ssid;
+                    apPassword = *r4aWifiSsidPassword[authIndex].password;
                     apChannel = channel;
                     authType = type;
                     apFound = true;

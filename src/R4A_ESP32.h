@@ -1031,8 +1031,8 @@ esp_err_t r4aWebServerFileDownload(httpd_req_t *request);
 // Entry in the SSID and password table r4aSsidPassword
 typedef struct _R4A_SSID_PASSWORD
 {
-    const char * ssid;      // ID of access point
-    const char * password;  // Password for the access point
+    const char ** ssid;     // ID of access point
+    const char ** password; // Password for the access point
 } R4A_SSID_PASSWORD;
 
 // List of known access points (APs)
