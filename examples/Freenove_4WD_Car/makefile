@@ -34,7 +34,6 @@ BIN_PATH=$BUILD_PATH)esp32.esp32.$(ESP32_CHIP)\
 BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32\binaries\
 ESPTOOL_PATH=$(USER_DIRECTORY_PATH)\.arduino15\packages\esp32\tools\esptool_py\4.5.1\
 HOME_BOARD_PATH=$(USER_DIRECTORY_PATH)AppData\Local\Arduino15\packages\esp32\
-READ_MAP_FILE_PATH=
 
 # Windows NT utilities
 ARDUINO_CLI=~/Arduino/arduino-cli
@@ -63,7 +62,6 @@ BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32/binaries/
 ESP_IDF_PATH=$(HOME_BOARD_PATH)tools/esp32-arduino-libs/
 ESPTOOL_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/tools/esptool_py/4.5.1/
 HOME_BOARD_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/
-READ_MAP_FILE_PATH=$(USER_DIRECTORY_PATH)SparkFun/rc/RTK/Firmware/Tools/
 
 # Linux utilities
 ARDUINO_CLI=$(USER_DIRECTORY_PATH)Arduino/arduino-cli
