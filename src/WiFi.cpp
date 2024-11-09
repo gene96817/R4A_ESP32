@@ -415,7 +415,15 @@ bool R4A_WIFI::stationStart()
 
     // Start the WiFi scan
     if (success)
-        WiFi.scanNetworks(true);
+    {
+        if (debug)
+            debug->printf("Starting WiFi scan\r\n");
+        if (WiFi.scanNetworks(true) != WIFI_SCAN_RUNNING)
+        {
+            if (debug)
+                debug->printf("ERROR: Failed to start the WiFi scan!\r\n");
+        }
+    }
     return success;
 }
 
