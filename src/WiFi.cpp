@@ -55,6 +55,14 @@ void R4A_WIFI::begin(const char * hostName)
 }
 
 //*********************************************************************
+// Get the active channel
+//   Returns the channel number or zero (0) if not connected
+uint8_t R4A_WIFI::channelGet()
+{
+    return _channel;
+}
+
+//*********************************************************************
 // Connect to a remote AP
 uint8_t R4A_WIFI::connect(uint8_t apCount)
 {
@@ -140,6 +148,8 @@ uint8_t R4A_WIFI::connect(uint8_t apCount)
                           apName,
                           apChannel,
                           (authType < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[authType] : "Unknown");
+        _ssid = String(apName);
+        _channel = apChannel;
         WiFi.STA.connect(apName, apPassword);
     }
 
@@ -166,8 +176,10 @@ void R4A_WIFI::event(arduino_event_id_t event, arduino_event_info_t info)
     if ((event != ARDUINO_EVENT_WIFI_STA_GOT_IP)
         && (event != ARDUINO_EVENT_WIFI_STA_GOT_IP6))
     {
+        _channel = 0;
         _connected = false;
         _mdnsAvailable = false;
+        _ssid = String("");
     }
 
     // Handle the event
@@ -352,6 +364,14 @@ bool R4A_WIFI::hostNameSet(const char * hostName)
     if ((!success) && debug)
         debug->print("ERROR: Failed to set the host name!\r\n");
     return success;
+}
+
+//*********************************************************************
+// Get the connected SSID
+//   Returns the address of a zero terminated string of characters or nullptr
+const char * R4A_WIFI::ssidGet()
+{
+    return _ssid.c_str();
 }
 
 //*********************************************************************

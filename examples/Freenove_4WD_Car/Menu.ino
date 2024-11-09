@@ -96,7 +96,24 @@ void gnssMenuDisplayLocation(const R4A_MENU_ENTRY * menuEntry,
 void mainMenuPre(Print * display)
 {
     if (r4aWifiSsidPasswordEntries)
+    {
+        // Display the WIFI status
+        const char * hostName = wifi.hostNameGet();
+        if (hostName)
+            display->printf("%s (%s): %s channel %d\r\n",
+                            hostName,
+                            WiFi.localIP().toString().c_str(),
+                            wifi.ssidGet(),
+                            wifi.channelGet());
+        else
+            display->printf("%s: %s channel %d\r\n",
+                            WiFi.localIP().toString().c_str(),
+                            wifi.ssidGet(),
+                            wifi.channelGet());
+
+        // Display the current time
         r4aNtpDisplayDateTime(display);
+    }
     DISPLAY_BATTERY_VOLTAGE(display);
 }
 

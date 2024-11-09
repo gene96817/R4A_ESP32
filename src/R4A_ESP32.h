@@ -1044,7 +1044,9 @@ class R4A_WIFI
 {
   private:
 
+    uint8_t _channel;           // Active channel number
     const char * _hostName;     // Name of this host
+    String _ssid;               // SSID of remote AP
 
     // Connect to an access point
     // Inputs:
@@ -1077,8 +1079,8 @@ class R4A_WIFI
     //   display: Print object to display WiFi startup summary
     //   debug: Print object to display WiFi debugging messages
     R4A_WIFI(Print * display, Print * debug)
-        : _connected{false}, _display{display}, _debug{debug}, _hostName{nullptr},
-          _mdnsAvailable{false}
+        : _channel{0}, _connected{false}, _display{display}, _debug{debug},
+          _hostName{nullptr}, _mdnsAvailable{false}, _ssid{String("")}
     {
     }
 
@@ -1086,6 +1088,10 @@ class R4A_WIFI
     // Inputs:
     //   hostName: Zero terminated string of characters
     void begin(const char * hostName);
+
+    // Get the active channel
+    //   Returns the channel number or zero (0) if not connected
+    uint8_t channelGet();
 
     // Handle the WiFi event
     void event(arduino_event_id_t event, arduino_event_info_t info);
@@ -1101,6 +1107,10 @@ class R4A_WIFI
     // Outputs:
     //   Returns true if the host name was successfully set
     bool hostNameSet(const char * hostName);
+
+    // Get the connected SSID
+    //   Returns the address of a zero terminated string of characters or nullptr
+    const char * ssidGet();
 
     // Start the Wifi station
     // Outputs:
