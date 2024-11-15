@@ -11,6 +11,8 @@
 // Constants
 //****************************************
 
+#define R4A_WIFI_RECONNECTION_DELAY     500 // milliseconds
+
 static const char * r4aEsp32WiFiAuthorizationName[] =
 {
     "Open",
@@ -34,7 +36,7 @@ static R4A_WIFI * r4aWiFi;
 // Handle the WiFi event
 void r4aEsp32WifiEvent(arduino_event_id_t event, arduino_event_info_t info)
 {
-    r4aWiFi->event(event, info);
+    r4aWiFi->eventHandler(event, info);
 }
 
 //*********************************************************************
@@ -59,112 +61,20 @@ void R4A_WIFI::begin(const char * hostName)
 //   Returns the channel number or zero (0) if not connected
 uint8_t R4A_WIFI::channelGet()
 {
-    return _channel;
-}
-
-//*********************************************************************
-// Connect to a remote AP
-uint8_t R4A_WIFI::connect(uint8_t apCount)
-{
-    int ap;
-    bool apFound;
-    const char * apName;
-    int apChannel;
-    const char * apPassword;
-    const char * apSsid;
-    String apSsidString;
-    int authIndex;
-    int authType;
-    int channel;
-    Print * debug;
-    int type;
-
-    // Verify that an AP was found
-    if (apCount == 0)
-        return 0;
-
-    // Print the header
-    //                                    1                 1         2         3
-    //             1234   1234   123456789012345   12345678901234567890123456789012
-    debug = (Print *)_debug;
-    if (debug)
-    {
-        debug->printf(" dBm   Chan   Authorization     SSID\r\n");
-        debug->printf("----   ----   ---------------   --------------------------------\r\n");
-    }
-
-    // Walk the list of APs that were found during the scan
-    apFound = false;
-    apChannel = 0;
-    for (ap = 0; ap < apCount; ap++)
-    {
-        // The APs are listed in decending signal strength order
-        // Check for a requested AP
-        apSsidString = WiFi.SSID(ap);
-        apSsid = apSsidString.c_str();
-        type = WiFi.encryptionType(ap);
-        channel = WiFi.channel(ap);
-        if (!apFound)
-        {
-            for (authIndex = 0; authIndex < r4aWifiSsidPasswordEntries; authIndex++)
-            {
-                // Determine if this authorization matches the AP's SSID
-                if (*r4aWifiSsidPassword[authIndex].ssid
-                    && strlen(*r4aWifiSsidPassword[authIndex].ssid)
-                    && (strcmp(apSsid, *r4aWifiSsidPassword[authIndex].ssid) == 0)
-                    && ((type == WIFI_AUTH_OPEN)
-                        || (*r4aWifiSsidPassword[authIndex].password
-                            && (strlen(*r4aWifiSsidPassword[authIndex].password)))))
-                {
-                    // A match was found, save it and stop looking
-                    apName = *r4aWifiSsidPassword[authIndex].ssid;
-                    apPassword = *r4aWifiSsidPassword[authIndex].password;
-                    apChannel = channel;
-                    authType = type;
-                    apFound = true;
-                    break;
-                }
-            }
-
-            // Check for done
-            if (apFound && (!_debug))
-                break;
-        }
-
-        // Display the list of APs
-        if (debug)
-            debug->printf("%4d   %4d   %s   %s\r\n",
-                          WiFi.RSSI(ap),
-                          channel,
-                          (type < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[type] : "Unknown",
-                          apSsid);
-    }
-
-    // Connect to the AP
-    if (apFound)
-    {
-        if (debug)
-            debug->printf("WiFi connecting to %s on channel %d with %s authorization\r\n",
-                          apName,
-                          apChannel,
-                          (authType < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[authType] : "Unknown");
-        _ssid = String(apName);
-        _channel = apChannel;
-        WiFi.STA.connect(apName, apPassword);
-    }
-
-    // Return the channel number
-    return apChannel;
+    return _wifiChannel;
 }
 
 //*********************************************************************
 // Handle the WiFi event
-void R4A_WIFI::event(arduino_event_id_t event, arduino_event_info_t info)
+void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
 {
-    int channel;
+    R4A_WIFI_CHANNEL_t channel;
     Print * debug;
     Print * display;
     static IPAddress localIP;
+    static char localIpType;
+    wifi_mode_t mode;
+    bool success;
 
     // Always output display items
     debug = (Print *)_debug;
@@ -172,14 +82,33 @@ void R4A_WIFI::event(arduino_event_id_t event, arduino_event_info_t info)
     if (!display)
         display = debug;
 
+    // Display the event
+    if (debug)
+        debug->printf("event: %d\r\n", event);
+
     // Notify the upper layers that WiFi is no longer available
-    if ((event != ARDUINO_EVENT_WIFI_STA_GOT_IP)
-        && (event != ARDUINO_EVENT_WIFI_STA_GOT_IP6))
+    if ((event >= ARDUINO_EVENT_WIFI_SCAN_DONE)
+        && (event <= ARDUINO_EVENT_WIFI_STA_LOST_IP))
     {
-        _channel = 0;
-        _connected = false;
-        _mdnsAvailable = false;
-        _ssid = String("");
+        switch (event)
+        {
+        case ARDUINO_EVENT_WIFI_STA_GOT_IP:
+        case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
+            break;
+
+        case ARDUINO_EVENT_WIFI_SCAN_DONE:
+        case ARDUINO_EVENT_WIFI_STA_START:
+        case ARDUINO_EVENT_WIFI_STA_STOP:
+        case ARDUINO_EVENT_WIFI_STA_CONNECTED:
+        case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
+        case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
+            _mdnsAvailable = false;
+            _stationConnected = false;
+            _wifiChannel = 0;
+        case ARDUINO_EVENT_WIFI_STA_LOST_IP:
+            _stationHasIp = false;
+            break;
+        }
     }
 
     // Handle the event
@@ -218,76 +147,125 @@ void R4A_WIFI::event(arduino_event_id_t event, arduino_event_info_t info)
             debug->printf("WiFi Event: Station start\r\n");
         break;
 
-    case ARDUINO_EVENT_WIFI_SCAN_DONE:
-        // uint32_t status:  status of scanning APs: 0 — success, 1 - failure
-        // uint8_t  number:  number of scan results
-        // uint8_t  scan_id: scan sequence number, used for block scan
-        if (info.wifi_scan_done.status == 0)
-        {
-            if (debug)
-                debug->printf("WiFi Event: Scan done\r\n");
-
-            uint8_t apCount = info.wifi_scan_done.number;
-            channel = connect(apCount);
-        }
-        else if (debug)
-            debug->printf("WiFi Event: Scan done - failed!\r\n");
-        break;
-
     case ARDUINO_EVENT_WIFI_STA_CONNECTED:
+        _stationConnected = true;
         if (debug)
             debug->printf("WiFi Event: Station connected\r\n");
         break;
 
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
-        localIP = WiFi.STA.localIP();
+    case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
+        _stationHasIp = true;
+
+        // Display the IP address
         if (display)
-            display->printf("WiFi Event: Got IP address %s\r\n",
-                            localIP.toString().c_str());
+        {
+            localIP = WiFi.STA.localIP();
+            localIpType = (event == ARDUINO_EVENT_WIFI_STA_GOT_IP) ? '4' : '6';
+            display->printf("WiFi Event: Got IPv%c address %s\r\n",
+                            localIpType, localIP.toString().c_str());
+        }
 
         // Start mDNS
-        if (_hostName)
-        {
-            if (MDNS.begin(_hostName))
-            {
-                if (display)
-                    display->printf("mDNS: %s.local connects to %s\r\n",
-                                    _hostName, localIP.toString().c_str());
-                _mdnsAvailable = true;
-            }
-            else if (debug)
-                debug->printf("ERROR: MDNS responder failed to start!\r\n");
-        }
-        _connected = true;
-        break;
-
-    case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
-        localIP = WiFi.STA.localIP();
-        if (display)
-            display->printf("WiFi Event: Got IP6 address\r\n",
-                            localIP.toString().c_str());
-        _connected = true;
+        mDNSStart();
         break;
 
     case ARDUINO_EVENT_WIFI_STA_LOST_IP:
         if (display)
-            display->printf("WiFi Event: Lost IP address %d\r\n",
-                            localIP.toString().c_str());
+            display->printf("WiFi Event: Lost IPv%c address %s\r\n",
+                            localIpType, localIP.toString().c_str());
         break;
 
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
-        if (debug)
-            debug->printf("WiFi Event: Station disconnected\r\n");
+    // Argument structure for WIFI_EVENT_STA_DISCONNECTED event
+    //  typedef struct {
+    //      uint8_t ssid[32];         // SSID of disconnected AP
+    //      uint8_t ssid_len;         // SSID length of disconnected AP
+    //      uint8_t bssid[6];         // BSSID of disconnected AP
+    //      uint8_t reason;           // reason of disconnection
+    //      int8_t  rssi;             // rssi of disconnection
+    //  } wifi_event_sta_disconnected_t;
+        if (display)
+            display->printf("WiFi Event: Station disconnected from %s\r\n",
+                            info.wifi_sta_disconnected.ssid);
+
+        // Start the reconnection timer
+        _wifiTimer = millis();
         break;
 
     case ARDUINO_EVENT_WIFI_STA_STOP:
         if (debug)
             debug->printf("WiFi Event: Station stop\r\n");
+
+        // Stop the reconnection timer
+        _wifiTimer = 0;
         break;
 
     case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
         if (debug)
             debug->printf("WiFi Event: Station authorization change\r\n");
+        break;
+
+    //----------------------------------------
+    // Scan events
+    //----------------------------------------
+
+    case ARDUINO_EVENT_WIFI_SCAN_DONE:
+        // Argument structure for WIFI_EVENT_SCAN_DONE event
+        //  typedef struct
+        //  {
+        //      uint32_t status;    // status of scanning APs: 0 — success, 1 - failure
+        //      uint8_t  number;    // number of scan results
+        //      uint8_t  scan_id;   // scan sequence number, used for block scan
+        //  } wifi_event_sta_scan_done_t;
+        _wifiScanRunning = false;
+        do {
+            if (info.wifi_scan_done.status != 0)
+            {
+                if (debug)
+                    debug->printf("WiFi Event: Scan done - failed!\r\n");
+                break;
+            }
+            if (debug)
+                debug->printf("WiFi Event: Scan done\r\n");
+
+            // Select an AP from the list
+            _apCount = info.wifi_scan_done.number;
+            channel = stationSelectAP(true, nullptr);
+            if (channel == 0)
+            {
+                if (debug)
+                    debug->printf("No compatible remote AP found!\r\n");
+                break;
+            }
+            _wifiChannel = channel;
+
+            // Start WiFi station mode
+            mode = WiFi.getMode();
+            if (WiFi.mode((wifi_mode_t)(mode | WIFI_MODE_STA)) == false)
+            {
+                Serial.printf("ERROR: Failed to enable WiFi station mode!\r\n");
+                break;
+            }
+            if (debug)
+                debug->printf("WiFi station mode enabled\r\n");
+
+            // Set the host name
+            if (!stationHostName(_hostName))
+                break;
+
+            // Disable auto reconnect
+            if (!WiFi.setAutoReconnect(false))
+            {
+                Serial.printf("ERROR: Failed to disable auto-reconnect!\r\n");
+                break;
+            }
+            if (debug)
+                debug->printf("WiFi auto-reconnect disabled\r\n");
+
+            // Connect to the remote AP
+            stationConnectAP();
+        } while (0);
         break;
 
     //------------------------------
@@ -337,6 +315,33 @@ void R4A_WIFI::event(arduino_event_id_t event, arduino_event_info_t info)
 }
 
 //*********************************************************************
+// Start the WiFi event handler
+void R4A_WIFI::eventHandlerStart()
+{
+    Print * debug;
+
+    debug = (Print *)_debug;
+    if (debug)
+        debug->printf("Starting the WiFi event handler\r\n");
+
+    // Establish the WiFi event handler
+    Network.onEvent(r4aEsp32WifiEvent);
+}
+
+//*********************************************************************
+// Stop the WiFi event handler
+void R4A_WIFI::eventHandlerStop()
+{
+    Print * debug;
+
+    debug = (Print *)_debug;
+    if (debug)
+        debug->printf("Stopping the WiFi event handler\r\n");
+
+    Network.removeEvent(r4aEsp32WifiEvent);
+}
+
+//*********************************************************************
 // Get the mDNS host name
 const char * R4A_WIFI::hostNameGet()
 {
@@ -344,26 +349,69 @@ const char * R4A_WIFI::hostNameGet()
 }
 
 //*********************************************************************
-// Set the mDNS host name
-bool R4A_WIFI::hostNameSet(const char * hostName)
+// List the remote APs
+// Inputs:
+//   display: Address of a Print object used to list the APs
+void R4A_WIFI::listAPs(Print * display)
+{
+    stationSelectAP(false, display);
+}
+
+//*********************************************************************
+// Start the multicast domain name server
+// Outputs:
+//   Returns true if successful and false upon failure
+bool R4A_WIFI::mDNSStart()
 {
     Print * debug;
-    bool success;
+    Print * display;
+    bool started;
 
-    // Verify that a host name was specified
-    debug = (Print *)_debug;
-    if (!hostName)
+    do
     {
-        if (debug)
-            debug->print("ERROR: No host name specified!\r\n");
-        return false;
-    }
+        // Always output display items
+        debug = (Print *)_debug;
+        display = (Print *)_display;
+        if (!display)
+            display = debug;
 
-    // Attempt to set the host name
-    success = WiFi.STA.setHostname(hostName);
-    if ((!success) && debug)
-        debug->print("ERROR: Failed to set the host name!\r\n");
-    return success;
+        // Verify that a host name exists
+        started = (_hostName != nullptr) && (strlen(_hostName) != 0);
+        if (!started)
+        {
+            Serial.printf("ERROR: No mDNS host name specified!\r\n");
+            break;
+        }
+
+        // Start mDNS
+        if (debug)
+            debug->printf("Starting mDNS\r\n");
+        started = MDNS.begin(_hostName);
+        if (!started)
+        {
+            Serial.printf("ERROR: Failed to start mDNS!\r\n");
+            break;
+        }
+        _mdnsAvailable = started;
+        if (display)
+            display->printf("mDNS started as %s.local\r\n", _hostName);
+    } while (0);
+    return started;
+}
+
+//*********************************************************************
+// Stop the multicast domain name server
+void R4A_WIFI::mDNSStop()
+{
+    Print * debug;
+
+    debug = (Print *)_debug;
+    if (debug)
+        debug->printf("Stopping mDNS\r\n");
+    _mdnsAvailable = false;
+    MDNS.end();
+    if (debug)
+        debug->printf("mDNS stopped\r\n");
 }
 
 //*********************************************************************
@@ -371,68 +419,446 @@ bool R4A_WIFI::hostNameSet(const char * hostName)
 //   Returns the address of a zero terminated string of characters or nullptr
 const char * R4A_WIFI::ssidGet()
 {
-    return _ssid.c_str();
+    return _apSSID;
+}
+
+//*********************************************************************
+// Connect the station to a remote AP
+bool R4A_WIFI::stationConnectAP()
+{
+    bool connected;
+    Print * debug;
+    Print * display;
+
+    do
+    {
+        // Determine if a remote AP is available
+        debug = (Print *)_debug;
+        display = (Print *)display;
+        if (!display)
+            display = debug;
+        connected = _apFound;
+        if (!connected)
+        {
+            Serial.printf("ERROR: No remote AP found!\r\n");
+            break;
+        }
+
+        // Connect to the remote AP
+        if (debug)
+            debug->printf("WiFi connecting to %s on channel %d with %s authorization\r\n",
+                          _apSSID,
+                          _wifiChannel,
+                          (_authType < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[_authType] : "Unknown");
+        connected = (WiFi.STA.connect(_apSSID, _apPassword, _wifiChannel));
+        if (!connected)
+        {
+            if (debug)
+                debug->printf("WIFI failed to connect to SSID %s with password %s\r\n", _apSSID, _apPassword);
+            break;
+        }
+        if (display)
+            display->printf("WiFi station connected to %s on channel %d with %s authorization\r\n",
+                            _apSSID,
+                            _wifiChannel,
+                            (_authType < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[_authType] : "Unknown");
+    } while (0);
+    return connected;
+}
+
+//*********************************************************************
+// Disconnect the station from an AP
+// Outputs:
+//   Returns true if successful and false upon failure
+bool R4A_WIFI::stationDisconnect()
+{
+    Print * debug;
+    bool disconnected;
+
+    do
+    {
+        // Determine if station is connected to a remote AP
+        debug = (Print *)_debug;
+        disconnected = !_stationConnected;
+        if (disconnected)
+        {
+            if (debug)
+                debug->printf("Station already disconnected from remote AP\r\n");
+            break;
+        }
+
+        // Disconnect from the remote AP
+        if (debug)
+            debug->printf("WiFI disconnection station\r\n");
+        disconnected = WiFi.STA.disconnect();
+        if (!disconnected)
+        {
+            Serial.printf("ERROR: Failed to disconnect WiFi from the AP!\r\n");
+            break;
+        }
+        if (debug)
+            debug->printf("WiFi disconnected from the AP\r\n");
+    } while (0);
+    return disconnected;
+}
+
+//*********************************************************************
+// Set the station's host name
+// Inputs:
+//   hostName: Zero terminated host name character string
+// Outputs:
+//   Returns true if successful and false upon failure
+bool R4A_WIFI::stationHostName(const char * hostName)
+{
+    Print * debug;
+    bool nameSet;
+
+    do
+    {
+        // Verify that a host name was specified
+        debug = (Print *)_debug;
+        nameSet =  (hostName != nullptr) && (strlen(hostName) != 0);
+        if (!nameSet)
+        {
+            Serial.printf("ERROR: No host name specified!\r\n");
+            break;
+        }
+
+        // Set the host name
+        if (debug)
+            debug->printf("WiFI setting station host name\r\n");
+        nameSet = WiFi.STA.setHostname(hostName);
+        if (!nameSet)
+        {
+            Serial.printf("ERROR: Failed to set the Wifi station host name!\r\n");
+            break;
+        }
+        if (debug)
+            debug->printf("WiFi station hostname: %s\r\n", hostName);
+    } while (0);
+    return nameSet;
+}
+
+//*********************************************************************
+// Start the WiFi scan
+// Inputs:
+//   channel: Channel number for the scan, zero (0) scan all channels
+// Outputs:
+//   Returns true if successful and false upon failure
+bool R4A_WIFI::stationScanStart(R4A_WIFI_CHANNEL_t channel)
+{
+    Print * debug;
+    int16_t status;
+
+    do
+    {
+        // Determine if the WiFi scan is already running
+        debug = (Print *)_debug;
+        if (_wifiScanRunning)
+        {
+            if (debug)
+                debug->printf("WiFi scan already running");
+            break;
+        }
+
+        // Determine if scanning a single channel or all channels
+        if (debug)
+        {
+            if (channel)
+                debug->printf("WiFI starting AP scan on channel %d\r\n", channel);
+            else
+                debug->printf("WiFI starting AP scan\r\n");
+        }
+
+        // Start the WiFi scan
+        status = WiFi.scanNetworks(true,        // async
+                                   false,       // show_hidden
+                                   false,       // passive
+                                   300,         // max_ms_per_chan
+                                   channel,     // channel number
+                                   nullptr,     // ssid *
+                                   nullptr);    // bssid *
+        _wifiScanRunning = (status == WIFI_SCAN_RUNNING);
+        if (!_wifiScanRunning)
+        {
+            Serial.printf("ERROR: WiFi scan failed to start!\r\n");
+            break;
+        }
+        if (debug)
+        {
+            if (channel)
+                debug->printf("WiFi scan started on channel %d\r\n", channel);
+            else
+                debug->printf("WiFi scan started\r\n");
+        }
+    } while (0);
+    return _wifiScanRunning;
+}
+
+//*********************************************************************
+// Select the AP and channel to use for WiFi station
+// Inputs:
+//   connect: Set to true for connection
+//   list: Address of a Print object used to list the APs or nullptr
+// Outputs:
+//   Returns the channel number of the AP
+R4A_WIFI_CHANNEL_t R4A_WIFI::stationSelectAP(bool connect, Print * list)
+{
+    int ap;
+    R4A_WIFI_CHANNEL_t apChannel;
+    int authIndex;
+    R4A_WIFI_CHANNEL_t channel;
+    Print * debug;
+    const char * ssid;
+    String ssidString;
+    int type;
+
+    // Determine the value to use for listing
+    debug = (Print *)_debug;
+    if (!list)
+        list = debug;
+
+    // Verify that an AP was found
+    if (_apCount == 0)
+        return 0;
+
+    // Print the header
+    //                                    1                 1         2         3
+    //             1234   1234   123456789012345   12345678901234567890123456789012
+    if (list)
+    {
+        list->printf(" dBm   Chan   Authorization     SSID\r\n");
+        list->printf("----   ----   ---------------   --------------------------------\r\n");
+    }
+
+    // Walk the list of APs that were found during the scan
+    _apFound = false;
+    apChannel = 0;
+    for (ap = 0; ap < _apCount; ap++)
+    {
+        // The APs are listed in decending signal strength order
+        // Check for a requested AP
+        ssidString = WiFi.SSID(ap);
+        ssid = ssidString.c_str();
+        type = WiFi.encryptionType(ap);
+        channel = WiFi.channel(ap);
+        if (connect && (!_apFound))
+        {
+            for (authIndex = 0; authIndex < r4aWifiSsidPasswordEntries; authIndex++)
+            {
+                // Determine if this authorization matches the AP's SSID
+                if (*r4aWifiSsidPassword[authIndex].ssid
+                    && strlen(*r4aWifiSsidPassword[authIndex].ssid)
+                    && (strcmp(ssid, *r4aWifiSsidPassword[authIndex].ssid) == 0)
+                    && ((type == WIFI_AUTH_OPEN)
+                        || (*r4aWifiSsidPassword[authIndex].password
+                            && (strlen(*r4aWifiSsidPassword[authIndex].password)))))
+                {
+                    if (debug)
+                        debug->printf("WiFi: Found remote AP: %s\r\n", ssid);
+
+                    // A match was found, save it and stop looking
+                    _apSSID = *r4aWifiSsidPassword[authIndex].ssid;
+                    _apPassword = *r4aWifiSsidPassword[authIndex].password;
+                    apChannel = channel;
+                    _authType = type;
+                    _apFound = true;
+                    break;
+                }
+            }
+
+            // Check for done
+            if (_apFound && (!list))
+                break;
+        }
+
+        // Display the list of APs
+        if (list)
+            list->printf("%4d   %4d   %s   %s\r\n",
+                         WiFi.RSSI(ap),
+                         channel,
+                         (type < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[type] : "Unknown",
+                         ssid);
+    }
+
+    // Return the channel number
+    return apChannel;
 }
 
 //*********************************************************************
 // Start the Wifi station
 bool R4A_WIFI::stationStart()
 {
+    int authIndex;
     Print * debug;
     wifi_mode_t mode;
-    bool success;
+    bool started;
 
-    // Verify that at least one WiFi access point is in the list
-    debug = (Print *)_debug;
-    if (r4aWifiSsidPasswordEntries == 0)
+    do
     {
-        if (debug)
-            debug->printf("ERROR: No entries in r4aWiFiSsidPasswordEntries\r\n");
-        return false;
-    }
+        // Verify that at least one WiFi access point is in the list
+        debug = (Print *)_debug;
+        started = (r4aWifiSsidPasswordEntries != 0);
+        if (!started)
+        {
+            Serial.printf("ERROR: No entries in r4aWifiSsidPasswordEntries\r\n");
+            break;
+        }
 
-    // Determine if WiFi is running
-    mode = WiFi.getMode();
-    if ((mode & (WIFI_MODE_STA | WIFI_MODE_AP)) == 0)
-    {
-        // Start the WiFi network
-        if (debug)
-            debug->printf("Initializing the WiFi controller\r\n");
+        // Verify that at least one SSID is set
+        for (authIndex = 0; authIndex < r4aWifiSsidPasswordEntries; authIndex++)
+            if (*r4aWifiSsidPassword[authIndex].ssid
+                && (strlen(*r4aWifiSsidPassword[authIndex].ssid)))
+            {
+                break;
+            }
+        if (authIndex >= r4aWifiSsidPasswordEntries)
+        {
+            Serial.printf("ERROR: No valid SSID in r4aWifiSsidPassword\r\n");
+            break;
+        }
 
-        // Establish the WiFi event handler
-        Network.onEvent(r4aEsp32WifiEvent);
-
-        // Start the network
-        success = WiFi.begin();
-
-        // Set the host name
-        if (success && _hostName)
-            success = hostNameSet(_hostName);
-    }
-    else if ((mode & WIFI_MODE_STA) == 0)
-        // Attempt to enable WiFi station
-        success = WiFi.mode((wifi_mode_t)(WiFi.getMode() | WIFI_MODE_STA));
-
-    // Start the WiFi scan
-    if (success)
-    {
-        if (debug)
-            debug->printf("Starting WiFi scan\r\n");
-        if (WiFi.scanNetworks(true) != WIFI_SCAN_RUNNING)
+        // Determine if WiFi is running
+        mode = WiFi.getMode();
+        started = ((mode & WIFI_MODE_STA) != 0);
+        if (started)
         {
             if (debug)
-                debug->printf("ERROR: Failed to start the WiFi scan!\r\n");
+                debug->printf("WiFi: Station already started\r\n");
+            if (_stationConnected)
+                break;
         }
-    }
-    return success;
+        else
+        {
+            // Start the WiFi event handler
+            eventHandlerStart();
+
+            // Attempt to enable WiFi station
+            if (debug)
+                debug->printf("WiFi: Starting station mode\r\n");
+            started = WiFi.mode((wifi_mode_t)(mode | WIFI_MODE_STA));
+            if (!started)
+            {
+                Serial.printf("ERROR: Failed to stop WiFi station mode!\r\n");
+                break;
+            }
+            if (debug)
+                debug->printf("WiFi: Started station mode\r\n");
+        }
+
+        // Start the WiFi scan
+        started = stationScanStart(_wifiChannel);
+    } while (0);
+    return started;
 }
 
 //*********************************************************************
 // Stop the WiFi station
 bool R4A_WIFI::stationStop()
 {
-    // Attempt to enable WiFi station
-    return WiFi.mode((wifi_mode_t)(WiFi.getMode() & ~WIFI_MODE_STA));
+    Print * debug;
+    wifi_mode_t mode;
+    bool stopped;
+
+    do {
+        // Determine if WiFi station is already stopped
+        debug = (Print *)_debug;
+        if (debug)
+            debug->printf("WiFI stopping station mode\r\n");
+        mode = WiFi.getMode();
+        stopped = ((mode & WIFI_MODE_STA) == 0);
+        if (stopped)
+        {
+            if (debug)
+                debug->printf("WiFi STA already stopped\r\n");
+            break;
+        }
+
+        // Stop mDNS
+        mDNSStop();
+
+        // Disconnect from the remote AP
+        stopped = stationDisconnect();
+        if (!stopped)
+            break;
+
+        // Stop WiFi station
+        stopped = WiFi.mode((wifi_mode_t)(mode & ~WIFI_MODE_STA));
+        if (!stopped)
+        {
+            Serial.printf("ERROR: Failed to stop WiFi STA!\r\n");
+            break;
+        }
+        if (debug)
+            debug->printf("WiFI STA: Started --> Stopped\r\n");
+
+        // Remove the WiFi event handler
+        eventHandlerStop();
+    } while (0);
+    return stopped;
+}
+
+//*********************************************************************
+// Test the WiFi modes, call from loop
+void R4A_WIFI::test()
+{
+    uint32_t currentMsec;
+    static uint32_t lastScanMsec = - (180 * 1000);
+    int rand;
+
+    // Delay the mode change until after the WiFi scan completes
+    currentMsec = millis();
+    if (_wifiScanRunning)
+        lastScanMsec = currentMsec;
+
+    // Check if it time for a mode change
+    else if ((currentMsec - lastScanMsec) >= (8 * 1000))
+    {
+        lastScanMsec = currentMsec;
+
+        // Get a random number
+        rand = random() & 3;
+
+        // Determine the next actions
+        switch (rand)
+        {
+        default:
+            lastScanMsec = 0;
+            break;
+
+        case 0:
+            Serial.printf("--------------------  %d: Stop  --------------------\r\n", rand);
+            stationStop();
+            break;
+
+        case 1:
+            Serial.printf("--------------------  %d: Start  -------------------\r\n", rand);
+            stationStart();
+            break;
+
+        case 2:
+            Serial.printf("--------------------  %d: Disconnect  --------------\r\n", rand);
+            stationDisconnect();
+            break;
+        }
+    }
+}
+
+//*********************************************************************
+// Check for reconnection after disconnect, call from loop
+void R4A_WIFI::update()
+{
+    // Check for reconnection request
+    if (_wifiTimer)
+    {
+        if ((millis() - _wifiTimer) >= R4A_WIFI_RECONNECTION_DELAY)
+        {
+            _wifiTimer = 0;
+
+            // Start the WiFi scan
+            stationScanStart(_wifiChannel);
+        }
+    }
 }
 
 //*********************************************************************
