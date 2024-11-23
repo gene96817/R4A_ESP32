@@ -715,8 +715,8 @@ class R4A_OV2640
                int i2cAddress,
                const R4A_OV2640_PINS * pins,
                uint32_t clockHz)
-        : _i2cBus{i2cBus}, _i2cAddress{i2cAddress & 0x7f}, _pins{pins},
-          _clockHz{clockHz}
+        : _clockHz{clockHz}, _i2cBus{i2cBus}, _i2cAddress{i2cAddress & 0x7f},
+          _pins{pins}
     {
     }
 
@@ -785,6 +785,11 @@ class R4A_ESP32_SPI : public R4A_SPI
     spi_t * _spi;
 
   public:
+
+    // Constructor
+    R4A_ESP32_SPI() : _div{0}, _spi{nullptr}
+    {
+    }
 
     // Allocate DMA buffer
     // Inputs:
@@ -943,7 +948,7 @@ class R4A_WEB_SERVER
     // Constructor
     // Inputs:
     //   port: Port number for the web server
-    R4A_WEB_SERVER(uint16_t port = 80) : _port{port}
+    R4A_WEB_SERVER(uint16_t port = 80) : _port{port}, _webServer{nullptr}
     {
     }
 
@@ -1132,8 +1137,8 @@ class R4A_WIFI
     //   display: Print object to display WiFi startup summary
     //   debug: Print object to display WiFi debugging messages
     R4A_WIFI(Print * display = nullptr, Print * debug = nullptr)
-        : _apFound{false}, _apPassword{""}, _apSSID{""}, _authType{0},
-          _display{display}, _debug{debug}, _hostName{nullptr},
+        : _apCount{0}, _apFound{false}, _apPassword{""}, _apSSID{""},
+          _authType{0}, _debug{debug}, _display{display}, _hostName{nullptr},
           _mdnsAvailable{false}, _stationConnected{false},  _stationHasIp{false},
           _wifiChannel{0}, _wifiScanRunning{false}, _wifiTimer{0}
     {
