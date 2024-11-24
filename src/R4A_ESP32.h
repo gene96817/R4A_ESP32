@@ -9,6 +9,7 @@
 #define __R4A_ESP32_H__
 
 #include <Arduino.h>            // Built-in
+#include "ESPmDNS.h"            // Built-in
 #include <HTTPClient.h>         // Built-in
 #include <LittleFS.h>           // Built-in, load and store files in flash
 #include <WiFi.h>               // Built-in
@@ -16,10 +17,10 @@
 #include <WiFiMulti.h>          // Built-in, multiple WiFi AP support
 #include <WiFiServer.h>         // Built-in
 
-#include <esp_camera.h>         // Built-in, needed for OV2640 camera
-#include <esp32-hal-spi.h>      // Built-in
-#include "ESPmDNS.h"            // Built-in
-#include <esp_http_server.h>    // Built in, needed for camera web server
+#include <esp_camera.h>         // IDF built-in, needed for OV2640 camera
+#include <esp32-hal-spi.h>      // IDF built-in
+#include <esp_http_server.h>    // IDF built-in, needed for camera web server
+#include <esp_wifi.h>           // IDF built-in
 
 #include <R4A_Robot.h>          // Robots-For-All robot support
 #include <R4A_I2C.h>            // Robots-For-All I2C support

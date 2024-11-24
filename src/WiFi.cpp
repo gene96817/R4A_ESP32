@@ -720,6 +720,7 @@ bool R4A_WIFI::stationStart()
     Print * debug;
     wifi_mode_t mode;
     bool started;
+    esp_err_t status;
 
     do
     {
@@ -771,6 +772,21 @@ bool R4A_WIFI::stationStart()
             }
             if (debug)
                 debug->printf("WiFi: Started station mode\r\n");
+
+            // Set the protocols
+            if (debug)
+                debug->printf("WiFi: Selecting WiFi frequencies and protocols\r\n");
+            status = esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B
+                                                        | WIFI_PROTOCOL_11G
+                                                        | WIFI_PROTOCOL_11N);
+            started = (status == ESP_OK);
+            if (!started)
+            {
+                Serial.printf("ERROR: Failed to set WiFi frequencies and protocols!\r\n");
+                break;
+            }
+            if (debug)
+                debug->printf("WiFi: WiFi frequencies and protocols set successfully\r\n");
         }
 
         // Start the WiFi scan
