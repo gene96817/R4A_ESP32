@@ -195,6 +195,17 @@ upload:	$(BIN_FILE)
 	$(TERMINAL_APP) -D $(TERMINAL_PORT) $(TERMINAL_PARAMS)
 
 ##########
+# Analyze a system crash using the MAP file
+##########
+
+.PHONY: crash
+
+READ_MAP_FILE_PATH=$(USER_DIRECTORY_PATH)SparkFun/rc/RTK/Firmware/Tools/
+
+crash: $(BIN_FILE)
+	$(READ_MAP_FILE_PATH)Read_Map_File  $(BIN_PATH)$(SKETCH).ino.map < /dev/tty
+
+##########
 # Open the terminal (tty)
 ##########
 
