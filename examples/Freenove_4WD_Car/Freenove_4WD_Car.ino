@@ -20,8 +20,10 @@
 
 // Servo default starting position
 #define SERVO_PAN_START     90  // Degrees
-
 #define SERVO_TILT_START    15  // Degrees
+
+// Telnet port number
+#define TELNET_PORT         23
 
 //****************************************
 // GNSS - Global Navigation Satellite System
@@ -29,14 +31,6 @@
 
 #define GNSS_POINTS_PER_SECOND      1
 #define GNSS_POINTS_TO_AVERAGE      (10 * GNSS_POINTS_PER_SECOND)   // 10 Seconds
-
-//****************************************
-// Forward routine declarations
-//****************************************
-
-void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
-              const char * command,
-              Print * display);
 
 //****************************************
 // Includes
@@ -47,6 +41,15 @@ void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
 #define DOWNLOAD_AREA       "/nvm/"
 
 #include "Parameters.h"
+
+//****************************************
+// Forward routine declarations
+//****************************************
+
+bool contextCreate(NetworkClient * client, void ** contextData);
+void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
+              const char * command,
+              Print * display);
 
 //****************************************
 // OV2640 camera
@@ -322,7 +325,10 @@ WEB_SERVER webServer(80);
 // WiFi support
 //****************************************
 
-R4A_TELNET_SERVER telnet(menuTable, menuTableEntries);
+R4A_TELNET_SERVER telnet(4,
+                         r4aTelnetContextProcessInput,
+                         contextCreate,
+                         r4aTelnetContextDelete);
 
 const R4A_SSID_PASSWORD r4aWifiSsidPassword[] =
 {
@@ -523,7 +529,7 @@ void loop()
     if (r4aWifiSsidPasswordEntries)
     {
         // Determine if WiFi is connected
-        wifiConnected = wifi._connected;
+        wifiConnected = wifi.stationHasIp();
 
         // Check for NTP updates
         if (DEBUG_LOOP_CORE_1)
@@ -538,16 +544,27 @@ void loop()
 #endif  // USE_NTRIP
 
         // Notify the telnet server of WiFi changes
-        if (DEBUG_LOOP_CORE_1)
-            callingRoutine("telnet.update");
-        telnet.update(wifiConnected);
         if (previousConnected != wifiConnected)
         {
             previousConnected = wifiConnected;
             if (wifiConnected)
+            {
+                if (DEBUG_LOOP_CORE_1)
+                    callingRoutine("telnet.begin\r\n");
+                telnet.begin(WiFi.STA.localIP(), TELNET_PORT);
                 Serial.printf("Telnet: %s:%d\r\n", WiFi.localIP().toString().c_str(),
                               telnet.port());
+            }
+            else
+            {
+                if (DEBUG_LOOP_CORE_1)
+                    callingRoutine("telnet.end\r\n");
+                telnet.end();
+            }
         }
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("telnet.update");
+        telnet.update(wifiConnected);
 
         // Update the web server
         if (DEBUG_LOOP_CORE_1)

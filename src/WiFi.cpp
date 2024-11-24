@@ -358,6 +358,15 @@ void R4A_WIFI::listAPs(Print * display)
 }
 
 //*********************************************************************
+// Determine if mDNS is available
+// Outputs:
+//   True when the mDNS address translation is available
+bool R4A_WIFI::mdnsAvailable()
+{
+    return _mdnsAvailable;
+}
+
+//*********************************************************************
 // Start the multicast domain name server
 // Outputs:
 //   Returns true if successful and false upon failure
@@ -467,6 +476,15 @@ bool R4A_WIFI::stationConnectAP()
 }
 
 //*********************************************************************
+// Determine if the stataion is connected to a remote access point
+// Outputs:
+//   True if station is connected to remote AP
+bool R4A_WIFI::stationConnected()
+{
+    return _stationConnected;
+}
+
+//*********************************************************************
 // Disconnect the station from an AP
 // Outputs:
 //   Returns true if successful and false upon failure
@@ -500,6 +518,15 @@ bool R4A_WIFI::stationDisconnect()
             debug->printf("WiFi disconnected from the AP\r\n");
     } while (0);
     return disconnected;
+}
+
+//*********************************************************************
+// Determine if the station has an IP address
+// Outputs:
+//    True if the station has an IP address
+bool R4A_WIFI::stationHasIp()
+{
+    return _stationHasIp;
 }
 
 //*********************************************************************

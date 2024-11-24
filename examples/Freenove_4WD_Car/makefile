@@ -1,7 +1,7 @@
 ######################################################################
 # makefile
 #
-# Builds the Freenove_4WD_Car sketch
+# Build the example sketch
 ######################################################################
 
 .ONESHELL:
@@ -23,6 +23,7 @@ ifeq ($(OS),Windows_NT)
 #---------
 # Windows NT generic paths
 #---------
+OS_NAME=Windows NT
 
 USER_DIRECTORY_PATH=C:\Users\$(USERNAME)\
 EXAMPLE_PATH=..\
@@ -47,9 +48,41 @@ TERMINAL_PORT=COM3
 TERMINAL_PARAMS=
 
 else
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+#---------
+# Mac generic paths
+#---------
+OS_NAME=Mac OS
+
+USER_DIRECTORY_PATH=($HOME)/
+EXAMPLE_PATH=../
+
+ARDUINO_PATH=$(USER_DIRECTORY_PATH)Documents/Arduino/
+ARDUINO_LIBRARY_PATH=$(ARDUINO_PATH)libraries/
+BUILD_PATH=build/
+BIN_PATH=$(BUILD_PATH)esp32.esp32.$(ESP32_CHIP)/
+BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32/binaries/
+ESP_IDF_PATH=$(HOME_BOARD_PATH)tools\esp32-arduino-libs\
+ESPTOOL_PATH=$(USER_DIRECTORY_PATH)\.arduino15\packages\esp32\tools\esptool_py\4.5.1\
+HOME_BOARD_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/
+
+# Mac utilities
+ARDUINO_CLI=arduino-cli
+CLEAR=clear
+COPY=cp
+DELETE=rmdir /s
+DIR_LISTING=ls
+TERMINAL_APP=minicom
+
+TERMINAL_PORT=COM3
+TERMINAL_PARAMS=-b 115200 -8 -D $(TERMINAL_PORT) < /dev/tty
+
+else
 #---------
 # Linux generic paths
 #---------
+OS_NAME=Linux
 
 USER_DIRECTORY_PATH=~/
 EXAMPLE_PATH=../
@@ -72,8 +105,9 @@ DIR_LISTING=ls
 TERMINAL_APP=minicom
 
 TERMINAL_PORT=/dev/ttyUSB0
-TERMINAL_PARAMS=-b 115200 -8 -D $(TERMINAL_PORT) < /dev/tty
+TERMINAL_PARAMS=-b 115200 -8 < /dev/tty
 
+endif
 endif
 
 #---------
@@ -110,28 +144,13 @@ arduino-config:
 # Get the ESP32 core
 ##########
 
-ESP_CORE_VERSION=3.0.5
+ESP_CORE_VERSION=3.0.7
 
 .PHONY: core-update
 
 core-update:
 	$(ARDUINO_CLI) core update-index
 	$(ARDUINO_CLI) core install esp32:esp32@$(ESP_CORE_VERSION)
-
-##########
-# Update the libraries
-##########
-
-.PHONY: lib-update
-
-lib-update:
-	$(ARDUINO_CLI) lib install \
-		NTPClient@03.2.1 \
-		R4A_Robot@0.2.2 \
-		R4A_I2C@0.3.1 \
-		R4A_ESP32@0.5.2 \
-		"SparkFun u-blox GNSS v3"@3.1.5 \
-		"SparkFun UM980 Triband RTK GNSS Arduino Library"@1.0.4 \
 
 ########
 # Robot Firmware
@@ -141,8 +160,8 @@ lib-update:
 DEBUG_LEVEL=none
 
 $(BIN_FILE):	$(SKETCH).ino   *.ino   *.h   makefile
-	$(CLEAR)
-	echo "----------------------------------------------------------------------"
+	@$(CLEAR)
+	@echo "------------------------- $(OS_NAME) ---------------------------------------------"
 	$(ARDUINO_CLI)  \
 		compile  \
 		--fqbn   "esp32:esp32:$(ESP32_CHIP)":DebugLevel=$(DEBUG_LEVEL),PartitionScheme=$(PARTITION_FILE_NAME),FlashMode=qio,FlashFreq=80,UploadSpeed=921600,EraseFlash=none  \
@@ -173,7 +192,7 @@ upload:	$(BIN_FILE)
          0x8000   $(BOOT_LOADER_PATH)$(PARTITION_FILE_NAME).bin \
          0xe000   $(BOOT_LOADER_PATH)boot_app0.bin \
         0x10000   $<
-	$(TERMINAL_APP) $(TERMINAL_PARAMS)
+	$(TERMINAL_APP) -D $(TERMINAL_PORT) $(TERMINAL_PARAMS)
 
 ##########
 # Open the terminal (tty)
@@ -182,7 +201,7 @@ upload:	$(BIN_FILE)
 .PHONY: terminal
 
 terminal:
-	$(TERMINAL_APP) $(TERMINAL_PARAMS)
+	$(TERMINAL_APP) -D $(TERMINAL_PORT) $(TERMINAL_PARAMS)
 
 ########
 # Clean the build directory

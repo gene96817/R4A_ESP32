@@ -1057,6 +1057,9 @@ class R4A_WIFI
     const char * _apSSID;           // Remote AP SSID
     int _authType;                  // Remote AP authorization type
     const char * _hostName;         // Name of this host
+    volatile bool _mdnsAvailable;   // True when the mDNS address translation is available
+    volatile bool _stationConnected;// True if station is connected to remote AP
+    volatile bool _stationHasIp;    // True if the station has an IP address
     R4A_WIFI_CHANNEL_t _wifiChannel;// WiFi channel in use
     bool _wifiScanRunning;          // WiFi scan is running
     uint32_t _wifiTimer;            // WiFi timer is running when non-zero
@@ -1128,9 +1131,6 @@ class R4A_WIFI
 
     volatile Print * _debug;        // Display debugging data
     volatile Print * _display;      // Display WiFi IP address and loss
-    volatile bool _mdnsAvailable;   // True when the mDNS address translation is available
-    volatile bool _stationConnected;// True if station is connected to remote AP
-    volatile bool _stationHasIp;    // True if the station has an IP address
 
     // Constructor
     // Inputs:
@@ -1169,9 +1169,24 @@ class R4A_WIFI
     //   display: Address of a Print object used to list the APs
     void listAPs(Print * display);
 
+    // Determine if mDNS is available
+    // Outputs:
+    //   True when the mDNS address translation is available
+    bool mdnsAvailable();
+
     // Get the connected SSID
     //   Returns the address of a zero terminated string of characters or nullptr
     const char * ssidGet();
+
+    // Determine if the stataion is connected to a remote access point
+    // Outputs:
+    //   True if station is connected to remote AP
+    bool stationConnected();
+
+    // Determine if the station has an IP address
+    // Outputs:
+    //    True if the station has an IP address
+    bool stationHasIp();
 
     // Start the Wifi station
     // Outputs:
