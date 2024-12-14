@@ -1468,6 +1468,9 @@ void r4aEsp32NvmParameterClear(const char * filePath,
                                    parameterTable,
                                    parameterCount,
                                    display);
+
+        // Display the updated parameter value
+        r4aEsp32NvmDisplayParameter(parameter, display);
     }
 }
 
@@ -1532,15 +1535,22 @@ bool r4aEsp32NvmParameterSet(const char * filePath,
     // Convert the valueString into a number or an allocated string
     if (r4aEsp32NvmParseValue(parameter, valueString, &value, display))
     {
+        bool success;
+
         // Successful conversion, set the value
         r4aEsp32NvmSetParameterValue(parameter, value.u64);
 
         // Write the parameters to the file
-        return r4aEsp32NvmWriteParameters(filePath,
-                                          parameterTable,
-                                          parameterCount,
-                                          display,
-                                          debug);
+        success = r4aEsp32NvmWriteParameters(filePath,
+                                             parameterTable,
+                                             parameterCount,
+                                             display,
+                                             debug);
+
+        // Display the updated parameter value
+        if (success)
+            r4aEsp32NvmDisplayParameter(parameter, display);
+        return success;
     }
     return false;
 }
