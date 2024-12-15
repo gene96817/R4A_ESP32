@@ -696,7 +696,6 @@ void setupCore0(void *parameter)
 void loopCore0()
 {
     uint32_t currentMsec;
-    static uint32_t lastGnssI2cPollMsec;
 
     // Get the time since boot
     currentMsec = millis();

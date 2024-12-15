@@ -20,11 +20,11 @@ void r4aEsp32HeapDisplay(Print * display)
 {
     display->println("              Size        Free      In Use");
     display->println("        ----------  ----------  ----------");
-    display->printf("Heap:   %10d  %10d  %10d\r\n",
+    display->printf("Heap:   %10ld  %10ld  %10ld\r\n",
                     ESP.getHeapSize(),
                     ESP.getFreeHeap(),
                     ESP.getHeapSize() - ESP.getFreeHeap());
-    display->printf("PSRAM:  %10d  %10d  %10d\r\n",
+    display->printf("PSRAM:  %10ld  %10ld  %10ld\r\n",
                     ESP.getPsramSize(),
                     ESP.getFreePsram(),
                     ESP.getPsramSize() - ESP.getFreePsram());
@@ -126,7 +126,7 @@ void r4aEsp32PartitionTableDisplay(Print * display)
             const esp_partition_t *p = esp_partition_get(pi);
 
             // Display the partition data
-            display->printf("|  %02x  | %02x  | 0x%06X | 0x%06X | %-16s |\r\n",
+            display->printf("|  %02x  | %02x  | 0x%06lx | 0x%06lx | %-16s |\r\n",
                             p->type,
                             p->subtype,
                             p->address,

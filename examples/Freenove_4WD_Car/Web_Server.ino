@@ -43,7 +43,10 @@ const httpd_uri_t webServerFileDownloadUri = {
     .uri       = DOWNLOAD_AREA "*",  // Match all URIs of type /path/to/file
     .method    = HTTP_GET,
     .handler   = r4aWebServerFileDownload,
-    .user_ctx  = nullptr
+    .user_ctx  = nullptr,
+    .is_websocket = true,
+    .handle_ws_control_frames = false,
+    .supported_subprotocol = nullptr,
 };
 
 //*********************************************************************

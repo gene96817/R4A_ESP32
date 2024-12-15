@@ -172,9 +172,9 @@ bool r4aEsp32NvmParseValue(const R4A_ESP32_NVM_PARAMETER * parameter,
                 if (!valid)
                 {
                     if (display && (!goodMaxValue))
-                        display->printf("ERROR: Bad maximum value: %f > %f\r\n", value->d, maximum);
+                        display->printf("ERROR: Bad maximum value: %f > %d\r\n", value->d, maximum);
                     if (display && (!goodMinValue))
-                        display->printf("ERROR: Bad minimum value: %f > %f\r\n", value->d, minimum);
+                        display->printf("ERROR: Bad minimum value: %f > %d\r\n", value->d, minimum);
                 }
                 break;
            }
@@ -323,6 +323,7 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
     // Determine the parameter type
     type = parameter->type;
     value.u64 = 0;
+    data = nullptr;
     switch (type)
     {
     default:
@@ -373,7 +374,7 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
 
     case R4A_ESP32_NVM_PT_INT32:
         if (display && debug)
-            display->printf("%s: %d\r\n", parameter->name, *(int32_t *)(parameter->addr));
+            display->printf("%s: %ld\r\n", parameter->name, *(int32_t *)(parameter->addr));
         value.i64 = (int64_t)(*(int32_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
@@ -381,7 +382,7 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
 
     case R4A_ESP32_NVM_PT_UINT32:
         if (display && debug)
-            display->printf("%s: %d\r\n", parameter->name, *(uint32_t *)(parameter->addr));
+            display->printf("%s: %ld\r\n", parameter->name, *(uint32_t *)(parameter->addr));
         value.u32 = (uint64_t)(*(uint32_t *)(parameter->addr));
         sprintf(valueString, "0x%016llx", value.u64);
         data = valueString;
@@ -456,7 +457,8 @@ bool r4aEsp32NvmWriteParameterValue(File &parameterFile,
         && r4aEsp32NvmWriteFileString(parameterFile, "\r\n"));
     if (display && debug)
         display->printf("%s (type %s): '%s' %s\r\n", parameter->name,
-                        r4aEsp32NvmTypeTable[parameter->type], data,
+                        r4aEsp32NvmTypeTable[parameter->type],
+                        data ? data : "nullptr",
                         valid ? "(valid)" : "(write failed)");
     return valid;
 }
@@ -512,13 +514,13 @@ void r4aEsp32NvmDisplayParameter(const R4A_ESP32_NVM_PARAMETER * parameter,
     case R4A_ESP32_NVM_PT_INT32:
         value.i32 = *(int32_t *)(parameter->addr);
         if (display)
-            display->printf("%s: %d\r\n", parameter->name, value.i32);
+            display->printf("%s: %ld\r\n", parameter->name, value.i32);
         break;
 
     case R4A_ESP32_NVM_PT_UINT32:
         value.u32 = *(uint32_t *)(parameter->addr);
         if (display)
-            display->printf("%s: %u\r\n", parameter->name, value.u32);
+            display->printf("%s: %lu\r\n", parameter->name, value.u32);
         break;
 
     case R4A_ESP32_NVM_PT_INT64:
@@ -657,7 +659,6 @@ void r4aEsp32NvmFileCat(String filePath, Print * display)
 {
     int bytesRead;
     size_t bytesToRead;
-    size_t bytesWritten;
     uint8_t data[256];
     File file;
     size_t length;
@@ -810,8 +811,8 @@ bool r4aEsp32NvmGetParameters(const char ** filePath,
                                             nvmParameterCount))
             {
                 if (display)
-                    display-printf("ERROR: Failed to write parameters to file %s!\r\n",
-                                   *filePath);
+                    display->printf("ERROR: Failed to write parameters to file %s!\r\n",
+                                    *filePath);
                 break;
             }
 
@@ -947,6 +948,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
         srcFileName = parameters.c_str();
         destFileName = strstr(srcFileName, " ");
         *destFileName++ = 0;
+        destPath = nullptr;
 
         // Get the source file name
         srcFilePath = String("/") + String(srcFileName);
@@ -958,7 +960,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
         if (!srcFile)
         {
             if (display)
-                display->printf("ERROR: Failed to open file %s!\r\n", srcFilePath);
+                display->printf("ERROR: Failed to open file %s!\r\n", srcFilePath.c_str());
             break;
         }
 
@@ -971,7 +973,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
         if (!destFile)
         {
             if (display)
-                display->printf("ERROR: Failed to open file %s!\r\n", destFilePath);
+                display->printf("ERROR: Failed to open file %s!\r\n", destFilePath.c_str());
             break;
         }
 
@@ -984,7 +986,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
             bytesRead = srcFile.read(data, bytesToRead);
             if(bytesRead < 0)
             {
-                display->printf("ERROR: Error reading from file %s\r\n", srcFilePath);
+                display->printf("ERROR: Error reading from file %s\r\n", srcFilePath.c_str());
                 break;
             }
 
@@ -992,7 +994,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
             bytesWritten = destFile.write(data, bytesRead);
             if(bytesWritten < bytesRead)
             {
-                display->printf("ERROR: Error writing to file %s\r\n", destFilePath);
+                display->printf("ERROR: Error writing to file %s\r\n", destFilePath.c_str());
                 break;
             }
 
@@ -1008,7 +1010,7 @@ void r4aEsp32NvmMenuFileCopy(const R4A_MENU_ENTRY * menuEntry,
         srcFile.close();
 
     // Delete the destination file if necessary
-    if (length)
+    if (length && destPath)
         if (!LittleFS.remove(destPath))
             display->printf("ERROR: Failed to delete file %s!r\r\n", destPath);
 }
@@ -1045,7 +1047,7 @@ void r4aEsp32NvmMenuFileDump(const R4A_MENU_ENTRY * menuEntry,
         if (!file)
         {
             if (display)
-                display->printf("ERROR: Failed to open file %s!\r\n", filePath);
+                display->printf("ERROR: Failed to open file %s!\r\n", filePath.c_str());
             break;
         }
 
@@ -1059,7 +1061,7 @@ void r4aEsp32NvmMenuFileDump(const R4A_MENU_ENTRY * menuEntry,
             bytesRead = file.read(data, bytesToRead);
             if(bytesRead < 0)
             {
-                display->printf("ERROR: Error reading from file %s\r\n", filePath);
+                display->printf("ERROR: Error reading from file %s\r\n", filePath.c_str());
                 break;
             }
 
@@ -1176,7 +1178,7 @@ void r4aEsp32NvmMenuFileMove(const R4A_MENU_ENTRY * menuEntry,
         if (LittleFS.rename(srcPath, destPath) == false)
         {
             if (display)
-                display->printf("ERROR: Failed to rename file %s!\r\n", srcFilePath);
+                display->printf("ERROR: Failed to rename file %s!\r\n", srcFilePath.c_str());
             break;
         }
     } while (0);

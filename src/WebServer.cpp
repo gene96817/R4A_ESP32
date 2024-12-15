@@ -108,13 +108,14 @@ esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
     const size_t bufferLength = 8192;
     size_t bytesRead;
     const char * dataType;
-    const char * chunk;
     File file;
     const char * path;
     esp_err_t status;
 
     do
     {
+        buffer = nullptr;
+
         // Get the file name
         path = request->uri;
 
@@ -174,7 +175,7 @@ esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
         if (file.isDirectory())
         {
             if (r4aWebServerDebug)
-                r4aWebServerDebug->printf("ERROR: File %d is a directory!\r\n", path);
+                r4aWebServerDebug->printf("ERROR: File %s is a directory!\r\n", path);
             httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, "Unable to download a directory");
             break;
         }
@@ -297,10 +298,6 @@ void R4A_WEB_SERVER::stop()
 //   wifiConnected: True when WiFi has an IP address and false otherwise
 void R4A_WEB_SERVER::update(bool wifiConnected)
 {
-    uint32_t currentMsec;
-    camera_fb_t * frameBuffer;
-    static uint32_t lastImageMsec;
-
     // Start the web server if necessary
     if ((!_webServer) && wifiConnected)
         start(_port);

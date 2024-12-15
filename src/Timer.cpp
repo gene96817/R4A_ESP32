@@ -14,14 +14,14 @@ void r4aEsp32TimerDisplayTimerRegs(uint32_t timerAddr, Print * display)
     R4A_ESP32_TIMER_REGS * timer = (R4A_ESP32_TIMER_REGS *)timerAddr;
     int n = (timerAddr & 0xff) ? 1 : 0;
 
-    display->printf("Timer @ 0x%08x %s\r\n", timerAddr,
+    display->printf("Timer @ 0x%08lx %s\r\n", timerAddr,
                     (timer->CONFIG & 0x80000000) ? "Enabled" : "Disabled");
-    display->printf("    0x%08x: T%d_CONFIG\r\n", timer->CONFIG, n);
-    display->printf("    0x%08x: T%d_LO\r\n", timer->LO, n);
-    display->printf("    0x%08x: T%d_HI\r\n", timer->HI, n);
-    display->printf("    0x%08x: T%d_ALARMLO\r\n", timer->ALARMLO, n);
-    display->printf("    0x%08x: T%d_ALARMHI\r\n", timer->ALARMHI, n);
-    display->printf("    0x%08x: T%d_LOADLO\r\n", timer->LOADLO, n);
+    display->printf("    0x%08lx: T%d_CONFIG\r\n", timer->CONFIG, n);
+    display->printf("    0x%08lx: T%d_LO\r\n", timer->LO, n);
+    display->printf("    0x%08lx: T%d_HI\r\n", timer->HI, n);
+    display->printf("    0x%08lx: T%d_ALARMLO\r\n", timer->ALARMLO, n);
+    display->printf("    0x%08lx: T%d_ALARMHI\r\n", timer->ALARMHI, n);
+    display->printf("    0x%08lx: T%d_LOADLO\r\n", timer->LOADLO, n);
 }
 
 //*********************************************************************
@@ -32,13 +32,13 @@ void r4aEsp32TimerDisplayWatchdogRegs(uint32_t timerAddr, Print * display)
 
     display->printf("Watchdog @ %p, %s\r\n", watchdog,
                     (watchdog->WDTCONFIG0 & 0x80000000) ? "Enabled" : "Disabled");
-    display->printf("    0x%08x: WDTCONFIG0\r\n", watchdog->WDTCONFIG0);
-    display->printf("    0x%08x: WDTCONFIG1\r\n", watchdog->WDTCONFIG1);
-    display->printf("    0x%08x: WDTCONFIG2\r\n", watchdog->WDTCONFIG2);
-    display->printf("    0x%08x: WDTCONFIG3\r\n", watchdog->WDTCONFIG3);
-    display->printf("    0x%08x: WDTCONFIG4\r\n", watchdog->WDTCONFIG4);
-    display->printf("    0x%08x: WDTCONFIG5\r\n", watchdog->WDTCONFIG5);
-    display->printf("    0x%08x: WDTWPROTECT\r\n", watchdog->WDTWPROTECT);
+    display->printf("    0x%08lx: WDTCONFIG0\r\n", watchdog->WDTCONFIG0);
+    display->printf("    0x%08lx: WDTCONFIG1\r\n", watchdog->WDTCONFIG1);
+    display->printf("    0x%08lx: WDTCONFIG2\r\n", watchdog->WDTCONFIG2);
+    display->printf("    0x%08lx: WDTCONFIG3\r\n", watchdog->WDTCONFIG3);
+    display->printf("    0x%08lx: WDTCONFIG4\r\n", watchdog->WDTCONFIG4);
+    display->printf("    0x%08lx: WDTCONFIG5\r\n", watchdog->WDTCONFIG5);
+    display->printf("    0x%08lx: WDTWPROTECT\r\n", watchdog->WDTWPROTECT);
 }
 
 //*********************************************************************
@@ -47,11 +47,11 @@ void r4aEsp32TimerDisplayTimerIntRegs(uint32_t timerAddr, Print * display)
 {
     R4A_ESP32_TIMER_INT_REGS * timerInt = (R4A_ESP32_TIMER_INT_REGS *)timerAddr;
 
-    display->printf("Timer Interrupts @ 0x%08x, %s\r\n", timerAddr,
+    display->printf("Timer Interrupts @ 0x%08lx, %s\r\n", timerAddr,
                     (timerInt->INT_RAW & 7) ? "Enabled" : "Disabled");
-    display->printf("    0x%08x: INT_RAW (WDT, T1, T0: Timer Expired)\r\n", timerInt->INT_RAW);
-    display->printf("    0x%08x: INT_ENA (WDT, T1, T0: Interrupt Enable)\r\n", timerInt->INT_ENA);
-    display->printf("    0x%08x: INT_ST  (WDT, T1, T0: Interrupt Pending)\r\n", timerInt->INT_ST);
+    display->printf("    0x%08lx: INT_RAW (WDT, T1, T0: Timer Expired)\r\n", timerInt->INT_RAW);
+    display->printf("    0x%08lx: INT_ENA (WDT, T1, T0: Interrupt Enable)\r\n", timerInt->INT_ENA);
+    display->printf("    0x%08lx: INT_ST  (WDT, T1, T0: Interrupt Pending)\r\n", timerInt->INT_ST);
 }
 
 //*********************************************************************

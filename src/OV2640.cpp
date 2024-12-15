@@ -283,7 +283,6 @@ esp_err_t r4aOV2640JpegHandler(httpd_req_t *request)
 {
     int64_t endTime;
     camera_fb_t * frameBuffer;
-    int16_t positionError;
     int64_t startTime;
     esp_err_t status;
 
@@ -312,7 +311,7 @@ esp_err_t r4aOV2640JpegHandler(httpd_req_t *request)
 
         // Add the timestamp to the header
         char timestamp[32];
-        snprintf(timestamp, sizeof(timestamp), "%ld.%06ld",
+        snprintf(timestamp, sizeof(timestamp), "%lld.%06ld",
                  frameBuffer->timestamp.tv_sec, frameBuffer->timestamp.tv_usec);
         httpd_resp_set_hdr(request, "X-Timestamp", (const char *)timestamp);
 
@@ -339,7 +338,7 @@ esp_err_t r4aOV2640JpegHandler(httpd_req_t *request)
         }
         endTime = esp_timer_get_time();
         if (r4aOV2640JpegDisplayTime)
-            Serial.printf("JPG: %u bytes %u mSec", (uint32_t)(frameBuffer->len),
+            Serial.printf("JPG: %lu bytes %lu mSec", (uint32_t)(frameBuffer->len),
                           (uint32_t)((endTime - startTime) / 1000));
         status = ESP_OK;
     } while (0);
@@ -359,5 +358,8 @@ const httpd_uri_t r4aOV2640JpegPage = {
     .uri      = R4A_OV2640_JPEG_WEB_PAGE,
     .method   = HTTP_GET,
     .handler  = r4aOV2640JpegHandler,
-    .user_ctx = NULL
+    .user_ctx = NULL,
+    .is_websocket = true,
+    .handle_ws_control_frames = false,
+    .supported_subprotocol = nullptr,
 };

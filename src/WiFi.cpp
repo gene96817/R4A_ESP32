@@ -74,7 +74,6 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
     static IPAddress localIP;
     static char localIpType;
     wifi_mode_t mode;
-    bool success;
 
     // Always output display items
     debug = (Print *)_debug;
@@ -92,6 +91,9 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
     {
         switch (event)
         {
+        default:
+            break;
+
         case ARDUINO_EVENT_WIFI_STA_GOT_IP:
         case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
             break;
@@ -105,6 +107,9 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
             _mdnsAvailable = false;
             _stationConnected = false;
             _wifiChannel = 0;
+            _stationHasIp = false;
+            break;
+
         case ARDUINO_EVENT_WIFI_STA_LOST_IP:
             _stationHasIp = false;
             break;
@@ -114,6 +119,8 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
     // Handle the event
     switch (event)
     {
+    default:
+        break;
 
     //------------------------------
     // Controller events
@@ -443,7 +450,7 @@ bool R4A_WIFI::stationConnectAP()
     {
         // Determine if a remote AP is available
         debug = (Print *)_debug;
-        display = (Print *)display;
+        display = (Print *)_display;
         if (!display)
             display = debug;
         connected = _apFound;
@@ -701,7 +708,7 @@ R4A_WIFI_CHANNEL_t R4A_WIFI::stationSelectAP(bool connect, Print * list)
 
         // Display the list of APs
         if (list)
-            list->printf("%4d   %4d   %s   %s\r\n",
+            list->printf("%4ld   %4d   %s   %s\r\n",
                          WiFi.RSSI(ap),
                          channel,
                          (type < WIFI_AUTH_MAX) ? r4aEsp32WiFiAuthorizationName[type] : "Unknown",

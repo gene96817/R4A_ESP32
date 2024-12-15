@@ -713,11 +713,11 @@ class R4A_OV2640
     //   pins: R4A_OV2640_PINS object containing the ESP32 GPIO pin numbers
     //   clockHz: OV2640 clock frequency input
     R4A_OV2640(R4A_I2C_BUS * i2cBus,
-               int i2cAddress,
+               uint8_t i2cAddress,
                const R4A_OV2640_PINS * pins,
                uint32_t clockHz)
-        : _clockHz{clockHz}, _i2cBus{i2cBus}, _i2cAddress{i2cAddress & 0x7f},
-          _pins{pins}
+        : _clockHz{clockHz}, _i2cBus{i2cBus}, _pins{pins},
+          _i2cAddress{(uint8_t)(i2cAddress & 0x7f)}
     {
     }
 

@@ -52,8 +52,6 @@ void r4aEsp32WpAddPoint(intptr_t parameter,
                         uint8_t satellitesInView,
                         Print * display)
 {
-    size_t bytesToWrite;
-    size_t bytesWritten;
     File file;
     size_t fileLength;
     String filePath;
@@ -262,7 +260,6 @@ bool r4aEsp32WpReadPoint(File * file,
     uint8_t * nextParameter;
     const char * path;
     uint8_t * parameter;
-    static size_t position;
     int satellites;
 
     // Read the next point from the waypoint file
@@ -285,13 +282,13 @@ bool r4aEsp32WpReadPoint(File * file,
             if (!r4aEsp32NvmReadLine(file, line, sizeof(line), display))
             {
                 if (display)
-                    display->printf("ERROR: Failed to read the first header line!\r\n", path);
+                    display->printf("ERROR: Failed to read the first header line!\r\n");
                 break;
             }
             if (!r4aEsp32NvmReadLine(file, line, sizeof(line), display))
             {
                 if (display)
-                    display->printf("ERROR: Failed to read the second header line!\r\n", path);
+                    display->printf("ERROR: Failed to read the second header line!\r\n");
                 break;
             }
         }
