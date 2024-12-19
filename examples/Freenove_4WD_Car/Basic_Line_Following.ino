@@ -35,117 +35,102 @@ int blfTimeFlag = 0;    //Record the blink time
 #define BLT_TURN_THRESHOLD  100
 
 //*********************************************************************
-// Implement the basic line following class
-class BLF : public R4A_ROBOT_CHALLENGE
+// The robotRunning routine calls this routine to actually perform
+// the challenge.  This routine typically reads a sensor and may
+// optionally adjust the motors based upon the sensor reading.  The
+// routine then must return.  The robot layer will call this routine
+// multiple times during the robot operation.
+void blfChallenge(R4A_ROBOT_CHALLENGE * object)
 {
-  public:
+    // Read the line sensors
+    pcf8574.read(&lineSensors);
+    lineSensors &= 7;
+    if (BLF_DEBUG_STATES)
+        Serial.printf("%d %d %d\r\n",
+                      lineSensors & 1,
+                      (lineSensors & 2) ? 1 : 0,
+                      (lineSensors & 4) ? 1 : 0);
 
-    // Constructor
-    BLF(const char * name)
-        : R4A_ROBOT_CHALLENGE(name, ROBOT_LINE_FOLLOW_DURATION_SEC)
+    // Update the robot direction
+    switch (lineSensors)
     {
+    //     RcL
+    case 0b000:
+    case 0b111:
+    default:
+        // No line or stop circle detected
+        r4aPca9685MotorBrakeAll();
+        break;
+
+    //     RcL
+    case 0b010:
+    case 0b101:
+        // Robot over center of line
+        robotMotorSetSpeeds(BLF_SPEED_LV1,  BLF_SPEED_LV1); // Move Forward
+        break;
+
+    //     RcL
+    case 0b001:
+    case 0b011:
+        // Robot over left sensor, need to turn left
+        robotMotorSetSpeeds(-BLF_SPEED_LV3, BLF_SPEED_LV4); // Turn left
+        break;
+
+    //     RcL
+    case 0b100:
+    case 0b110:
+        // Robot over right sensor, need to turn right
+        robotMotorSetSpeeds(BLF_SPEED_LV4, -BLF_SPEED_LV3); // Turn right
+        break;
     }
+}
 
-    //****************************************
-    // The robotStart routine calls this routine to verify the battery
-    // level.
-    // Outputs:
-    //   Returns true if the battery level is high enough to run the robot
-    //   challenge and returns false if the battery needs to be changed.
-    bool batteryLevel()
-    {
-        return robotCheckBatteryLevel();
-    }
+//*********************************************************************
+// The robotStart calls this routine before switching to the initial
+// delay state.
+void blfInit(R4A_ROBOT_CHALLENGE * object)
+{
+    challengeInit();
+}
 
-    //****************************************
-    // The robotRunning routine calls this routine to actually perform
-    // the challenge.  This routine typically reads a sensor and may
-    // optionally adjust the motors based upon the sensor reading.  The
-    // routine then must return.  The robot layer will call this routine
-    // multiple times during the robot operation.
-    void challenge()
-    {
-        // Read the line sensors
-        pcf8574.read(&lineSensors);
-        lineSensors &= 7;
-        if (BLF_DEBUG_STATES)
-            Serial.printf("%d %d %d\r\n",
-                          lineSensors & 1,
-                          (lineSensors & 2) ? 1 : 0,
-                          (lineSensors & 4) ? 1 : 0);
+//*********************************************************************
+// The initial delay routine calls this routine just before calling
+// the challenge routine for the first time.
+void blfStart(R4A_ROBOT_CHALLENGE * object)
+{
+    challengeStart();
 
-        // Update the robot direction
-        switch (lineSensors)
-        {
-        //     RcL
-        case 0b000:
-        case 0b111:
-        default:
-            // No line or stop circle detected
-            r4aPca9685MotorBrakeAll();
-            break;
+    // Set the reference voltage from the photo-resistor voltage divider
+    r4aEsp32VoltageGet(LIGHT_SENSOR_PIN,
+                       0,
+                       1,
+                       &lsAdcReference);
+}
 
-        //     RcL
-        case 0b010:
-        case 0b101:
-            // Robot over center of line
-            robotMotorSetSpeeds(BLF_SPEED_LV1,  BLF_SPEED_LV1); // Move Forward
-            break;
-
-        //     RcL
-        case 0b001:
-        case 0b011:
-            // Robot over left sensor, need to turn left
-            robotMotorSetSpeeds(-BLF_SPEED_LV3, BLF_SPEED_LV4); // Turn left
-            break;
-
-        //     RcL
-        case 0b100:
-        case 0b110:
-            // Robot over right sensor, need to turn right
-            robotMotorSetSpeeds(BLF_SPEED_LV4, -BLF_SPEED_LV3); // Turn right
-            break;
-        }
-    }
-
-    //****************************************
-    // The robotStart calls this routine before switching to the initial
-    // delay state.
-    void init()
-    {
-        challengeInit();
-    }
-
-    //****************************************
-    // The initial delay routine calls this routine just before calling
-    // the challenge routine for the first time.
-    void start()
-    {
-        challengeStart();
-
-        // Set the reference voltage from the photo-resistor voltage divider
-        r4aEsp32VoltageGet(LIGHT_SENSOR_PIN,
-                           0,
-                           1,
-                           &lsAdcReference);
-    }
-
-    //****************************************
-    // The robot.stop routine calls this routine to stop the motors and
-    // perform any other actions.
-    void stop()
-    {
-        challengeStop();
-    }
-};
+//*********************************************************************
+// The robot.stop routine calls this routine to stop the motors and
+// perform any other actions.
+void blfStop(R4A_ROBOT_CHALLENGE * object)
+{
+    challengeStop();
+}
 
 //*********************************************************************
 // Start the line following
-void blfStart(const struct _R4A_MENU_ENTRY * menuEntry,
-              const char * command,
-              Print * display)
+void menuBlfStart(const struct _R4A_MENU_ENTRY * menuEntry,
+                  const char * command,
+                  Print * display)
 {
-    static BLF basicLineFollowing("Basic Line Following");
+    static R4A_ROBOT_CHALLENGE basicLineFollowing =
+    {
+        blfChallenge,
+        blfInit,
+        blfStart,
+        blfStop,
+
+        "Basic Line Following",         // _name
+        ROBOT_LINE_FOLLOW_DURATION_SEC, // _duration
+    };
     float voltage;
 
     // Only start the robot if the battery is on
