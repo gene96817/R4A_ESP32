@@ -56,41 +56,12 @@ void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
 //****************************************
 
 #ifdef  USE_OV2640
-class OV2640 : public R4A_OV2640
-{
-  public:
-
-    // Constructor
-    // Inputs:
-    //   i2cBus: R4A_I2C_BUS object address used to access the OV2640 camera
-    //   i2cAddress: I2C address of the OV2640 camera
-    //   pins: R4A_OV2640_PINS object containing the ESP32 GPIO pin numbers
-    //   clockHz: OV2640 clock frequency input
-    OV2640(R4A_I2C_BUS * i2cBus,
-           int i2cAddress,
-           const R4A_OV2640_PINS * pins,
-           uint32_t clockHz)
-        : R4A_OV2640(i2cBus, i2cAddress, pins, clockHz)
-    {
-    }
-
-    // Process the frame buffer
-    // Inputs:
-    //   frameBuffer: Buffer containing the raw image data
-    //   display: Address of Print object for output
-    // Outputs:
-    //   Returns true if the processing was successful and false upon error
-    bool processFrameBuffer(camera_fb_t * frameBuffer,
-                            Print * display);
-
-    // Process the web server's frame buffer
-    // Inputs:
-    //   frameBuffer: Buffer containing the raw image data
-    // Outputs:
-    //   Returns true if the processing was successful and false upon error
-    virtual bool processWebServerFrameBuffer(camera_fb_t * frameBuffer);
-};
-
+// Forward routine declarations
+bool ov2640ProcessFrameBuffer(R4A_OV2640 * object,
+                              camera_fb_t * frameBuffer,
+                              Print * display);
+bool ov2640ProcessWebServerFrameBuffer(R4A_OV2640 * object,
+                                       camera_fb_t * frameBuffer);
 #endif  // USE_OV2640
 
 //****************************************
@@ -122,7 +93,15 @@ R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
         R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
     R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
 #ifdef  USE_OV2640
-    OV2640 ov2640(&i2cBus, OV2640_I2C_ADDRESS, &r4aOV2640Pins, 20 * 1000 * 1000);
+    R4A_OV2640 ov2640 =
+    {
+        ov2640ProcessFrameBuffer,           // _processFrameBuffer
+        ov2640ProcessWebServerFrameBuffer,  // _processWebServerFrameBuffer
+        20 * 1000 * 1000,       // _clockHz
+        &i2cBus,                // _i2cBus
+        OV2640_I2C_ADDRESS,     // _i2cAddress
+        &r4aOV2640Pins,         // _pins
+    };
 #endif  // USE_OV2640
 #ifdef  USE_ZED_F9P
     R4A_ZED_F9P zedf9p(&i2cBus, ZEDF9P_I2C_ADDRESS);
@@ -559,7 +538,11 @@ void loop()
     // Process the next image
 #ifdef  USE_OV2640
     if (ov2640Present && ov2640Enable)
-        ov2640.update();
+    {
+        if (DEBUG_LOOP_CORE_1)
+            callingRoutine("r4aOv2640Update");
+        r4aOv2640Update(&ov2640);
+    }
 #endif  // USE_OV2640
 
     // Process serial commands
@@ -620,9 +603,9 @@ void setupCore0(void *parameter)
     if (ov2640Present)
     {
         if(DEBUG_BOOT)
-            callingRoutine("ov2640.setup");
+            callingRoutine("r4aOv2640Setup");
         Serial.printf("Initializing the OV2640 camera\r\n");
-        ov2640.setup(PIXFORMAT_RGB565);
+        r4aOv2640Setup(&ov2640, PIXFORMAT_RGB565);
     }
 #endif  // USE_OV2640
 

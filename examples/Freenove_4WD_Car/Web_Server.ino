@@ -82,7 +82,7 @@ bool webServerRegisterUriHandlers(R4A_WEB_SERVER * object)
 
 #ifdef  USE_OV2640
         // Add the jpeg camera image page
-        error = httpd_register_uri_handler(object->_webServer, &r4aOV2640JpegPage);
+        error = httpd_register_uri_handler(object->_webServer, &ov2640JpegPage);
         if (error != ESP_OK)
         {
             if (r4aWebServerDebug)
