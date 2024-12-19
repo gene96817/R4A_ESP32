@@ -18,6 +18,22 @@ uint8_t r4aOV2640PixelFormat = PIXFORMAT_RGB565;
 bool r4aOV2640JpegDisplayTime;  // Set to true to display the JPEG conversion time
 
 //*********************************************************************
+// Constructor
+// Inputs:
+//   i2cBus: R4A_I2C_BUS object address used to access the OV2640 camera
+//   i2cAddress: I2C address of the OV2640 camera
+//   pins: R4A_OV2640_PINS object containing the ESP32 GPIO pin numbers
+//   clockHz: OV2640 clock frequency input
+R4A_OV2640::R4A_OV2640(R4A_I2C_BUS * i2cBus,
+                       uint8_t i2cAddress,
+                       const R4A_OV2640_PINS * pins,
+                       uint32_t clockHz)
+    : _clockHz{clockHz}, _i2cBus{i2cBus}, _pins{pins},
+      _i2cAddress{(uint8_t)(i2cAddress & 0x7f)}
+{
+}
+
+//*********************************************************************
 // Display a group of registers
 // Inputs:
 //   firstRegister: The register address of the first register to be displayed

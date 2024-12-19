@@ -22,6 +22,15 @@ const char * r4aWebServerNvmArea;
 static R4A_WEB_SERVER * r4aWebServer;
 
 //*********************************************************************
+// Constructor
+// Inputs:
+//   port: Port number for the web server
+R4A_WEB_SERVER::R4A_WEB_SERVER(uint16_t port)
+    : _port{port}, _webServer{nullptr}
+{
+}
+
+//*********************************************************************
 // Check for extension
 bool r4aWebServerCheckExtension(const char * path, const char * extension)
 {

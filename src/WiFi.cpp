@@ -33,6 +33,20 @@ static const int r4aEsp32WiFiAuthorizationNameEntries =
 static R4A_WIFI * r4aWiFi;
 
 //*********************************************************************
+// Constructor
+// Inputs:
+//   display: Print object to display WiFi startup summary
+//   debug: Print object to display WiFi debugging messages
+R4A_WIFI::R4A_WIFI(Print * display,
+                   Print * debug)
+    : _apCount{0}, _apFound{false}, _apPassword{""}, _apSSID{""},
+      _authType{0}, _debug{debug}, _display{display}, _hostName{nullptr},
+      _mdnsAvailable{false}, _stationConnected{false},  _stationHasIp{false},
+      _wifiChannel{0}, _wifiScanRunning{false}, _wifiTimer{0}
+{
+}
+
+//*********************************************************************
 // Handle the WiFi event
 void r4aEsp32WifiEvent(arduino_event_id_t event, arduino_event_info_t info)
 {

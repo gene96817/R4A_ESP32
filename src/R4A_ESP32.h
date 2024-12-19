@@ -715,11 +715,7 @@ class R4A_OV2640
     R4A_OV2640(R4A_I2C_BUS * i2cBus,
                uint8_t i2cAddress,
                const R4A_OV2640_PINS * pins,
-               uint32_t clockHz)
-        : _clockHz{clockHz}, _i2cBus{i2cBus}, _pins{pins},
-          _i2cAddress{(uint8_t)(i2cAddress & 0x7f)}
-    {
-    }
+               uint32_t clockHz);
 
     // Display a group of registers
     // Inputs:
@@ -788,19 +784,14 @@ class R4A_ESP32_SPI : public R4A_SPI
   public:
 
     // Constructor
-    R4A_ESP32_SPI() : _div{0}, _spi{nullptr}
-    {
-    }
+    R4A_ESP32_SPI();
 
     // Allocate DMA buffer
     // Inputs:
     //   length: Number of data bytes to allocate
     // Outputs:
     //   Returns the buffer address if successful and nullptr otherwise
-    uint8_t * allocateDmaBuffer(int length)
-    {
-        return (uint8_t *)heap_caps_malloc(length, MALLOC_CAP_DMA);
-    }
+    uint8_t * allocateDmaBuffer(int length);
 
     // Initialize the SPI controller
     // Inputs:
@@ -809,31 +800,14 @@ class R4A_ESP32_SPI : public R4A_SPI
     //   clockHz: SPI clock frequency in Hertz
     // Outputs:
     //   Return true if successful and false upon failure
-    bool begin(uint8_t spiNumber, uint8_t pinMOSI, uint32_t clockHz)
-    {
-        // Determine the SPI clock divider
-        _div = spiFrequencyToClockDiv(clockHz);
-
-        // Configure the SPI device
-        _spi = spiStartBus(spiNumber, _div, SPI_MODE0, SPI_MSBFIRST);
-        if (_spi)
-        {
-            // Connect the SPI TX output to the MOSI pin
-            spiAttachMOSI(_spi, pinMOSI);
-            return true;
-        }
-        return false;
-    }
+    bool begin(uint8_t spiNumber, uint8_t pinMOSI, uint32_t clockHz);
 
     // Transfer the data to the SPI device
     // Inputs:
     //   txBuffer: Address of the buffer containing the data to send
     //   rxBuffer: Address of the receive data buffer
     //   length: Number of data bytes in the buffer
-    void transfer(const uint8_t * txBuffer, uint8_t * rxBuffer, uint32_t length)
-    {
-        spiTransferBytes(_spi, txBuffer, rxBuffer, length);
-    }
+    void transfer(const uint8_t * txBuffer, uint8_t * rxBuffer, uint32_t length);
 };
 
 //****************************************
@@ -949,9 +923,7 @@ class R4A_WEB_SERVER
     // Constructor
     // Inputs:
     //   port: Port number for the web server
-    R4A_WEB_SERVER(uint16_t port = 80) : _port{port}, _webServer{nullptr}
-    {
-    }
+    R4A_WEB_SERVER(uint16_t port = 80);
 
     // Update the configuration
     // Inputs:
@@ -1137,13 +1109,8 @@ class R4A_WIFI
     // Inputs:
     //   display: Print object to display WiFi startup summary
     //   debug: Print object to display WiFi debugging messages
-    R4A_WIFI(Print * display = nullptr, Print * debug = nullptr)
-        : _apCount{0}, _apFound{false}, _apPassword{""}, _apSSID{""},
-          _authType{0}, _debug{debug}, _display{display}, _hostName{nullptr},
-          _mdnsAvailable{false}, _stationConnected{false},  _stationHasIp{false},
-          _wifiChannel{0}, _wifiScanRunning{false}, _wifiTimer{0}
-    {
-    }
+    R4A_WIFI(Print * display = nullptr,
+             Print * debug = nullptr);
 
     // Setup WiFi
     // Inputs:
