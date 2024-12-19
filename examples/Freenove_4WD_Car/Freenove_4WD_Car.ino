@@ -290,36 +290,20 @@ R4A_SPI * r4aSpi = new R4A_ESP32_SPI();
 // Web server
 //****************************************
 
-class WEB_SERVER : public R4A_WEB_SERVER
+// Forward routine declarations
+void webServerConfigUpdate(R4A_WEB_SERVER * object, httpd_config_t * config);
+bool webServerRegisterErrorHandlers(R4A_WEB_SERVER * object);
+bool webServerRegisterUriHandlers(R4A_WEB_SERVER * object);
+
+// Web server object
+R4A_WEB_SERVER webServer =
 {
-  public:
-
-    // Constructor
-    // Inputs:
-    //   port: Port number for the web server
-    WEB_SERVER(uint16_t port = 80) : R4A_WEB_SERVER(port)
-    {
-    }
-
-    // Update the configuration
-    // Inputs:
-    //   config: Address of the HTTP config object
-    void configUpdate(httpd_config_t * config);
-
-    // Register the error handlers
-    // Outputs:
-    //   Returns true if the all of the error handlers were installed and
-    //   false upon failure
-    bool registerErrorHandlers();
-
-    // Register the URI handlers
-    // Outputs:
-    //   Returns true if the all of the URI handlers were installed and
-    //   false upon failure
-    bool registerUriHandlers();
+    webServerConfigUpdate,          // _configUpdate
+    webServerRegisterErrorHandlers, // _registerErrorHandlers
+    webServerRegisterUriHandlers,   // _registerUriHandlers
+    80,         // _port
+    nullptr,    // _webServer
 };
-
-WEB_SERVER webServer(80);
 
 //****************************************
 // WiFi support
@@ -568,8 +552,8 @@ void loop()
 
         // Update the web server
         if (DEBUG_LOOP_CORE_1)
-            callingRoutine("webServer.update");
-        webServer.update(wifiConnected && webServerEnable);
+            callingRoutine("r4aWebServerUpdate");
+        r4aWebServerUpdate(&webServer, wifiConnected && webServerEnable);
     }
 
     // Process the next image

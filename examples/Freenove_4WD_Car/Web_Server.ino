@@ -7,8 +7,10 @@
 //*********************************************************************
 // Update the configuration
 // Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
 //   config: Address of the HTTP config object
-void WEB_SERVER::configUpdate(httpd_config_t * config)
+void webServerConfigUpdate(R4A_WEB_SERVER * object,
+                           httpd_config_t * config)
 {
     // Enable matching multiple web pages
     config->uri_match_fn = httpd_uri_match_wildcard;
@@ -16,13 +18,18 @@ void WEB_SERVER::configUpdate(httpd_config_t * config)
 
 //*********************************************************************
 // Register the error handlers
-bool WEB_SERVER::registerErrorHandlers()
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+// Outputs:
+//   Returns true if the all of the error handlers were installed and
+//   false upon failure
+bool webServerRegisterErrorHandlers(R4A_WEB_SERVER * object)
 {
     esp_err_t error;
 
     for (int index = 0; index < r4aHttpErrorCount; index++)
     {
-        error = httpd_register_err_handler(_webServer,
+        error = httpd_register_err_handler(object->_webServer,
                                            r4aHttpError[index],
                                            r4aWebServerError);
         if (error != ESP_OK)
@@ -39,11 +46,12 @@ bool WEB_SERVER::registerErrorHandlers()
 //*********************************************************************
 
 // URI handler for getting uploaded files
-const httpd_uri_t webServerFileDownloadUri = {
+const httpd_uri_t webServerFileDownloadUri =
+{
     .uri       = DOWNLOAD_AREA "*",  // Match all URIs of type /path/to/file
     .method    = HTTP_GET,
     .handler   = r4aWebServerFileDownload,
-    .user_ctx  = nullptr,
+    .user_ctx  = (void *)&webServer,
     .is_websocket = true,
     .handle_ws_control_frames = false,
     .supported_subprotocol = nullptr,
@@ -51,14 +59,20 @@ const httpd_uri_t webServerFileDownloadUri = {
 
 //*********************************************************************
 // Register the URI handlers
-bool WEB_SERVER::registerUriHandlers()
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+// Outputs:
+//   Returns true if the all of the URI handlers were installed and
+//   false upon failure
+bool webServerRegisterUriHandlers(R4A_WEB_SERVER * object)
 {
     esp_err_t error;
 
     do
     {
         // Add the NVM download page
-        error = httpd_register_uri_handler(_webServer, &webServerFileDownloadUri);
+        error = httpd_register_uri_handler(object->_webServer,
+                                           &webServerFileDownloadUri);
         if (error != ESP_OK)
         {
             if (r4aWebServerDebug)
@@ -68,7 +82,7 @@ bool WEB_SERVER::registerUriHandlers()
 
 #ifdef  USE_OV2640
         // Add the jpeg camera image page
-        error = httpd_register_uri_handler(_webServer, &r4aOV2640JpegPage);
+        error = httpd_register_uri_handler(object->_webServer, &r4aOV2640JpegPage);
         if (error != ESP_OK)
         {
             if (r4aWebServerDebug)

@@ -15,24 +15,11 @@ Print * r4aWebServerDebug;
 const char * r4aWebServerDownloadArea;
 const char * r4aWebServerNvmArea;
 
-//****************************************
-// Locals
-//****************************************
-
-static R4A_WEB_SERVER * r4aWebServer;
-
-//*********************************************************************
-// Constructor
-// Inputs:
-//   port: Port number for the web server
-R4A_WEB_SERVER::R4A_WEB_SERVER(uint16_t port)
-    : _port{port}, _webServer{nullptr}
-{
-}
-
 //*********************************************************************
 // Check for extension
-bool r4aWebServerCheckExtension(const char * path, const char * extension)
+bool r4aWebServerCheckExtension(R4A_WEB_SERVER * object,
+                                const char * path,
+                                const char * extension)
 {
     int extensionLength;
     int pathLength;
@@ -48,24 +35,8 @@ bool r4aWebServerCheckExtension(const char * path, const char * extension)
 
 //*********************************************************************
 // Handle the web server errors
-esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error)
-{
-    return r4aWebServer->error(req, error);
-}
-
-//*********************************************************************
-// Download a file from the robot to the browser
-//   request: Address of a HTTP request object
-// Outputs:
-//   Returns the file download status
-esp_err_t r4aWebServerFileDownload(httpd_req_t *request)
-{
-    return r4aWebServer->fileDownload(request);
-}
-
-//*********************************************************************
-// Handle the web server errors
-esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
+esp_err_t r4aWebServerError (httpd_req_t *request,
+                             httpd_err_code_t error)
 {
     const R4A_TAG_NAME_T methodName[] =
     {
@@ -76,11 +47,15 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
     int index;
     const char * method;
     static char line[1000];
+    R4A_WEB_SERVER * object;
+
+    // Get the web server data structure
+    object = (R4A_WEB_SERVER *)request->user_ctx;
 
     // Get the method name
     method = nullptr;
     for (index = 0; index < methodNameEntries; index++)
-        if (req->method == methodName[index].tag)
+        if (request->method == methodName[index].tag)
         {
             method = methodName[index].name;
             break;
@@ -89,9 +64,9 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
     // Send the error to the browser
     sprintf(line, "<html><body>%s: %s<br>\r\n%s\r\n</body>\r\n</html>\r\n",
             (method ? method : "Request"),
-            req->uri,
+            request->uri,
             r4aHttpErrorName[error]);
-    httpd_resp_send_err(req, error, line);
+    httpd_resp_send_err(request, error, line);
 
     // Display the error locally
     if (r4aWebServerDebug)
@@ -99,7 +74,7 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
         if (!method)
             method = "Unknown";
         r4aWebServerDebug->printf("Request: %s(%d) %s\r\n",
-                                  method, req->method, req->uri);
+                                  method, request->method, request->uri);
         r4aWebServerDebug->printf("%s\r\n", r4aHttpErrorName[error]);
     }
 
@@ -108,10 +83,7 @@ esp_err_t R4A_WEB_SERVER::error (httpd_req_t *req, httpd_err_code_t error)
 
 //*********************************************************************
 // Download a file from the robot to the browser
-//   request: Address of a HTTP request object
-// Outputs:
-//   Returns the file download status
-esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
+esp_err_t r4aWebServerFileDownload(httpd_req_t *request)
 {
     uint8_t * buffer;
     const size_t bufferLength = 8192;
@@ -120,6 +92,10 @@ esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
     File file;
     const char * path;
     esp_err_t status;
+    R4A_WEB_SERVER * object;
+
+    // Get the web server data structure
+    object = (R4A_WEB_SERVER *)request->user_ctx;
 
     do
     {
@@ -149,8 +125,8 @@ esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
 
         // Determine the data type
         dataType = nullptr;
-        if (r4aWebServerCheckExtension(path, ".txt")
-            || r4aWebServerCheckExtension(path, ".log"))
+        if (r4aWebServerCheckExtension(object, path, ".txt")
+            || r4aWebServerCheckExtension(object, path, ".log"))
             dataType = "text/plain";
         if (!dataType)
         {
@@ -233,22 +209,22 @@ esp_err_t R4A_WEB_SERVER::fileDownload(httpd_req_t *request)
 
 //*********************************************************************
 // Start the web server
-bool R4A_WEB_SERVER::start(uint16_t port)
+bool r4aWebServerStart(R4A_WEB_SERVER * object)
 {
     esp_err_t error;
 
     // Generate default configuration
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    config.server_port = port;
+    config.server_port = object->_port;
 
     // Start the httpd server
     do
     {
         // Update the configuration
-        configUpdate(&config);
+        object->_configUpdate(object, &config);
 
         // Start the web server
-        error = httpd_start(&_webServer, &config);
+        error = httpd_start(&object->_webServer, &config);
         if (error != ESP_OK)
         {
             if (r4aWebServerDebug)
@@ -258,25 +234,24 @@ bool R4A_WEB_SERVER::start(uint16_t port)
         }
 
         // Register URI handlers
-        if (!registerUriHandlers())
+        if (!object->_registerUriHandlers(object))
             break;
 
         // Register the error handlers
-        if (!registerErrorHandlers())
+        if (!object->_registerErrorHandlers(object))
             break;
 
         // Display the web server path
         Serial.printf("Starting web-server: http://%s:%d\r\n",
                       WiFi.localIP().toString().c_str(),
-                      port);
+                      object->_port);
 
         // Successful server initialization
-        r4aWebServer = this;
         return true;
     } while (0);
 
     // Stop the web server
-    stop();
+    r4aWebServerStop(object);
 
     // The web server failed to start
     return false;
@@ -284,34 +259,28 @@ bool R4A_WEB_SERVER::start(uint16_t port)
 
 //*********************************************************************
 // Stop the web server
-void R4A_WEB_SERVER::stop()
+void r4aWebServerStop(R4A_WEB_SERVER * object)
 {
-    if (_webServer)
+    if (object->_webServer)
     {
         if (r4aWebServerDebug)
             Serial.println("Stopping the web-server");
 
         // Stop the web server
-        httpd_stop(_webServer);
-        _webServer = nullptr;
-
-        // Done with the web server
-        if (r4aWebServer)
-            r4aWebServer = nullptr;
+        httpd_stop(object->_webServer);
+        object->_webServer = nullptr;
     }
 }
 
 //*********************************************************************
 // Update the camera processing state
-// Inputs:
-//   wifiConnected: True when WiFi has an IP address and false otherwise
-void R4A_WEB_SERVER::update(bool wifiConnected)
+void r4aWebServerUpdate(R4A_WEB_SERVER * object, bool wifiConnected)
 {
     // Start the web server if necessary
-    if ((!_webServer) && wifiConnected)
-        start(_port);
+    if ((!object->_webServer) && wifiConnected)
+        r4aWebServerStart(object);
 
     // Stop the web server if necessary
-    if (_webServer && (!wifiConnected))
-        stop();
+    if (object->_webServer && (!wifiConnected))
+        r4aWebServerStop(object);
 }

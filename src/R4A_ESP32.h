@@ -908,72 +908,37 @@ bool r4aEsp32WpReadPoint(File * file,
 // Web Server API
 //****************************************
 
-class R4A_WEB_SERVER
+// Update the configuration
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+//   config: Address of the HTTP config object
+typedef void (* R4A_WEB_SERVER_CONFIG_UPDATE)(struct _R4A_WEB_SERVER * object,
+                                              httpd_config_t * config);
+
+// Register the error handlers
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+// Outputs:
+//   Returns true if the all of the error handlers were installed and
+//   false upon failure
+typedef bool (* R4A_WEB_SERVER_REGISTER_ERROR_HANDLERS)(struct _R4A_WEB_SERVER * object);
+
+// Register the URI handlers
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+// Outputs:
+//   Returns true if the all of the error handlers were installed and
+//   false upon failure
+typedef bool (* R4A_WEB_SERVER_REGISTER_URI_HANDLERS)(struct _R4A_WEB_SERVER * object);
+
+typedef struct _R4A_WEB_SERVER
 {
-  private:
-
-    const uint16_t _port;       // Port number for the web server
-
-  protected:
-
+    R4A_WEB_SERVER_CONFIG_UPDATE _configUpdate;
+    R4A_WEB_SERVER_REGISTER_ERROR_HANDLERS _registerErrorHandlers;
+    R4A_WEB_SERVER_REGISTER_URI_HANDLERS _registerUriHandlers;
+    uint16_t _port;             // Port number for the web server
     httpd_handle_t _webServer;  // HTTP server object
-
-  public:
-
-    // Constructor
-    // Inputs:
-    //   port: Port number for the web server
-    R4A_WEB_SERVER(uint16_t port = 80);
-
-    // Update the configuration
-    // Inputs:
-    //   config: Address of the HTTP config object
-    virtual void configUpdate(httpd_config_t * config);
-
-    // Process the request error
-    // Inputs:
-    //   req: httpd_req_t object containing the request from the browser
-    //   error: Error detected by the web server
-    // Outputs:
-    //   Returns status indicating if the response was successfully sent
-    //   to the browser
-    esp_err_t error (httpd_req_t *req, httpd_err_code_t error);
-
-    // Download a file from the robot to the browser
-    //   request: Address of a HTTP request object
-    // Outputs:
-    //   Returns the file download status
-    esp_err_t fileDownload(httpd_req_t *request);
-
-    // Register the error handlers
-    // Outputs:
-    //   Returns true if the all of the error handlers were installed and
-    //   false upon failure
-    virtual bool registerErrorHandlers();
-
-    // Register the URI handlers
-    // Outputs:
-    //   Returns true if the all of the error handlers were installed and
-    //   false upon failure
-    virtual bool registerUriHandlers();
-
-    // Start the web server
-    // Inputs:
-    //   port: Port number to use for the web server
-    // Outputs:
-    //   Returns true if the web server was successfully started and false
-    //   upon failure
-    bool start(uint16_t port);
-
-    // Stop the web server
-    // Inputs:
-    void stop();
-
-    // Update the camera processing state
-    // Inputs:
-    //   wifiConnected: True when WiFi has an IP address and false otherwise
-    void update(bool wifiConnected);
-};
+} R4A_WEB_SERVER;
 
 extern Print * r4aWebServerDebug;   // Address of a Print object for web server debugging
 extern const char * r4aWebServerDownloadArea;   // Directory path for the download area
@@ -981,26 +946,49 @@ extern const char * r4aWebServerNvmArea;   // Directory path for the NVM downloa
 
 // Check for extension
 // Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
 //   path: Zero terminated string containing the file's path
 //   extension: Zero terminated string containing the extension for comparison
 // Outputs:
 //   Returns true if the extension matches and false otherwise
-bool webServerCheckExtension(const char * path, const char * extension);
+bool webServerCheckExtension(R4A_WEB_SERVER * object,
+                             const char * path,
+                             const char * extension);
 
 // Handle the web server errors
 // Inputs:
-//   req: httpd_req_t object containing the request from the browser
+//   request: httpd_req_t object containing the request from the browser
 //   error: Error detected by the web server
 // Outputs:
 //   Returns status indicating if the response was successfully sent
 //   to the browser
-esp_err_t r4aWebServerError (httpd_req_t *req, httpd_err_code_t error);
+esp_err_t r4aWebServerError (httpd_req_t *request, httpd_err_code_t error);
 
 // Download a file from the robot to the browser
+// Inputs:
 //   request: Address of a HTTP request object
 // Outputs:
 //   Returns the file download status
 esp_err_t r4aWebServerFileDownload(httpd_req_t *request);
+
+// Start the web server
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+// Outputs:
+//   Returns true if the web server was successfully started and false
+//   upon failure
+bool r4aWebServerStart(R4A_WEB_SERVER * object);
+
+// Stop the web server
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+void r4aWebServerStop(R4A_WEB_SERVER * object);
+
+// Update the camera processing state
+// Inputs:
+//   object: Address of a R4A_WEB_SERVER data structure
+//   wifiConnected: True when WiFi has an IP address and false otherwise
+void r4aWebServerUpdate(R4A_WEB_SERVER * object, bool wifiConnected);
 
 //****************************************
 // WiFi API
