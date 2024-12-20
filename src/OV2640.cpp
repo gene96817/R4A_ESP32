@@ -32,12 +32,14 @@ void r4aOv2640DisplayRegisters(R4A_OV2640 * object,
     }
 
     // Read the bytes from the camera
-    if (object->_i2cBus->read(object->_i2cAddress,
-                              &firstRegister,
-                              sizeof(firstRegister),
-                              data,
-                              bytesToRead,
-                              display) != bytesToRead)
+    if (object->_i2cBus->_read(object->_i2cBus,
+                               object->_i2cAddress,
+                               &firstRegister,
+                               sizeof(firstRegister),
+                               data,
+                               bytesToRead,
+                               display,
+                               true) != bytesToRead)
     {
         display->printf("ERROR: Failed to read register 0x%02x\r\n", firstRegister);
         return;

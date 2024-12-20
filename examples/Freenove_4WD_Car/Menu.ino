@@ -361,12 +361,12 @@ const R4A_MENU_ENTRY wayPointMenuTable[] =
 const R4A_MENU_ENTRY mainMenuTable[] =
 {
     // Command  menuRoutine         menuParam       HelpRoutine align   HelpText
-    {"alf",     menuAlfStart,           0,              nullptr,    0,      "Advanced line following"},
-    {"blf",     menuBlfStart,           0,              nullptr,    0,      "Basic line following"},
-    {"blt",     menuBltStart,           0,              nullptr,    0,      "Basic light tracking"},
+    {"alf",     menuAlfStart,       0,              nullptr,    0,      "Advanced line following"},
+    {"blf",     menuBlfStart,       0,              nullptr,    0,      "Basic line following"},
+    {"blt",     menuBltStart,       0,              nullptr,    0,      "Basic light tracking"},
 #ifdef  USE_OV2640
     {"c", r4aMenuBoolToggle, (intptr_t)&ov2640Enable, r4aMenuBoolHelp, 0, "Toggle OV2640 camera"},
-    {"clf",     menuClfStart,           0,              nullptr,    0,      "Camera line following"},
+    {"clf",     menuClfStart,       0,              nullptr,    0,      "Camera line following"},
 #endif  // USE_OV2640
     {"d",       nullptr,            MTI_DEBUG,      nullptr,    0,      "Enter the debug menu"},
 #ifdef  USE_ZED_F9P

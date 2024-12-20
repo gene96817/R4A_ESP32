@@ -81,9 +81,21 @@ const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =
     {ZEDF9P_I2C_ADDRESS,   "u-blox ZED F9P GNSS receiver"}
 #endif  // USE_ZED_F9P
 };
-const int i2cBusDeviceTableEntries = sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]);
 
-R4A_ESP32_I2C_BUS i2cBus(0, i2cBusDeviceTable, i2cBusDeviceTableEntries);
+R4A_I2C_BUS i2cBus =
+{
+    &Wire,              // _i2cBus
+    i2cBusDeviceTable,  // _deviceTable
+    sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]), // _deviceTableEntries
+    0,                  // _lock
+    {0,},               // _present
+    r4aEsp32I2cBusWriteWithLock, // _writeWithLock
+    r4aEsp32I2cBusRead, // _read
+    false,              // _enumerated
+};
+
+R4A_I2C_BUS * r4aI2cBus; // I2C bus for menu system
+
     R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);
         R4A_PCA9685_SERVO servoPan(&pca9685, 0, 0, 180);
         R4A_PCA9685_SERVO servoTilt(&pca9685, 1, 2, 150);
@@ -568,16 +580,18 @@ void setupCore0(void *parameter)
     // Setup and enumerate the I2C devices
     if(DEBUG_BOOT)
         callingRoutine("i2cBus.begin");
-    i2cBus.begin(I2C_SDA,
-                 I2C_SCL,
-                 R4A_I2C_FAST_MODE_HZ);
+    r4aEsp32I2cBusBegin(&i2cBus,
+                        I2C_SDA,
+                        I2C_SCL,
+                        R4A_I2C_FAST_MODE_HZ);
+    r4aI2cBus = &i2cBus;
 
     // Determine which devices are present
     if(DEBUG_BOOT)
         callingRoutine("i2cBus.isDevicePresent");
-    ov2640Present = i2cBus.isDevicePresent(OV2640_I2C_ADDRESS);
-    vk16k33Present = i2cBus.isDevicePresent(VK16K33_I2C_ADDRESS);
-    zedf9pPresent = i2cBus.isDevicePresent(ZEDF9P_I2C_ADDRESS);
+    ov2640Present = r4aI2cBusIsDevicePresent(&i2cBus, OV2640_I2C_ADDRESS);
+    vk16k33Present = r4aI2cBusIsDevicePresent(&i2cBus, VK16K33_I2C_ADDRESS);
+    zedf9pPresent = r4aI2cBusIsDevicePresent(&i2cBus, ZEDF9P_I2C_ADDRESS);
 
     // Initialize the PCA9685
     if(DEBUG_BOOT)
