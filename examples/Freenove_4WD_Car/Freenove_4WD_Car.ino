@@ -275,7 +275,7 @@ USE_SERVO_TABLE;
 // SPI support - WS2812 LEDs
 //****************************************
 
-R4A_SPI * r4aSpi = new R4A_ESP32_SPI();
+R4A_ESP32_SPI r4aEsp32Spi;
 
 //****************************************
 // Web server
@@ -412,8 +412,14 @@ void setup()
         callingRoutine("r4aNtpSetup");
     r4aNtpSetup(-10 * R4A_SECONDS_IN_AN_HOUR, true);
 
+    // Initialize the SPI controller
+    if (DEBUG_BOOT)
+        callingRoutine("r4aEsp32SpiBegin");
+    if (!r4aEsp32SpiBegin(&r4aEsp32Spi, 2, BATTERY_WS2812_PIN, 4 * 1000 * 1000))
+        r4aReportFatalError("Failed to initialize the SPI controller!");
+
     // Initialize the SPI controller for the WD2812 LEDs
-    if (!r4aLEDSetup(2, BATTERY_WS2812_PIN, 4 * 1000 * 1000, car.numberOfLEDs))
+    if (!r4aLEDSetup(&r4aEsp32Spi.spi, car.numberOfLEDs))
         r4aReportFatalError("Failed to allocate the SPI device for the WS2812 LEDs!");
 
     // Turn off all of the 3 color LEDs

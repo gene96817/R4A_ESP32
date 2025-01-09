@@ -44,6 +44,13 @@ extern const R4A_GPIO_MATRIX r4aGpioMatrixNames[256];
 // ESP32 API
 //****************************************
 
+// Allocate DMA buffer
+// Inputs:
+//   length: Number of data bytes to allocate
+// Outputs:
+//   Returns the buffer address if successful and nullptr otherwise
+uint8_t * r4aEsp32AllocateDmaBuffer(int length);
+
 // Determine if the address is in the EEPROM (Flash)
 // Inputs:
 //   addr: Address in question
@@ -759,41 +766,38 @@ extern const R4A_OV2640_PINS r4aOV2640Pins; // ESP32 WRover camera pins
 // SPI API
 //****************************************
 
-class R4A_ESP32_SPI : public R4A_SPI
+typedef struct _R4A_ESP32_SPI
 {
-  private:
+    R4A_SPI spi;
 
+    // Private
     uint32_t _div;
     spi_t * _spi;
+} R4A_ESP32_SPI;
 
-  public:
+// Initialize the SPI controller
+// Inputs:
+//   spi: Address of an R4A_ESP32_SPI data structure
+//   spiNumber: Number of the SPI controller
+//   pinMOSI: SPI TX data pin number
+//   clockHz: SPI clock frequency in Hertz
+// Outputs:
+//   Return true if successful and false upon failure
+bool r4aEsp32SpiBegin(struct _R4A_ESP32_SPI * spi,
+                      uint8_t spiNumber,
+                      uint8_t pinMOSI,
+                      uint32_t clockHz);
 
-    // Constructor
-    R4A_ESP32_SPI();
-
-    // Allocate DMA buffer
-    // Inputs:
-    //   length: Number of data bytes to allocate
-    // Outputs:
-    //   Returns the buffer address if successful and nullptr otherwise
-    uint8_t * allocateDmaBuffer(int length);
-
-    // Initialize the SPI controller
-    // Inputs:
-    //   spiNumber: Number of the SPI controller
-    //   pinMOSI: SPI TX data pin number
-    //   clockHz: SPI clock frequency in Hertz
-    // Outputs:
-    //   Return true if successful and false upon failure
-    bool begin(uint8_t spiNumber, uint8_t pinMOSI, uint32_t clockHz);
-
-    // Transfer the data to the SPI device
-    // Inputs:
-    //   txBuffer: Address of the buffer containing the data to send
-    //   rxBuffer: Address of the receive data buffer
-    //   length: Number of data bytes in the buffer
-    void transfer(const uint8_t * txBuffer, uint8_t * rxBuffer, uint32_t length);
-};
+// Transfer the data to the SPI device
+// Inputs:
+//   spi: Address of an R4A_SPI data structure
+//   txBuffer: Address of the buffer containing the data to send
+//   rxBuffer: Address of the receive data buffer
+//   length: Number of data bytes in the buffer
+void r4aEsp32SpiTransfer(struct _R4A_SPI * spi,
+                         const uint8_t * txBuffer,
+                         uint8_t * rxBuffer,
+                         uint32_t length);
 
 //****************************************
 // Timer API
