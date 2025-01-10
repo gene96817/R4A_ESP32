@@ -263,7 +263,7 @@ R4A_ROBOT robot(0,                          // CPU core
 // Serial menu support
 //****************************************
 
-R4A_MENU serialMenu(menuTable, menuTableEntries);
+R4A_MENU serialMenu;
 
 //****************************************
 // Servos
@@ -339,6 +339,9 @@ void setup()
     if (DEBUG_BOOT)
         callingRoutine("r4aEsp32NvmGetParameters");
     r4aEsp32NvmGetParameters(&parameterFilePath);
+
+    // Initialize the menus
+    r4aMenuBegin(&serialMenu, menuTable, menuTableEntries);
 
     // Enable web server debugging
     r4aWebServerDebug = webServerDebug ? &Serial : nullptr;

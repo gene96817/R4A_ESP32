@@ -38,7 +38,7 @@ extern const int menuTableEntries;
 // Serial menu support
 //****************************************
 
-R4A_MENU serialMenu(menuTable, menuTableEntries);
+R4A_MENU serialMenu;
 
 //****************************************
 // WiFi support
@@ -69,6 +69,9 @@ void setup()
     Serial.begin(115200);
     Serial.println();
     Serial.printf("%s\r\n", __FILE__);
+
+    // Initialize the menu
+    r4aMenuBegin(&serialMenu, menuTable, menuTableEntries);
 
     // Get the parameters
     r4aEsp32NvmGetParameters(&parameterFilePath);
