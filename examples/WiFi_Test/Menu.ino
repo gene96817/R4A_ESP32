@@ -63,7 +63,6 @@ void wifiMenuRestart(const R4A_MENU_ENTRY * menuEntry,
 enum MENU_TABLE_INDEX
 {
     MTI_DEBUG = R4A_MENU_MAIN + 1,
-    MTI_I2C,
     MTI_NVM,
     MTI_TELNET,
 };
@@ -73,7 +72,6 @@ const R4A_MENU_ENTRY debugMenuTable[] =
 {
     // Command  menuRoutine                 menuParam       HelpRoutine align   HelpText
     {"h",       r4aEsp32MenuDisplayHeap,    0,              nullptr,    0,      "Display the heap"},
-    {"i",       nullptr,                    MTI_I2C,        nullptr,    0,      "I2C menu"},
     {"p",    r4aEsp32MenuDisplayPartitions, 0,              nullptr,    0,      "Display the partitions"},
     {"x",       nullptr,                    R4A_MENU_MAIN,  nullptr,    0,      "Return to the main menu"},
 };
@@ -107,7 +105,6 @@ const R4A_MENU_TABLE menuTable[] =
     // menuName         preMenu routine firstEntry          entryCount
     {"Main Menu",       mainMenuPre,    mainMenuTable,      MAIN_MENU_ENTRIES},
     {"Debug Menu",      nullptr,        debugMenuTable,     DEBUG_MENU_ENTRIES},
-    {"I2C Menu",        nullptr,        r4aI2cMenuTable,    R4A_I2C_MENU_ENTRIES},
     {"NVM Menu",        nullptr,      r4aEsp32NvmMenuTable, R4A_ESP32_NVM_MENU_ENTRIES},
     {"Telnet Menu",     nullptr,        telnetMenuTable,    TELNET_MENU_ENTRIES},
 };
