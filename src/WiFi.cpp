@@ -20,6 +20,7 @@ static const char * r4aEsp32WiFiAuthorizationName[] =
     "WPA_PSK",
     "WPA2_PSK",
     "WPA_WPA2_PSK",
+    "WIFI_AUTH_WPA_WPA2_PSK",
     "WPA2_Enterprise",
     "WPA3_PSK",
     "WPA2_WPA3_PSK",
@@ -952,7 +953,7 @@ void R4A_WIFI::verifyTables()
         debug = (Print *)debug;
         if (!debug)
             debug = &Serial;
-        ((Print *)_debug)->printf("ERROR: Fix authorizationNameName list to match wifi_auth_mode_t in esp_wifi_types.h!\r\n");
+        ((Print *)debug)->printf("ERROR: Fix authorizationNameName list to match wifi_auth_mode_t in esp_wifi_types.h!\r\n");
         r4aReportFatalError("Fix authorizationNameName list to match wifi_auth_mode_t");
     }
 }
