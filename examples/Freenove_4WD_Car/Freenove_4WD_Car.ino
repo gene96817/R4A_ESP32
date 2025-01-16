@@ -329,43 +329,30 @@ void setup()
     Serial.printf("Freenove 4WD Car\r\n");
 
     // Display the core number
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("setup() running on core %d\r\n", xPortGetCoreID());
-        Serial.flush();
-    }
+    log_v("setup() running on core %d\r\n", xPortGetCoreID());
 
     // Get the parameters
-    if (DEBUG_BOOT)
-        callingRoutine("r4aEsp32NvmGetParameters");
+    log_v("Calling r4aEsp32NvmGetParameters");
     r4aEsp32NvmGetParameters(&parameterFilePath);
 
     // Initialize the menus
+    log_v("Calling r4aMenuBegin");
     r4aMenuBegin(&serialMenu, menuTable, menuTableEntries);
 
     // Enable web server debugging
     r4aWebServerDebug = webServerDebug ? &Serial : nullptr;
 
     // Set the ADC reference voltage
-    if (DEBUG_BOOT)
-        callingRoutine("r4aEsp32VoltageSetReference");
+    log_v("Calling r4aEsp32VoltageSetReference");
     r4aEsp32VoltageSetReference(ADC_REFERENCE_VOLTAGE);
 
     // Turn off the buzzer
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Turning off the buzzer\r\n");
-        Serial.flush();
-    }
+    log_v("Turning off the buzzer\r\n");
     pinMode(BLUE_LED_BUZZER_PIN, OUTPUT);
     digitalWrite(BLUE_LED_BUZZER_PIN, ESP32_WROVER_BLUE_LED_OFF);
 
     // Turn off ESP32 Wrover blue LED when battery power is applied
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Setting the blue LED\r\n");
-        Serial.flush();
-    }
+    log_v("Setting the blue LED\r\n");
     float batteryVoltage = READ_BATTERY_VOLTAGE(nullptr);
     int blueLED = (batteryVoltage > 2.)
                 ? ESP32_WROVER_BLUE_LED_ON : ESP32_WROVER_BLUE_LED_OFF;
@@ -375,8 +362,7 @@ void setup()
     delay(1000);
 
     // Start the core 0 task
-    if (DEBUG_BOOT)
-        callingRoutine("xTaskCreatePinnedToCore");
+    log_v("Calling xTaskCreatePinnedToCore");
     status = xTaskCreatePinnedToCore(
                   setupCore0,   // Function to implement the task
                   "Core 0",     // Name of the task
@@ -387,37 +373,26 @@ void setup()
                   0);           // Core where the task should run
     if (status != pdPASS)
         r4aReportFatalError("Failed to create the core 0 task!");
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Core 0 task started\r\n");
-        Serial.flush();
-    }
+    log_v("Core 0 task started");
 
     // Start WiFi if enabled
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Calling wifiBegin\r\n");
-        Serial.flush();
-    }
+    log_v("Calling wifiBegin");
     if (wifiDebug)
         wifi._debug = &Serial;
     wifi.begin(mdnsHostName);
 
 #ifdef  USE_NTRIP
     // Validate the NTRIP tables
-    if (DEBUG_BOOT)
-        callingRoutine("ntrip.validateTables");
+    log_v("ntrip.validateTables");
     ntrip.validateTables();
 #endif  // USE_NTRIP
 
     // Initialize the NTP client
-    if (DEBUG_BOOT)
-        callingRoutine("r4aNtpSetup");
+    log_v("Calling r4aNtpSetup");
     r4aNtpSetup(-10 * R4A_SECONDS_IN_AN_HOUR, true);
 
     // Initialize the SPI controller
-    if (DEBUG_BOOT)
-        callingRoutine("r4aEsp32SpiBegin");
+    log_v("r4aEsp32SpiBegin");
     if (!r4aEsp32SpiBegin(&r4aEsp32Spi, 2, BATTERY_WS2812_PIN, 4 * 1000 * 1000))
         r4aReportFatalError("Failed to initialize the SPI controller!");
 
@@ -426,18 +401,15 @@ void setup()
         r4aReportFatalError("Failed to allocate the SPI device for the WS2812 LEDs!");
 
     // Turn off all of the 3 color LEDs
-    if (DEBUG_BOOT)
-        callingRoutine("car.ledsOff");
+    log_v("Calling car.ledsOff");
     car.ledsOff();
 
     // Reduce the LED intensity
-    if (DEBUG_BOOT)
-        callingRoutine("r4aLEDSetIntensity");
+    log_v("Calling r4aLEDSetIntensity");
     r4aLEDSetIntensity(1);
 
     // Set the initial LED values
-    if (DEBUG_BOOT)
-        callingRoutine("r4aLEDUpdate");
+    log_v("Calling r4aLEDUpdate");
     r4aLEDUpdate(true);
 
     //****************************************
@@ -445,26 +417,16 @@ void setup()
     //****************************************
 
     // Wait for the other core to finish initialization
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Waiting for setupCore0 to complete\r\n");
-        Serial.flush();
-    }
+    log_v("Waiting for setupCore0 to complete");
     while (!core0Initialized)
         delayMicroseconds(1);
-    if (DEBUG_BOOT)
-        callingRoutine("r4aNtpSetup");
 
     //****************************************
     // Core 1 completed initialization
     //****************************************
 
     // Finished with the initialization
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("setup complete\r\n");
-        Serial.flush();
-    }
+    log_v("setup complete");
     core1Initialized = true;
 
     //****************************************
@@ -577,18 +539,13 @@ void loop()
 void setupCore0(void *parameter)
 {
     // Display the core number
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("setupCore0() running on core %d\r\n", xPortGetCoreID());
-        Serial.flush();
-    }
+    log_v("setupCore0() running on core %d", xPortGetCoreID());
 
     // Allow I2C devices time to power up
     delay(100);
 
     // Setup and enumerate the I2C devices
-    if(DEBUG_BOOT)
-        callingRoutine("i2cBus.begin");
+    log_v("Calling i2cBus.begin");
     r4aEsp32I2cBusBegin(&i2cBus,
                         I2C_SDA,
                         I2C_SCL,
@@ -596,37 +553,31 @@ void setupCore0(void *parameter)
     r4aI2cBus = &i2cBus;
 
     // Determine which devices are present
-    if(DEBUG_BOOT)
-        callingRoutine("i2cBus.isDevicePresent");
+    log_v("Calling i2cBus.isDevicePresent");
     ov2640Present = r4aI2cBusIsDevicePresent(&i2cBus, OV2640_I2C_ADDRESS);
     vk16k33Present = r4aI2cBusIsDevicePresent(&i2cBus, VK16K33_I2C_ADDRESS);
     zedf9pPresent = r4aI2cBusIsDevicePresent(&i2cBus, ZEDF9P_I2C_ADDRESS);
 
     // Initialize the PCA9685
-    if(DEBUG_BOOT)
-        callingRoutine("pca9685.begin");
+    log_v("Calling pca9685.begin");
     if (pca9685.begin())
     {
         // Initialize the Pan/Tilt servos
-        if(DEBUG_BOOT)
-            callingRoutine("servoPan.positionSet");
+        log_v("Calling servoPan.positionSet");
         servoPan.positionSet(servoPanStartDegrees);
-        if(DEBUG_BOOT)
-            callingRoutine("servoTilt.positionSet");
+        log_v("Calling servoTilt.positionSet");
         servoTilt.positionSet(servoTiltStartDegrees);
     }
 
     // Initialize the PCF8574
-    if(DEBUG_BOOT)
-        callingRoutine("pcf8574.write");
+    log_v("Calling pcf8574.write");
     pcf8574.write(0xff);
 
     // Initialize the camera
 #ifdef USE_OV2640
     if (ov2640Present)
     {
-        if(DEBUG_BOOT)
-            callingRoutine("r4aOv2640Setup");
+        log_v("Calling r4aOv2640Setup");
         Serial.printf("Initializing the OV2640 camera\r\n");
         r4aOv2640Setup(&ov2640, PIXFORMAT_RGB565);
     }
@@ -636,8 +587,7 @@ void setupCore0(void *parameter)
 #ifdef  USE_ZED_F9P
     if (zedf9pPresent)
     {
-        if(DEBUG_BOOT)
-            callingRoutine("zedf9p.begin");
+        log_v("Calling zedf9p.begin");
         Serial.printf("Initializing the ZED-F9P GNSS receiver\r\n");
         zedf9p.begin();
     }
@@ -647,11 +597,7 @@ void setupCore0(void *parameter)
     // Core 0 completed initialization
     //****************************************
 
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("setupCore0 complete\r\n");
-        Serial.flush();
-    }
+    log_v("setupCore0 complete");
 
     // Finished with the initialization
     core0Initialized = true;
@@ -660,18 +606,13 @@ void setupCore0(void *parameter)
     // Synchronize with core 1
     //****************************************
 
-    if (DEBUG_BOOT)
-    {
-        Serial.printf("Waiting for setup to complete\r\n");
-        Serial.flush();
-    }
+    log_v("Waiting for setup to complete");
 
     // Wait for the other core to finish initialization
     while (!core1Initialized)
         delayMicroseconds(1);
 
-    if(DEBUG_BOOT)
-        callingRoutine("loopCore0");
+    log_v("Calling loopCore0");
 
     //****************************************
     // Execute loopCore0 forever
