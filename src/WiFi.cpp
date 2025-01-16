@@ -58,6 +58,7 @@ void r4aEsp32WifiEvent(arduino_event_id_t event, arduino_event_info_t info)
 void R4A_WIFI::begin(const char * hostName)
 {
     // Verify the tables
+    log_v("Calling verifyTables");
     verifyTables();
 
     // Save the object
@@ -67,6 +68,7 @@ void R4A_WIFI::begin(const char * hostName)
     _hostName = hostName;
 
     // Start the WiFi station
+    log_v("Calling stationStart");
     stationStart();
 }
 
@@ -96,6 +98,7 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
         display = debug;
 
     // Display the event
+    log_v("Event: %d", event);
     if (debug)
         debug->printf("event: %d\r\n", event);
 
@@ -252,6 +255,7 @@ void R4A_WIFI::eventHandler(arduino_event_id_t event, arduino_event_info_t info)
 
             // Select an AP from the list
             _apCount = info.wifi_scan_done.number;
+            log_v("Calling stationSelectAP");
             channel = stationSelectAP(true, nullptr);
             if (channel == 0)
             {
@@ -619,6 +623,7 @@ bool R4A_WIFI::stationScanStart(R4A_WIFI_CHANNEL_t channel)
         }
 
         // Start the WiFi scan
+        log_v("Calling WiFi.scanNetworks");
         status = WiFi.scanNetworks(true,        // async
                                    false,       // show_hidden
                                    false,       // passive
@@ -626,6 +631,7 @@ bool R4A_WIFI::stationScanStart(R4A_WIFI_CHANNEL_t channel)
                                    channel,     // channel number
                                    nullptr,     // ssid *
                                    nullptr);    // bssid *
+        log_v("WiFi.scanNetworks returned %d", status);
         _wifiScanRunning = (status == WIFI_SCAN_RUNNING);
         if (!_wifiScanRunning)
         {
@@ -755,6 +761,7 @@ bool R4A_WIFI::stationStart()
         }
 
         // Verify that at least one SSID is set
+        log_v("Checking for configured WiFi SSID");
         for (authIndex = 0; authIndex < r4aWifiSsidPasswordEntries; authIndex++)
             if (*r4aWifiSsidPassword[authIndex].ssid
                 && (strlen(*r4aWifiSsidPassword[authIndex].ssid)))
@@ -766,6 +773,7 @@ bool R4A_WIFI::stationStart()
             Serial.printf("ERROR: No valid SSID in r4aWifiSsidPassword\r\n");
             break;
         }
+        log_v("Configured WiFi SSID found");
 
         // Determine if WiFi is running
         mode = WiFi.getMode();
@@ -780,12 +788,18 @@ bool R4A_WIFI::stationStart()
         else
         {
             // Start the WiFi event handler
+            log_v("Starting WiFi event handler");
             eventHandlerStart();
 
             // Attempt to enable WiFi station
             if (debug)
                 debug->printf("WiFi: Starting station mode\r\n");
+            else
+            {
+                log_v("WiFi: Starting station mode");
+            }
             started = WiFi.mode((wifi_mode_t)(mode | WIFI_MODE_STA));
+            log_v("WiFi station mode %sstarted", started ? "" : "NOT ");
             if (!started)
             {
                 Serial.printf("ERROR: Failed to stop WiFi station mode!\r\n");
@@ -797,9 +811,11 @@ bool R4A_WIFI::stationStart()
             // Set the protocols
             if (debug)
                 debug->printf("WiFi: Selecting WiFi frequencies and protocols\r\n");
+            log_v("Calling esp_wifi_set_protocol");
             status = esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_11B
                                                         | WIFI_PROTOCOL_11G
                                                         | WIFI_PROTOCOL_11N);
+            log_v("esp_wifi_set_protocol returned %s", esp_err_to_name(status));
             started = (status == ESP_OK);
             if (!started)
             {
@@ -811,6 +827,7 @@ bool R4A_WIFI::stationStart()
         }
 
         // Start the WiFi scan
+        log_v("Calling stationScanStart");
         started = stationScanStart(_wifiChannel);
     } while (0);
     return started;
@@ -929,8 +946,12 @@ void R4A_WIFI::update()
 // Verify the WiFi tables
 void R4A_WIFI::verifyTables()
 {
+    Print * debug;
     if (WIFI_AUTH_MAX != r4aEsp32WiFiAuthorizationNameEntries)
     {
+        debug = (Print *)debug;
+        if (!debug)
+            debug = &Serial;
         ((Print *)_debug)->printf("ERROR: Fix authorizationNameName list to match wifi_auth_mode_t in esp_wifi_types.h!\r\n");
         r4aReportFatalError("Fix authorizationNameName list to match wifi_auth_mode_t");
     }
