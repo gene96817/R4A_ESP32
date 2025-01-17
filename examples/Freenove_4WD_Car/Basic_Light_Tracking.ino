@@ -98,7 +98,8 @@ void menuBltStart(const struct _R4A_MENU_ENTRY * menuEntry,
     }
     else
         // Start the robot challenge if the robot is not active
-        robot.init(&basicLightTracking,
-                   ROBOT_LIGHT_TRACKING_DURATION_SEC,
-                   display);
+        r4aRobotStart(&robot,
+                      &basicLightTracking,
+                      ROBOT_LIGHT_TRACKING_DURATION_SEC,
+                      display);
 }

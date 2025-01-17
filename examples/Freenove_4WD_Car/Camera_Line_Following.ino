@@ -73,9 +73,10 @@ void menuClfStart(const struct _R4A_MENU_ENTRY * menuEntry,
     }
     else
         // Start the robot challenge if the robot is not active
-        robot.init(&cameraLineFollowing,
-                   ROBOT_LINE_FOLLOW_DURATION_SEC,
-                   display);
+        r4aRobotStart(&robot,
+                      &cameraLineFollowing,
+                      ROBOT_LINE_FOLLOW_DURATION_SEC,
+                      display);
 }
 
 #endif  // USE_OV2640

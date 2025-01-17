@@ -73,7 +73,8 @@ void menuAlfStart(const struct _R4A_MENU_ENTRY * menuEntry,
     }
     else
         // Start the robot challenge if the robot is not active
-        robot.init(&advancedLineFollowing,
-                   ROBOT_LINE_FOLLOW_DURATION_SEC,
-                   display);
+        r4aRobotStart(&robot,
+                      &advancedLineFollowing,
+                      ROBOT_LINE_FOLLOW_DURATION_SEC,
+                      display);
 }

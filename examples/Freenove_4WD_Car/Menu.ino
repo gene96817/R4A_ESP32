@@ -209,7 +209,7 @@ void robotMenuStop(const R4A_MENU_ENTRY * menuEntry,
                    const char * command,
                    Print * display)
 {
-    robot.stop(millis(), display);
+    r4aRobotStop(&robot, millis(), display);
 }
 
 //*********************************************************************

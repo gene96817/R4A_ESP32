@@ -253,11 +253,7 @@ bool ignoreBatteryCheck;
 void robotIdle(uint32_t currentMsec);
 void robotDisplayTime(uint32_t milliseconds);
 
-R4A_ROBOT robot(0,                          // CPU core
-                ROBOT_START_DELAY_SEC,      // Challenge start delay
-                ROBOT_STOP_TO_IDLE_SEC,     // Delay after running the challenge
-                robotIdle,                  // Idle routine
-                robotDisplayTime);          // Time display routine
+R4A_ROBOT robot;
 
 //****************************************
 // Serial menu support
@@ -593,6 +589,14 @@ void setupCore0(void *parameter)
     }
 #endif  // USE_ZED_F9P
 
+    // Initialize the robot
+    r4aRobotInit(&robot,
+                 xPortGetCoreID(),       // CPU core
+                 ROBOT_START_DELAY_SEC,  // Challenge start delay
+                 ROBOT_STOP_TO_IDLE_SEC, // Delay after running the challenge
+                 robotIdle,              // Idle routine
+                 robotDisplayTime);      // Time display routine
+
     //****************************************
     // Core 0 completed initialization
     //****************************************
@@ -657,8 +661,8 @@ void loopCore0()
 
     // Perform the robot challenge
     if (DEBUG_LOOP_CORE_0)
-        callingRoutine("robot.update");
-    robot.update(currentMsec);
+        callingRoutine("r4aRobotUpdate");
+    r4aRobotUpdate(&robot, currentMsec);
 }
 
 //*********************************************************************
