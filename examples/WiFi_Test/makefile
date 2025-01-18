@@ -1,6 +1,7 @@
 ######################################################################
 # makefile
 #
+# Robots-For-All (R4A)
 # Build the example sketch
 ######################################################################
 
@@ -14,6 +15,10 @@ SHELL=/bin/bash
 SKETCH=WiFi_Test
 ESP32_CHIP=esp32wrover
 PARTITION_FILE_NAME=huge_app
+
+ESP_CORE_VERSION=3.1.1
+ESPTOOL_VERSION=4.9.dev3
+IDF_VERSION=idf-release_v5.3-cfea4f7c-v1
 
 ##########
 # OS specific paths
@@ -33,8 +38,9 @@ ARDUINO_LIBRARY_PATH=$(ARDUINO_PATH)libraries\
 BUILD_PATH=build\
 BIN_PATH=$BUILD_PATH)esp32.esp32.$(ESP32_CHIP)\
 BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32\binaries\
-ESPTOOL_PATH=$(USER_DIRECTORY_PATH)\.arduino15\packages\esp32\tools\esptool_py\4.5.1\
 HOME_BOARD_PATH=$(USER_DIRECTORY_PATH)AppData\Local\Arduino15\packages\esp32\
+ESP_IDF_PATH=$(HOME_BOARD_PATH)tools\esp32-arduino-libs\$(IDF_VERSION)\
+ESPTOOL_PATH=$(HOME_BOARD_PATH)\.arduino15\packages\esp32\tools\esptool_py\$(ESPTOOL_VERSION)\
 
 # Windows NT utilities
 ARDUINO_CLI=~/Arduino/arduino-cli
@@ -63,9 +69,9 @@ ARDUINO_LIBRARY_PATH=$(ARDUINO_PATH)libraries/
 BUILD_PATH=build/
 BIN_PATH=$(BUILD_PATH)esp32.esp32.$(ESP32_CHIP)/
 BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32/binaries/
-ESP_IDF_PATH=$(HOME_BOARD_PATH)tools\esp32-arduino-libs\
-ESPTOOL_PATH=$(USER_DIRECTORY_PATH)\.arduino15\packages\esp32\tools\esptool_py\4.5.1\
-HOME_BOARD_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/
+HOME_BOARD_PATH=$(USER_DIRECTORY_PATH)AppData/Local/Arduino15/packages/esp32/
+ESP_IDF_PATH=$(HOME_BOARD_PATH)tools/esp32-arduino-libs/$(IDF_VERSION)/
+ESPTOOL_PATH=$(HOME_BOARD_PATH)tools/esptool_py/$(ESPTOOL_VERSION)/
 
 # Mac utilities
 ARDUINO_CLI=arduino-cli
@@ -92,9 +98,9 @@ ARDUINO_LIBRARY_PATH=$(ARDUINO_PATH)libraries/
 BUILD_PATH=build/
 BIN_PATH=$(BUILD_PATH)esp32.esp32.$(ESP32_CHIP)/
 BOOT_LOADER_PATH=$(ARDUINO_LIBRARY_PATH)R4A_ESP32/binaries/
-ESP_IDF_PATH=$(HOME_BOARD_PATH)tools/esp32-arduino-libs/
-ESPTOOL_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/tools/esptool_py/4.5.1/
 HOME_BOARD_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/
+ESP_IDF_PATH=$(HOME_BOARD_PATH)tools/esp32-arduino-libs/$(IDF_VERSION)/
+ESPTOOL_PATH=$(USER_DIRECTORY_PATH).arduino15/packages/esp32/tools/esptool_py/$(ESPTOOL_VERSION)/
 
 # Linux utilities
 ARDUINO_CLI=$(USER_DIRECTORY_PATH)Arduino/arduino-cli
@@ -144,8 +150,6 @@ arduino-config:
 # Get the ESP32 core
 ##########
 
-ESP_CORE_VERSION=3.0.7
-
 .PHONY: core-update
 
 core-update:
@@ -156,7 +160,10 @@ core-update:
 # Robot Firmware
 ##########
 
+#DEBUG_LEVEL=verbose
 #DEBUG_LEVEL=debug
+#DEBUG_LEVEL=warn
+#DEBUG_LEVEL=error
 DEBUG_LEVEL=none
 
 $(BIN_FILE):	$(SKETCH).ino   *.ino   *.h   makefile
@@ -177,21 +184,21 @@ $(BIN_FILE):	$(SKETCH).ino   *.ino   *.h   makefile
 .PHONY: upload
 
 upload:	$(BIN_FILE)
-	python3 $(ESPTOOL_PATH)esptool.py \
-        --chip   esp32 \
-        --port   $(TERMINAL_PORT) \
-        --baud   921600 \
-        --before   default_reset \
-        --after   hard_reset \
-        write_flash \
-        --flash_mode dio \
-        --flash_freq 80m \
-        --flash_size detect \
-        --compress \
-         0x1000   $(BOOT_LOADER_PATH)bootloader.bin \
-         0x8000   $(BOOT_LOADER_PATH)$(PARTITION_FILE_NAME).bin \
-         0xe000   $(BOOT_LOADER_PATH)boot_app0.bin \
-        0x10000   $<
+	$(ESPTOOL_PATH)esptool \
+		--chip   esp32 \
+		--port   $(TERMINAL_PORT) \
+		--baud   921600 \
+		--before   default_reset \
+		--after   hard_reset \
+		write_flash \
+		--flash_mode dio \
+		--flash_freq 80m \
+		--flash_size detect \
+		--compress \
+		 0x1000   $(BOOT_LOADER_PATH)bootloader.bin \
+		 0x8000   $(BOOT_LOADER_PATH)$(PARTITION_FILE_NAME).bin \
+		 0xe000   $(BOOT_LOADER_PATH)boot_app0.bin \
+		0x10000   $<
 	$(TERMINAL_APP) -D $(TERMINAL_PORT) $(TERMINAL_PARAMS)
 
 ##########
@@ -221,4 +228,4 @@ terminal:
 .PHONY: clean
 
 clean:
-	rm -Rf *.o *.a $(BUILD_PATH)
+	rm -Rf $(BUILD_PATH)
