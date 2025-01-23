@@ -11,7 +11,7 @@
 //****************************************
 
 //#define USE_NTRIP
-#define USE_OV2640
+//#define USE_OV2640
 //#define USE_ZED_F9P
 
 #define DEBUG_BOOT              0
