@@ -23,7 +23,7 @@
 // Forward routine declarations
 //****************************************
 
-bool contextCreate(NetworkClient * client, void ** contextData);
+bool contextCreate(void ** contextData, NetworkClient * client);
 void listClients(const R4A_MENU_ENTRY * menuEntry, const char * command, Print * display);
 void serverInfo(const R4A_MENU_ENTRY * menuEntry, const char * command, Print * display);
 

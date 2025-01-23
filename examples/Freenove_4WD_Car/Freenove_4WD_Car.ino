@@ -46,7 +46,7 @@
 // Forward routine declarations
 //****************************************
 
-bool contextCreate(NetworkClient * client, void ** contextData);
+bool contextCreate(void ** contextData, NetworkClient * client);
 void wpfStart(const struct _R4A_MENU_ENTRY * menuEntry,
               const char * command,
               Print * display);
