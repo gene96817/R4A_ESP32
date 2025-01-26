@@ -169,7 +169,7 @@ void setup()
     // Start the robot challenge
     r4aRobotStart(&robot,
                   &basicLineFollowing,
-                  5, // ROBOT_LINE_FOLLOW_DURATION_SEC,
+                  ROBOT_LINE_FOLLOW_DURATION_SEC,
                   &Serial);
 
     // Execute loop forever
