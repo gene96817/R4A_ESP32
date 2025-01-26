@@ -48,6 +48,13 @@ void r4aEsp32HeapDisplay(Print * display)
 }
 
 //*********************************************************************
+// Determine if the address is SRAM that supports DMA
+bool r4aEsp32IsAddressInDMARAM(void * addr)
+{
+    return r4aEsp32IsAddressInSRAM1(addr) || r4aEsp32IsAddressInSRAM2(addr);
+}
+
+//*********************************************************************
 // Determine if the address is in the EEPROM (Flash)
 bool r4aEsp32IsAddressInEEPROM(void * addr)
 {
@@ -62,10 +69,11 @@ bool r4aEsp32IsAddressInPSRAM(void * addr)
 }
 
 //*********************************************************************
-// Determine if the address is in PSRAM or SRAM
+// Determine if the address is in PSRAM, SRAM or RTC fast memory
 bool r4aEsp32IsAddressInRAM(void * addr)
 {
-    return r4aEsp32IsAddressInSRAM(addr) || r4aEsp32IsAddressInPSRAM(addr);
+    return r4aEsp32IsAddressInSRAM(addr) || r4aEsp32IsAddressInPSRAM(addr)
+        || r4aEsp32IsAddressInRtcFastMemory(addr);
 }
 
 //*********************************************************************
@@ -76,8 +84,43 @@ bool r4aEsp32IsAddressInROM(void * addr)
 }
 
 //*********************************************************************
+// Determine if the address is in RTC fast memory
+bool r4aEsp32IsAddressInRtcFastMemory(void * addr)
+{
+    // Instruction bus addresses, PRO_CPU only, see pages 28-29 in the TRM
+    return (xPortGetCoreID() == 0)
+        && ((addr >= (void *)0x3ff80000) && (addr <= (void *)0x3ff81fff));
+}
+
+//*********************************************************************
 // Determine if the address is in SRAM
 bool r4aEsp32IsAddressInSRAM(void * addr)
+{
+    return r4aEsp32IsAddressInSRAM0(addr) || r4aEsp32IsAddressInSRAM1(addr)
+        || r4aEsp32IsAddressInSRAM2(addr);
+}
+
+//*********************************************************************
+// Determine if the address is in SRAM0
+bool r4aEsp32IsAddressInSRAM0(void * addr)
+{
+    // Instruction bus addresses
+    return ((addr >= (void *)0x40070000) && (addr <= (void *)0x4007ffff));
+}
+
+//*********************************************************************
+// Determine if the address is in SRAM1
+bool r4aEsp32IsAddressInSRAM1(void * addr)
+{
+    // Data bus addresses
+    return ((addr >= (void *)0x3ffe0000) && (addr <= (void *)0x3fffffff))
+        // Instruction bus addresses
+        || ((addr >= (void *)0x400a0000) && (addr <= (void *)0x400bffff));
+}
+
+//*********************************************************************
+// Determine if the address is in SRAM2
+bool r4aEsp32IsAddressInSRAM2(void * addr)
 {
     return ((addr >= (void *)0x3ffae000) && (addr <= (void *)0x3ffdffff));
 }

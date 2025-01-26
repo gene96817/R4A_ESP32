@@ -51,6 +51,14 @@ extern const R4A_GPIO_MATRIX r4aGpioMatrixNames[256];
 //   Returns the buffer address if successful and nullptr otherwise
 uint8_t * r4aEsp32AllocateDmaBuffer(int length);
 
+// Determine if the address is SRAM that supports DMA
+// Inputs:
+//   addr: Address in question
+// Outputs:
+//   Returns true if the address is in SRAM that supports DMA and false
+//   otherwise
+bool r4aEsp32IsAddressInDMARAM(void * addr);
+
 // Determine if the address is in the EEPROM (Flash)
 // Inputs:
 //   addr: Address in question
@@ -79,12 +87,40 @@ bool r4aEsp32IsAddressInRAM(void * addr);
 //   Returns true if the address is in ROM and false otherwise
 bool r4aEsp32IsAddressInROM(void * addr);
 
+// Determine if the address is in RTC fast memory
+// Inputs:
+//   addr: Address in question
+// Outputs:
+//   Returns true if the address is in RTC fast memory and false otherwise
+bool r4aEsp32IsAddressInRtcFastMemory(void * addr);
+
 // Determine if the address is in SRAM
 // Inputs:
 //   addr: Address in question
 // Outputs:
 //   Returns true if the address is in SRAM and false otherwise
 bool r4aEsp32IsAddressInSRAM(void * addr);
+
+// Determine if the address is in SRAM0
+// Inputs:
+//   addr: Address in question
+// Outputs:
+//   Returns true if the address is in SRAM0 and false otherwise
+bool r4aEsp32IsAddressInSRAM0(void * addr);
+
+// Determine if the address is in SRAM1
+// Inputs:
+//   addr: Address in question
+// Outputs:
+//   Returns true if the address is in SRAM1 and false otherwise
+bool r4aEsp32IsAddressInSRAM1(void * addr);
+
+// Determine if the address is in SRAM2
+// Inputs:
+//   addr: Address in question
+// Outputs:
+//   Returns true if the address is in SRAM2 and false otherwise
+bool r4aEsp32IsAddressInSRAM2(void * addr);
 
 // Find the specified partition
 // Inputs:
