@@ -137,6 +137,7 @@ void blfChallenge(R4A_ROBOT_CHALLENGE * object)
     default:
         // No line or stop circle detected
         r4aPca9685MotorBrakeAll();
+        r4aRobotStop(&robot, millis(), &telnet);
         break;
 
     //     RcL
