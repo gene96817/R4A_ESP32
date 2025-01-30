@@ -3,6 +3,45 @@
 
   Perform basic line following, modified code from the Freenove
   04.2_Track_Car example
+
+  Modify the blfChallenge routine later in this file to read the line
+  sensors and set the motor speeds (run the challenge.
+
+  Call stack:
+
+    setup - Sketch entry point
+        r4aRobotInit - Initialize the robot layer
+        r4aRobotStart - Starts the initial delay followed by the challenge
+
+    loop - main routine
+        r4aRobotUpdate - Updates the robot layer
+            blfChallenge - Perform the basic line following
+                pcf8574.read - Read line sensors
+                    _i2cBus->_read - R4A I2C layer read routine
+                        r4aEsp32I2cBusRead - R4A ESP32 I2C interface
+                            requestFrom - ESP32 I2C controller API
+                            endTransmission - ESP32 I2C controller API
+                robotMotorSetSpeeds - Control motors
+                    motor*.speed - Select PWM value
+                        bufferLedOnOff - Select one PWM value
+                    pca9685.writeBufferedRegisters - Write the PWM values
+                        r4aI2cBusWrite - R4A I2C layer write routine
+                            _writeWithLock - Generic I2C write routine
+                                r4aEsp32I2cBusWriteWithLock - R4A ESP32 I2C interface
+                                    write - ESP32 I2C controller API
+                                    endTransmission - ESP32 I2C controller API
+                r4aRobotStop - Stops the robot
+
+    Where is the code?
+
+        libraries
+            R4A_Robot
+                Robot layer
+            R4A_I2C
+                PWM code for motors
+            R4A_ESP32
+                This example
+                ESP32 I2C controller layer
 **********************************************************************/
 
 #include <R4A_Freenove_4WD_Car.h>   // Freenove 4WD Car configuration
@@ -21,6 +60,7 @@
 // I2C bus configuration
 //****************************************
 
+// List of devices on the I2C bus
 const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =
 {
     {PCA9685_I2C_ADDRESS,  "PCA9685 16-Channel LED controller, motors & servos"},
@@ -28,9 +68,10 @@ const R4A_I2C_DEVICE_DESCRIPTION i2cBusDeviceTable[] =
     {VK16K33_I2C_ADDRESS,  "VT16K33 16x8 LED controller, LED matrix"},
 };
 
+// Connect generic R4A I2C layer to the CPU's I2C controller code
 R4A_I2C_BUS i2cBus =
 {
-    &Wire,              // _i2cBus
+    &Wire,              // _i2cBus, ESP32 controller code
     i2cBusDeviceTable,  // _deviceTable
     sizeof(i2cBusDeviceTable) / sizeof(i2cBusDeviceTable[0]), // _deviceTableEntries
     0,                  // _lock
@@ -42,11 +83,16 @@ R4A_I2C_BUS i2cBus =
 
 R4A_I2C_BUS * r4aI2cBus; // I2C bus for menu system
 
+// Connect the R4A I2C layer to the ESP32 I2C controller code
 R4A_PCA9685 pca9685(&i2cBus, PCA9685_I2C_ADDRESS, 50, 25 * 1000 * 1000);
+
+    // Connect the motors to the PWM controller (PCA9685)
     R4A_PCA9685_MOTOR motorBackLeft(&pca9685, 8, 9);
     R4A_PCA9685_MOTOR motorBackRight(&pca9685, 11, 10);
     R4A_PCA9685_MOTOR motorFrontRight(&pca9685, 13, 12);
     R4A_PCA9685_MOTOR motorFrontLeft(&pca9685, 14, 15);
+
+// Connect the GPIO controller (PCF8574) to the R4A I2C layer
 R4A_PCF8574 pcf8574(&i2cBus, PCF8574_I2C_ADDRESS);
 
 //****************************************
