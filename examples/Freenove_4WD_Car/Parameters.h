@@ -8,6 +8,15 @@
 #define __PARAMETERS_H__
 
 //****************************************
+// Basic Line Fllowing (BLF)
+// Genes Basic Line Following (gBLF)
+//****************************************
+
+extern int blfTimeBefore;
+
+
+
+//****************************************
 // Camera Line Following (CLF)
 //****************************************
 

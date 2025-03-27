@@ -4,6 +4,8 @@
   Perform basic line following, modified code from 04.2_Track_Car example
 **********************************************************************/
 
+#include "Parameters.h"
+
 //****************************************
 // Constants
 //****************************************
@@ -20,7 +22,8 @@
 // Locals
 //****************************************
 
-int blfTimeBefore = 0;  //Record each non-blocking time
+// blfTimeBefore is defined in Menu.ino
+// int blfTimeBefore = 0;  //Record each non-blocking time
 int blfTimeCount = 0;   //Record the number of non-blocking times
 int blfTimeFlag = 0;    //Record the blink time
 
