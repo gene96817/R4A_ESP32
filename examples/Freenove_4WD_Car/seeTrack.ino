@@ -27,9 +27,6 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     PT3 = stateHistory[2][0];  // PT3 takes the previous PT2
     PT2 = stateHistory[1][0];  // PT2 takes the previous PT1 (most recent reading)
 
-
-
-
     // Update history for all states
     updateStateHistory(stateHistory, NUM_READINGS, PT1, PT2, PT3, PT4, PT5, PT6);
 
@@ -51,6 +48,7 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     return PT1;  // Return PT1 for the FSM to process
 }
 
+/*******************************
 // Function to update rolling history for all states
 void updateStateHistory(int history[][NUM_READINGS], int numReadings,
                         int PT1, int PT2, int PT3, int PT4, int PT5, int PT6) {
@@ -64,3 +62,4 @@ void updateStateHistory(int history[][NUM_READINGS], int numReadings,
         history[state][0] = newValues[state];  // Insert new reading at front
     }
 }
+***********************/
