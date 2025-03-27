@@ -5,7 +5,7 @@
 extern int pcf8574;
 
 constexpr int NUM_HISTORY = 6;  // Number of historical states to track (PT1 - PT6)
-constexpr int NUM_READINGS 5; // Depth of history (last 5 readings for each state)
+constexpr int NUM_READINGS = 5; // Depth of history (last 5 readings for each state)
 
 // Multi-state history array: rows for each PT state, columns for history depth
 int stateHistory[NUM_HISTORY][NUM_READINGS] = {0};
