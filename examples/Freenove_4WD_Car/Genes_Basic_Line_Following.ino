@@ -166,15 +166,16 @@ if (trace) {Serial.print("Search failed  ");};
 
 // get a sensor reading
 
+/****************************************
 // make a move
-process(PT1, PT2, PT3);
+void process(int PT1, int PT2, int PT3);
 	// process looks up action in the state table
     // see stateMachine.cpp
 
 // what result should process() return;
 // what is the halting condition
 
-
+*****************************************/
 
 
 
