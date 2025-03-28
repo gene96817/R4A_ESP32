@@ -27,6 +27,7 @@
 //****************************************
 
 #include "Parameters.h"
+#include "PCF8574.h"
 #include "SeeTrack.ino"
 #include "StateMachine.ino"
 #include "SetMotor.ino"
