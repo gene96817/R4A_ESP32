@@ -13,7 +13,7 @@ int stateHistory[NUM_HISTORY][NUM_READINGS] = {0};
 // Updated seeTrack function
 int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     // Read the line sensors to get current PT1
-    int lineSensors;
+    uint8_t lineSensors;
     if (pcf8574.read(&lineSensors) != 0) {
         std::cerr << "Error reading sensors" << std::endl;
         return -1; // Return an error code
@@ -28,7 +28,7 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     PT2 = stateHistory[0][0];  // PT2 takes the previous PT1 (most recent reading)
 
     // Update history for all states
-    updateStateHistory(stateHistory, NUM_READINGS, PT1, PT2, PT3, PT4, PT5, PT6);
+    // StateHistory(stateHistory, NUM_READINGS, PT1, PT2, PT3, PT4, PT5, PT6);
 
     // Debugging output
     if (BLF_DEBUG_STATES) {
@@ -51,10 +51,10 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
 void showsensor() {
     // Assuming PT1, PT2, and PT3 are global variables or accessible in this scope
     Serial.print("PT1: ");
-    Serial.print(PT1); // Display the value of PT1
+    Serial.print(stateHistory[0],[0]); // Display the value of PT1
     Serial.print(", PT2: ");
-    Serial.print(PT2); // Display the value of PT2
+    Serial.print(stateHistory[1],[0)); // Display the value of PT2
     Serial.print(", PT3: ");
-    Serial.println(PT3); // Display the value of PT3 and move to the next line
+    Serial.println(stateHistory[2],[0]); // Display the value of PT3 and move to the next line
 }
 
