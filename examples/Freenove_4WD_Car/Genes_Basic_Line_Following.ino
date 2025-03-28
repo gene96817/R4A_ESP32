@@ -13,7 +13,6 @@
 #include <math.h>                         in R4A_Robot.h
 // #include "Freenove_4WD_Car_For_ESP32.h"
 #include <HardwareSerial.h>               in R4A_Robot.h
-#include "Parameters.h"                   in R4A_Robot.h
   #include "Freenove_4WD_Car_For_ESP32.ino"
 
   This code is for the Freenove 4WD Car with ESP32.
@@ -28,6 +27,10 @@
 //****************************************
 
 #include "Parameters.h"
+#include "SeeTrack.ino"
+#include "StateMachine.ino"
+#include "SetMotor.ino"
+
 
 #define BLF_DEBUG_MOTORS        0
 #define BLF_DEBUG_STATES        0
