@@ -1,8 +1,8 @@
 #include <iostream>
 #include <iomanip>
+#include "PCF8574.h"
 
 // Function declaration for external sensor reading
-extern int pcf8574;
 
 constexpr int NUM_HISTORY = 6;  // Number of historical states to track (PT1 - PT6)
 constexpr int NUM_READINGS = 5; // Depth of history (last 5 readings for each state)
