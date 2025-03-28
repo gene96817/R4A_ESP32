@@ -51,10 +51,10 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
 void showsensor() {
     // Assuming PT1, PT2, and PT3 are global variables or accessible in this scope
     Serial.print("PT1: ");
-    Serial.print(stateHistory[0],[0]); // Display the value of PT1
+    Serial.print(stateHistory[0][0]); // Display the value of PT1
     Serial.print(", PT2: ");
-    Serial.print(stateHistory[1],[0)); // Display the value of PT2
+    Serial.print(stateHistory[1][0]); // Display the value of PT2
     Serial.print(", PT3: ");
-    Serial.println(stateHistory[2],[0]); // Display the value of PT3 and move to the next line
+    Serial.println(stateHistory[2][0]); // Display the value of PT3 and move to the next line
 }
 
