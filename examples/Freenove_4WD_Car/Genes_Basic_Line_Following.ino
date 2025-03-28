@@ -27,9 +27,6 @@
 // Constants
 //****************************************
 
-#include <Arduino.h>
-#include <math.h>
-#include <HardwareSerial.h>
 #include "Parameters.h"
 
 #define BLF_DEBUG_MOTORS        0
@@ -59,8 +56,8 @@ bool trace = true;    // this enables all the print statements for debugging.
 
 // blfTimeBefore is defined in Menu.ino
 // int blfTimeBefore = 0;  //Record each non-blocking time
-int blfTimeCount = 0;   //Record the number of non-blocking times
-int blfTimeFlag = 0;    //Record the blink time
+// int blfTimeCount = 0;   //Record the number of non-blocking times
+// int blfTimeFlag = 0;    //Record the blink time
 
 //initialize memory of track detection
 int SensorReadings[6] = {2, 2, 2, 2, 0, 0}; // last 6 positions read

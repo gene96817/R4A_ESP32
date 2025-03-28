@@ -13,6 +13,10 @@
 //****************************************
 
 extern int blfTimeBefore;
+extern int blfTimeCount;
+extern int blfTimeFlag;
+
+extern void showsensor();
 
 
 

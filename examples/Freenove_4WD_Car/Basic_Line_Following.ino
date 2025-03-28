@@ -22,10 +22,10 @@
 // Locals
 //****************************************
 
-// blfTimeBefore is defined in Menu.ino
+// move these variables to Menu.ino
 // int blfTimeBefore = 0;  //Record each non-blocking time
-int blfTimeCount = 0;   //Record the number of non-blocking times
-int blfTimeFlag = 0;    //Record the blink time
+// int blfTimeCount = 0;   //Record the number of non-blocking times
+// int blfTimeFlag = 0;    //Record the blink time
 
 //****************************************
 // Constants

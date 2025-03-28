@@ -8,7 +8,11 @@
   Global variables used in multiple files
 **********************************************************************/
 
-int blfTimeBefore = 0;
+int blfTimeBefore = 0;   // Record each non-blocking time
+int blfTimeCount = 0;   // Record the number of non-blocking times
+int blfTimeFlag = 0;    // Record the blink time
+
+
 
 
 

@@ -20,12 +20,12 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     }
     int PT1 = lineSensors & 7; // Mask to 3 bits (0-7 range for PT1)
 
-    // PT6 takes the previous PT5
-    PT6
+    // Update states from oldest to newest
+    PT6 = stateHistory[4][0];  // PT6 takes the previous PT5
     PT5 = stateHistory[3][0];  // PT5 takes the previous PT4
     PT4 = stateHistory[2][0];  // PT4 takes the previous PT3
-    PT3 = stateHistory[2][0];  // PT3 takes the previous PT2
-    PT2 = stateHistory[1][0];  // PT2 takes the previous PT1 (most recent reading)
+    PT3 = stateHistory[1][0];  // PT3 takes the previous PT2
+    PT2 = stateHistory[0][0];  // PT2 takes the previous PT1 (most recent reading)
 
     // Update history for all states
     updateStateHistory(stateHistory, NUM_READINGS, PT1, PT2, PT3, PT4, PT5, PT6);
@@ -48,18 +48,13 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     return PT1;  // Return PT1 for the FSM to process
 }
 
-/*******************************
-// Function to update rolling history for all states
-void updateStateHistory(int history[][NUM_READINGS], int numReadings,
-                        int PT1, int PT2, int PT3, int PT4, int PT5, int PT6) {
-    int newValues[NUM_HISTORY] = {PT1, PT2, PT3, PT4, PT5, PT6};
-
-    // For each state (PT1-PT6), shift its history back and insert the new value
-    for (int state = 0; state < NUM_HISTORY; ++state) {
-        for (int i = numReadings - 1; i > 0; --i) {
-            history[state][i] = history[state][i - 1];  // Shift history
-        }
-        history[state][0] = newValues[state];  // Insert new reading at front
-    }
+void showsensor() {
+    // Assuming PT1, PT2, and PT3 are global variables or accessible in this scope
+    Serial.print("PT1: ");
+    Serial.print(PT1); // Display the value of PT1
+    Serial.print(", PT2: ");
+    Serial.print(PT2); // Display the value of PT2
+    Serial.print(", PT3: ");
+    Serial.println(PT3); // Display the value of PT3 and move to the next line
 }
-***********************/
+
