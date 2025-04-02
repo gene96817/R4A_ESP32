@@ -4,8 +4,8 @@
 
 // Function declaration for external sensor reading
 
-constexpr int NUM_HISTORY = 6;  // Number of historical states to track (PT1 - PT6)
-constexpr int NUM_READINGS = 5; // Depth of history (last 5 readings for each state)
+static constexpr int NUM_HISTORY = 6;  // Number of historical states to track (PT1 - PT6)
+static constexpr int NUM_READINGS = 5; // Depth of history (last 5 readings for each state)
 
 int PT1 = 0;
 int PT2 = 0;
