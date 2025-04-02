@@ -10,8 +10,8 @@
 // #include "Genes_Basic_Line_Following.h"
 
 // External function declarations
-extern void MOVE(int speed, int direction);
-extern void showsensor();
+void MOVE(int speed, int direction);
+void showsensor();
 
 class LineFollowingService {
 
