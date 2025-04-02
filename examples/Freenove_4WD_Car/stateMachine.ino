@@ -11,7 +11,7 @@
 
 // External function declarations
 void MOVE(int speed, int direction);
-void showsensor();
+// void showsensor();
 
 class LineFollowingService {
 
