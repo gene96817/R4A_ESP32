@@ -20,6 +20,11 @@ private:
     static constexpr int NUM_PT2_STATES = 8;  // Number of PT2 sensor states
     static constexpr int NUM_STATES = NUM_PT1_STATES * NUM_PT2_STATES;  // Total states
 
+ public:
+     LineFollowingService();  // look up stateAction and build call to MOVE
+        // Constructor
+    }
+
 
 
 
