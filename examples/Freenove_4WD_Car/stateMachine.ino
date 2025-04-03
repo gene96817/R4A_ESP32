@@ -16,11 +16,13 @@ void MOVE(int speed, int direction);
 class LineFollowingService {
 
 private:
-    static constexpr int NUM_PT1_STATES = 8;  // Number of PT1 sensor states
-    static constexpr int NUM_PT2_STATES = 8;  // Number of PT2 sensor states
-    static constexpr int NUM_STATES = NUM_PT1_STATES * NUM_PT2_STATES;  // Total states
+     constexpr size_t NUM_STATES = 8; // 8 states, or the appropriate number
 
  public:
+    static constexpr int NUM_PT1_STATES = 8;  // Number of PT1 sensor states
+    static constexpr int NUM_PT2_STATES = 8;  // Number of PT2 sensor states
+
+
      LineFollowingService();  // look up stateAction and build call to MOVE
         // Constructor
     }
