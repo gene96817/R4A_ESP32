@@ -1,6 +1,4 @@
-#include <iostream>
-#include <iomanip>
-#include "PCF8574.h"
+
 
 // Function declaration for external sensor reading
 
@@ -14,7 +12,6 @@ int PT4 = 0;
 int PT5 = 0;
 
 
-
 // Multi-state history array: rows for each PT state, columns for history depth
 int stateHistory[NUM_HISTORY][NUM_READINGS] = {0};
 
@@ -23,7 +20,7 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
     // Read the line sensors to get current PT1
     uint8_t lineSensors;
     if (pcf8574.read(&lineSensors) != 0) {
-        std::cerr << "Error reading sensors" << std::endl;
+        Serial.println("Error reading sensors");
         return -1; // Return an error code
     }
     int PT1 = lineSensors & 7; // Mask to 3 bits (0-7 range for PT1)
