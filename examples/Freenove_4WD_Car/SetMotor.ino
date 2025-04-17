@@ -6,7 +6,6 @@
 // #include "SetMotor.h"
 // #include "Genes_Basic_Line_Following.ino"
 
-
 class SetMotor {
 public:
     // Member variables
