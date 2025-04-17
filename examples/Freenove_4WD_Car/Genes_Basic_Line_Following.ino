@@ -26,14 +26,13 @@
 // Constants
 //****************************************
 
-#include "Arduino.h"
-#include "Freenove_4WD_Car.ino"
-#include <iostream>
-#include "PCF8574.h"
-#include "Parameters.h"
-#include "SeeTrack.ino"
-#include "StateMachine.ino"
-#include "SetMotor.ino"
+// #include "Arduino.h"
+// #include "Freenove_4WD_Car.ino"
+// #include <iostream>
+// #include "PCF8574.h"
+// #include "Parameters.h"
+// #include "SeeTrack.ino"
+// #include "SetMotor.ino"
 
 
 #define BLF_DEBUG_MOTORS        0
@@ -105,10 +104,10 @@ void search() {      //use this to find the track if overrun the track
    Serial.print("\n");
   };
 //backup
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
 
 /* skip searching straight ahead... already failed...
 //search straight ahead

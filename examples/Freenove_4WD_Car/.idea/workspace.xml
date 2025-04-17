@@ -19,7 +19,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="chasing compiler errors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +162,7 @@
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;wip-2&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/eugene/Robotics2/libraries/R4A_ESP32/examples/Freenove_4WD_Car/Freenove_4WD_Car.ino&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -186,7 +185,7 @@
       <workItem from="1742970981702" duration="38140000" />
       <workItem from="1743636545823" duration="11770000" />
       <workItem from="1743819827229" duration="8388000" />
-      <workItem from="1744759313881" duration="16930000" />
+      <workItem from="1744759313881" duration="3473000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -356,15 +355,7 @@
       <option name="project" value="LOCAL" />
       <updated>1743827336364</updated>
     </task>
-    <task id="LOCAL-00022" summary="chasing compiler errors">
-      <option name="closed" value="true" />
-      <created>1744781714519</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1744781714519</updated>
-    </task>
-    <option name="localTasksCounter" value="23" />
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -421,59 +412,9 @@
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/seeTrack.ino</url>
-          <line>18</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
-          <line>69</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Basic_Line_Following.ino</url>
-          <line>65</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Basic_Line_Following.ino</url>
-          <line>107</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/seeTrack.ino</url>
-          <line>58</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Basic_Line_Following.ino</url>
-          <line>173</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
-          <line>105</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
-          <line>13</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
-          <line>73</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
-          <line>84</line>
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
-          <line>71</line>
-          <option name="timeStamp" value="33" />
+          <line>39</line>
+          <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
