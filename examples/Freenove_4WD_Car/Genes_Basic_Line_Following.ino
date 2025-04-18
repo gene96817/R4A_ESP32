@@ -13,7 +13,7 @@
 #include <math.h>                         in R4A_Robot.h
 // #include "Freenove_4WD_Car_For_ESP32.h"
 #include <HardwareSerial.h>               in R4A_Robot.h
-  #include "Freenove_4WD_Car_For_ESP32.ino"
+#include "Freenove_4WD_Car_For_ESP32.ino"
 
   This code is for the Freenove 4WD Car with ESP32.
   The robot is expected to follow a black line on a white background.
@@ -32,7 +32,8 @@
 // #include "PCF8574.h"
 // #include "Parameters.h"
 // #include "SeeTrack.ino"
-// #include "SetMotor.ino"
+ #include "Freenove_4WD_Car_For_ESP32.cpp"
+ #include "SetMotor.ino"
 
 
 #define BLF_DEBUG_MOTORS        0
@@ -114,7 +115,7 @@ showsensor(); SetMotor(10,-180);
 for ( int i=0; i<5; i++) 
  { 
   Serial.print("Search forward");
-   MOVE(10, 0);
+   SetMotor(10, 0);
    Track_Read();  // get a new sensor reading
    if (sensorValue[3] != 0) break;
  }
@@ -122,45 +123,45 @@ for ( int i=0; i<5; i++)
 
 
 //backup 
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
-showsensor(); MOVE(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
+showsensor(); SetMotor(10,-180);
 
 */
 
 
 //search to right  up to 4 stepts
-showsensor(); MOVE(12,70);
+showsensor(); SetMotor(12,70);
 
 for ( int i=0; i<5; i++) 
 { 
   if (trace) {Serial.print("Searching to right  ");};
-  showsensor();MOVE(10, 60);
+  showsensor();SetMotor(10, 60);
   Track_Read();  // get a new sensor reading
   if (sensorValue[3] != 0) break;
 }
 //backup and start pointing to the left
-showsensor(); MOVE(10, -160);
-showsensor(); MOVE(10, -160);
-showsensor(); MOVE(10, -160);
-showsensor(); MOVE(10, -160);
+showsensor(); SetMotor(10, -160);
+showsensor(); SetMotor(10, -160);
+showsensor(); SetMotor(10, -160);
+showsensor(); SetMotor(10, -160);
 
 //search to left 
-showsensor(); MOVE(14, -220);
+showsensor(); SetMotor(14, -220);
 
 for ( int i=0; i<5; i++) 
   { 
     Serial.print("Searching to left  ");
-    MOVE(12, -20);
+    SetMotor(12, -20);
     Track_Read();  // get a new sensor reading
     if (sensorValue[3] != 0) break;
   }
  //backup
- showsensor(); MOVE(10,-200);
- showsensor(); MOVE(10,-200);
- showsensor(); MOVE(10,-200);
- showsensor(); MOVE(10,-200);
+ showsensor(); SetMotor(10,-200);
+ showsensor(); SetMotor(10,-200);
+ showsensor(); SetMotor(10,-200);
+ showsensor(); SetMotor(10,-200);
 
 if (trace) {Serial.print("Search failed  ");};
 }
@@ -382,22 +383,22 @@ void loop() {
         // eyesBlink1(100);
 
         if (PT1 == 6) {
-          MOVE(18, -100);
+          SetMotor(18, -100);
         } else if (PT2 == 2) {
-          MOVE(18, 0); 
+          SetMotor(18, 0); 
         } else if (PT3 == 2) {
-          MOVE(18, 0);
+          SetMotor(18, 0);
         } else if (PT1 == 2) {
-          MOVE(18, 0);
+          SetMotor(18, 0);
         } else if (PT2 == 2) {
-          MOVE(18, 100);
+          SetMotor(18, 100);
         } else if (PT3 == 3) {
-          MOVE(18, 0);
+          SetMotor(18, 0);
         } else {
-          MOVE(0, 0);
+          SetMotor(0, 0);
         }  //HALT
         
-        MOVE(12,0);
+        SetMotor(12,0);
         //  
         delay(10);
       
@@ -407,7 +408,7 @@ void loop() {
       default:
         // Remove print statement to speed up code
         if (trace) {Serial.print("Case Default");};
-        MOVE(10, 0);
+        SetMotor(10, 0);
         //  
         delay(10);
         break;
@@ -415,7 +416,7 @@ void loop() {
 
 
      //  delay(20);               // Move for 0.1 seconds then halt -- Warning: This halts code execution
-     Motor_Move(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
+     Motor_SetMotor(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
      // delay(10);
 
    
