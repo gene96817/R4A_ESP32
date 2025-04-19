@@ -36,14 +36,14 @@
  #include "SetMotor.ino"
 
 
-#define BLF_DEBUG_MOTORS        0
-#define BLF_DEBUG_STATES        0
+#define glf_DEBUG_MOTORS        0
+#define glf_DEBUG_STATES        0
 
-#define BLF_SPEED_LV4   4000
-#define BLF_SPEED_LV3   3000
-#define BLF_SPEED_LV2   2500
-#define BLF_SPEED_LV1   1500
-#define BLF_SPEED_MIN   1500          // This can be varied according to the motor performance
+#define glf_SPEED_LV4   4000
+#define glf_SPEED_LV3   3000
+#define glf_SPEED_LV2   2500
+#define glf_SPEED_LV1   1500
+#define glf_SPEED_MIN   1500          // This can be varied according to the motor performance
                                       // Set this large enough to get consistent readings motor movement
 
 #define BLT_SPEED_FAST      1500
@@ -61,10 +61,10 @@ const int NUM_SENSORS = 6;
 
 bool trace = true;    // this enables all the print statements for debugging.
 
-// blfTimeBefore is defined in Menu.ino
-// int blfTimeBefore = 0;  //Record each non-blocking time
-// int blfTimeCount = 0;   //Record the number of non-blocking times
-// int blfTimeFlag = 0;    //Record the blink time
+// glfTimeBefore is defined in Menu.ino
+// int glfTimeBefore = 0;  //Record each non-blocking time
+// int glfTimeCount = 0;   //Record the number of non-blocking times
+// int glfTimeFlag = 0;    //Record the blink time
 
 //initialize memory of track detection
 int SensorReadings[6] = {2, 2, 2, 2, 0, 0}; // last 6 positions read
@@ -190,12 +190,12 @@ void process(int PT1, int PT2, int PT3);
 // optionally adjust the motors based upon the sensor reading.  The
 // routine then must return.  The robot layer will call this routine
 // multiple times during the robot operation.
-void blfChallenge(R4A_ROBOT_CHALLENGE * object)
+void glfChallenge(R4A_ROBOT_CHALLENGE * object)
 {
     // Read the line sensors
     pcf8574.read(&lineSensors);
     lineSensors &= 7;
-    if (BLF_DEBUG_STATES)
+    if (glf_DEBUG_STATES)
         Serial.printf("%d %d %d\r\n",
                       lineSensors & 1,
                       (lineSensors & 2) ? 1 : 0,
@@ -216,21 +216,21 @@ void blfChallenge(R4A_ROBOT_CHALLENGE * object)
     case 0b010:
     case 0b101:
         // Robot over center of line
-        robotMotorSetSpeeds(BLF_SPEED_LV1,  BLF_SPEED_LV1); // Move Forward
+        robotMotorSetSpeeds(glf_SPEED_LV1,  glf_SPEED_LV1); // Move Forward
         break;
 
     //     RcL
     case 0b001:
     case 0b011:
         // Robot over left sensor, need to turn left
-        robotMotorSetSpeeds(-BLF_SPEED_LV3, BLF_SPEED_LV4); // Turn left
+        robotMotorSetSpeeds(-glf_SPEED_LV3, glf_SPEED_LV4); // Turn left
         break;
 
     //     RcL
     case 0b100:
     case 0b110:
         // Robot over right sensor, need to turn right
-        robotMotorSetSpeeds(BLF_SPEED_LV4, -BLF_SPEED_LV3); // Turn right
+        robotMotorSetSpeeds(glf_SPEED_LV4, -glf_SPEED_LV3); // Turn right
         break;
     }
 }
@@ -238,7 +238,7 @@ void blfChallenge(R4A_ROBOT_CHALLENGE * object)
 //*********************************************************************
 // The robotStart calls this routine before switching to the initial
 // delay state.
-void blfInit(R4A_ROBOT_CHALLENGE * object)
+void glfInit(R4A_ROBOT_CHALLENGE * object)
 {
     challengeInit();
 }
@@ -246,7 +246,7 @@ void blfInit(R4A_ROBOT_CHALLENGE * object)
 //*********************************************************************
 // The initial delay routine calls this routine just before calling
 // the challenge routine for the first time.
-void blfStart(R4A_ROBOT_CHALLENGE * object)
+void glfStart(R4A_ROBOT_CHALLENGE * object)
 {
     challengeStart();
 
@@ -262,7 +262,7 @@ void blfStart(R4A_ROBOT_CHALLENGE * object)
 //*********************************************************************
 // The robot.stop routine calls this routine to stop the motors and
 // perform any other actions.
-void blfStop(R4A_ROBOT_CHALLENGE * object)
+void glfStop(R4A_ROBOT_CHALLENGE * object)
 {
     challengeStop();
 }
@@ -448,16 +448,16 @@ void loop() {
 //end original code
 //*****************************
 
-void menuBlfStart(const struct _R4A_MENU_ENTRY * menuEntry,
+void menuglfStart(const struct _R4A_MENU_ENTRY * menuEntry,
                   const char * command,
                   Print * display)
 {
     static R4A_ROBOT_CHALLENGE basicLineFollowing =
     {
-        blfChallenge,
-        blfInit,
-        blfStart,
-        blfStop,
+        glfChallenge,
+        glfInit,
+        glfStart,
+        glfStop,
 
         "Basic Line Following",         // _name
         ROBOT_LINE_FOLLOW_DURATION_SEC, // _duration
