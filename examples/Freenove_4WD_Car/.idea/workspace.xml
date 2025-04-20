@@ -18,9 +18,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="deliminate unneeded includes">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Genes_Basic_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Basic_Line_Following.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,6 +161,7 @@
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;wip-2&quot;,
@@ -188,7 +188,8 @@
       <workItem from="1743636545823" duration="11770000" />
       <workItem from="1743819827229" duration="8388000" />
       <workItem from="1744759313881" duration="3473000" />
-      <workItem from="1744933721667" duration="2101000" />
+      <workItem from="1744933721667" duration="11428000" />
+      <workItem from="1745112596639" duration="903000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -366,7 +367,39 @@
       <option name="project" value="LOCAL" />
       <updated>1744873909846</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Keep Motor_Move &#10;by adding Freenove_4DW_Car_For_ESP32.cpp and .h&#10;... in line 99 change pca9685 to pca9685old&#10;&#10;Fix SetMotor by including SetMotor.ino">
+      <option name="closed" value="true" />
+      <created>1745018423845</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1745018423845</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Changed Genes_Basic_Line_Following to Genes_Line_Following">
+      <option name="closed" value="true" />
+      <created>1745029194097</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1745029194097</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Changed Genes_Basic_Line_Following to Genes_Line_Following">
+      <option name="closed" value="true" />
+      <created>1745029263505</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1745029263505</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files">
+      <option name="closed" value="true" />
+      <created>1745030050834</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1745030050834</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,7 +448,10 @@
     <MESSAGE value="fix NUM_STATES declaration" />
     <MESSAGE value="chasing compiler errors" />
     <MESSAGE value="deliminate unneeded includes" />
-    <option name="LAST_COMMIT_MESSAGE" value="deliminate unneeded includes" />
+    <MESSAGE value="Keep Motor_Move &#10;by adding Freenove_4DW_Car_For_ESP32.cpp and .h&#10;... in line 99 change pca9685 to pca9685old&#10;&#10;Fix SetMotor by including SetMotor.ino" />
+    <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following" />
+    <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -437,8 +473,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
-          <line>39</line>
-          <option name="timeStamp" value="34" />
+          <line>98</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Freenove_4WD_Car_For_ESP32.cpp</url>
+          <line>27</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Freenove_4WD_Car_For_ESP32.cpp</url>
+          <line>47</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Freenove_4WD_Car_For_ESP32.cpp</url>
+          <line>48</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>192</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Basic_Line_Following.ino</url>
+          <line>45</line>
+          <option name="timeStamp" value="43" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
