@@ -23,7 +23,7 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
         Serial.println("Error reading sensors");
         return -1; // Return an error code
     }
-    int PT1 = lineSensors & 7; // Mask to 3 bits (0-7 range for PT1)
+    PT1 = lineSensors & 7; // Mask to 3 bits (0-7 range for PT1)
 
     // Update states from oldest to newest
     PT6 = stateHistory[4][0];  // PT6 takes the previous PT5
@@ -37,18 +37,9 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
 
     // Debugging output
     if (BLF_DEBUG_STATES) {
-        std::cout << "Sensor Values (PT1-PT6, Current Reading -> History): " << std::endl;
-        for (int state = 0; state < NUM_HISTORY; ++state) {
-            std::cout << "PT" << state + 1 << ": ";
-            for (int reading = 0; reading < NUM_READINGS; ++reading) {
-                std::cout << stateHistory[state][reading] << " ";
+      // verify this prints out the last six readings
+        Serial.println("Sensor Values (PT1, PT2, PT3, PT4, PT5, PT6");
             }
-            std::cout << std::endl;
-        }
-        std::cout << "Current PT1: " << PT1 << ", PT2: " << PT2
-                  << ", PT3: " << PT3 << ", PT4: " << PT4 << ", PT5: " << PT5
-                  << ", PT6: " << PT6 << "\n";
-    }
 
     return PT1;  // Return PT1 for the FSM to process
 }

@@ -18,8 +18,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino">
-      <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fix includes for seeTrack.ino">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seeTrack.ino" beforeDir="false" afterPath="$PROJECT_DIR$/seeTrack.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,97 +48,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Freenove_4WD_Car.ino" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Parameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/R4A_Robot.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -189,7 +102,7 @@
       <workItem from="1743819827229" duration="8388000" />
       <workItem from="1744759313881" duration="3473000" />
       <workItem from="1744933721667" duration="11428000" />
-      <workItem from="1745112596639" duration="17890000" />
+      <workItem from="1745112596639" duration="19587000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -439,7 +352,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745276411433</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="fix includes for seeTrack.ino">
+      <option name="closed" value="true" />
+      <created>1745276651760</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1745276651760</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -493,7 +414,8 @@
     <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files" />
     <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Need to check if it propagates to other files" />
     <MESSAGE value="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino" />
-    <option name="LAST_COMMIT_MESSAGE" value="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino" />
+    <MESSAGE value="fix includes for seeTrack.ino" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix includes for seeTrack.ino" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -556,6 +478,16 @@
           <url>file://$PROJECT_DIR$/Advanced_Line_Following.ino</url>
           <line>69</line>
           <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/seeTrack.ino</url>
+          <line>40</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>23</line>
+          <option name="timeStamp" value="50" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
