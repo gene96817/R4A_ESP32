@@ -184,6 +184,8 @@ void process(int PT1, int PT2, int PT3);
 // optionally adjust the motors based upon the sensor reading.  The
 // routine then must return.  The robot layer will call this routine
 // multiple times during the robot operation.
+
+
 void glfChallenge(R4A_ROBOT_CHALLENGE * object)
 {
     // Read the line sensors
@@ -269,7 +271,9 @@ void glfStop(R4A_ROBOT_CHALLENGE * object)
 // setup is done in Freenove_4WD_Car.ino
 
 
-void loop() {    
+// void loop() {
+
+/* this old code used to initialize the line following routine. Now not needed.
 
   char receivedChar = Serial.read();
   
@@ -287,10 +291,17 @@ void loop() {
   Serial.print("received a character, begin execution of code\n");
     // };
 
-   while (true) {    
+********
+
+ */
+
+   // while (true) {
+// change this to a single step routine that is repeatedly called
      // change loop condition to loop forever
 
      // gets here when a char is read
+
+void GLF-make-a-step() {
      // run_time = millis() - start_time;  // calculate the time stamp
      Track_Read();  // get a sensor reading
 
