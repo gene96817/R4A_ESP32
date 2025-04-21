@@ -26,12 +26,6 @@
 // Constants
 //****************************************
 
-// #include "Arduino.h"
-// #include "Freenove_4WD_Car.ino"
-// #include <iostream>
-// #include "PCF8574.h"
-// #include "Parameters.h"
-// #include "SeeTrack.ino"
  #include "Freenove_4WD_Car_For_ESP32.cpp"
  #include "SetMotor.ino"
 
@@ -271,13 +265,8 @@ void glfStop(R4A_ROBOT_CHALLENGE * object)
 // Start the line following
 // original code
 
-void setup() {
-  Track_Setup();    //Track module initialization
-  PCA9685_Setup();  //Motor drive initialization
-  // Emotion_Setup();
-  Serial.begin(460800);   //    ASYNC SPEED OVER THE USB IS HARD CODED!!!!!!!!!!
-  // start_time = millis();  // This is "now" or relative zero -- THIS IS THE RTC CLOCK AT TIME = 0
-}
+// void setup() {
+// setup is done in Freenove_4WD_Car.ino
 
 
 void loop() {    

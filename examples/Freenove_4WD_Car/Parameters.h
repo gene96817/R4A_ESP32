@@ -9,7 +9,7 @@
 
 //****************************************
 // Basic Line Fllowing (BLF)
-// Genes Basic Line Following (gBLF)
+// Genes Line Following (gLF)
 //****************************************
 
 extern int blfTimeBefore;
