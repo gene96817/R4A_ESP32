@@ -7,13 +7,6 @@
  
   Perform basic line following, modified code from 04.2_Track_Car example
   Line following logic by Eugene Chang
-  
-  Assuming 
-#include <Arduino.h>                      in R4A_Robot.h
-#include <math.h>                         in R4A_Robot.h
-// #include "Freenove_4WD_Car_For_ESP32.h"
-#include <HardwareSerial.h>               in R4A_Robot.h
-#include "Freenove_4WD_Car_For_ESP32.ino"
 
   This code is for the Freenove 4WD Car with ESP32.
   The robot is expected to follow a black line on a white background.
@@ -28,6 +21,8 @@
 
  #include "Freenove_4WD_Car_For_ESP32.cpp"
  #include "SetMotor.ino"
+ #include "seeTrack.ino"
+
 
 
 #define glf_DEBUG_MOTORS        0

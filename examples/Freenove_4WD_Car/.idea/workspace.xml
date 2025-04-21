@@ -18,8 +18,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Need to check if it propagates to other files">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino">
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -190,7 +189,7 @@
       <workItem from="1743819827229" duration="8388000" />
       <workItem from="1744759313881" duration="3473000" />
       <workItem from="1744933721667" duration="11428000" />
-      <workItem from="1745112596639" duration="17585000" />
+      <workItem from="1745112596639" duration="17890000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -432,7 +431,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745274168185</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino">
+      <option name="closed" value="true" />
+      <created>1745276411433</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1745276411433</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -485,7 +492,8 @@
     <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following" />
     <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Neet to check if it propagates to other files" />
     <MESSAGE value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Need to check if it propagates to other files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed Genes_Basic_Line_Following to Genes_Line_Following&#10;change all &quot;blf&quot; to &quot;glf&quot;&#10;&#10;Need to check if it propagates to other files" />
+    <MESSAGE value="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino" />
+    <option name="LAST_COMMIT_MESSAGE" value="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -541,12 +549,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>188</line>
+          <line>183</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Advanced_Line_Following.ino</url>
-          <line>67</line>
+          <line>69</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
       </breakpoints>
