@@ -19,9 +19,10 @@
 // Constants
 //****************************************
 
- #include "Freenove_4WD_Car_For_ESP32.cpp"
- #include "SetMotor.ino"
- #include "seeTrack.ino"
+#include "Freenove_4WD_Car_For_ESP32.cpp"
+#include "SetMotor.ino"
+#include "seeTrack.ino"
+#include "stateMachine.ino"
 
 
 
@@ -329,8 +330,9 @@ void GLF_make_a_step() {
       Serial.print("   ");
       }
   
-
-
+// WARNING.... check all code for PT2 and PT1 usage
+      // PT1 is latest reading.... PT2 is previous reading
+/*  execute action
     switch (sensorValue[3])  {   
       // look at the sensor reading
       // CAUTION: BITS flipped to be Left - middle - right
@@ -340,7 +342,6 @@ void GLF_make_a_step() {
 
       //  do something at this position -- this section is the state table
       case 0:
-        // eyesBlink1(100);
         state0 (PT1);
         break;  // end case 0
 
@@ -413,7 +414,11 @@ void GLF_make_a_step() {
      //  delay(20);               // Move for 0.1 seconds then halt -- Warning: This halts code execution
      Motor_SetMotor(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
      // delay(10);
+*/
+// WARNING.... check all code for PT2 and PT1 usage
+      // PT1 is latest reading.... PT2 is previous reading
 
+      stateTable(PT2 * 8 + PT1);
    
    /*    remove character startstop control
       if (Serial.available())  // a char arrived

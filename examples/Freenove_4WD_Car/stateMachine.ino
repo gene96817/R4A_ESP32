@@ -18,12 +18,11 @@
 
 class LineFollowingService {
 private:
-  static constexpr size_t NUM_STATES = 8; // Total states
+  static constexpr size_t NUM_STATES = 64; // Total states
 
 public:
   static constexpr size_t NUM_PT1_STATES = 8; // Number of PT1 sensor states
     static constexpr size_t NUM_PT2_STATES = 8; // Number of PT2 sensor states
-
 
         SetMotor(speed, direction);
 
@@ -67,8 +66,68 @@ public:
         StateAction{8,   0, "Halting condition?"},             // PT1=7
 
         // Add all other PT2 states here (PT2=1 to PT2=7)...
+        // PT2=1: Actions for PT1=0 to PT1=7
+        StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+        StateAction{12,  45, "Steady forward motion"},         // PT1=1
+        StateAction{12,  30, "Correcting left drift"},         // PT1=2
+        StateAction{12,  30, "Missed right turn"},             // PT1=3
+        StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+        StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+        StateAction{12,  60, "Sharp right turn"},              // PT1=6
+        StateAction{8,   0, "Halting condition?"},             // PT1=7
 
-        // PT2=7: Special halt detection states. PT1=0..6 are false detections, PT1=7 is the actual stop.
+        // PT2=2: Actions for PT1=0 to PT1=7
+StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+StateAction{12,  45, "Steady forward motion"},         // PT1=1
+StateAction{12,  30, "Correcting left drift"},         // PT1=2
+StateAction{12,  30, "Missed right turn"},             // PT1=3
+StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+StateAction{12,  60, "Sharp right turn"},              // PT1=6
+StateAction{8,   0, "Halting condition?"},             // PT1=7
+
+        // PT2=3: Actions for PT1=0 to PT1=7
+StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+StateAction{12,  45, "Steady forward motion"},         // PT1=1
+StateAction{12,  30, "Correcting left drift"},         // PT1=2
+StateAction{12,  30, "Missed right turn"},             // PT1=3
+StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+StateAction{12,  60, "Sharp right turn"},              // PT1=6
+StateAction{8,   0, "Halting condition?"},             // PT1=7
+
+        // PT2=4: Actions for PT1=0 to PT1=7
+StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+StateAction{12,  45, "Steady forward motion"},         // PT1=1
+StateAction{12,  30, "Correcting left drift"},         // PT1=2
+StateAction{12,  30, "Missed right turn"},             // PT1=3
+StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+StateAction{12,  60, "Sharp right turn"},              // PT1=6
+StateAction{8,   0, "Halting condition?"},             // PT1=7
+
+        // PT2=5: Actions for PT1=0 to PT1=7
+      StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+      StateAction{12,  45, "Steady forward motion"},         // PT1=1
+      StateAction{12,  30, "Correcting left drift"},         // PT1=2
+      StateAction{12,  30, "Missed right turn"},             // PT1=3
+      StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+      StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+      StateAction{12,  60, "Sharp right turn"},              // PT1=6
+      StateAction{8,   0, "Halting condition?"},             // PT1=7
+
+
+        // PT2=5: Actions for PT1=0 to PT1=7
+      StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+      StateAction{12,  45, "Steady forward motion"},         // PT1=1
+      StateAction{12,  30, "Correcting left drift"},         // PT1=2
+      StateAction{12,  30, "Missed right turn"},             // PT1=3
+      StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+      StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+      StateAction{12,  60, "Sharp right turn"},              // PT1=6
+      StateAction{8,   0, "Halting condition?"},             // PT1=7
+
+        // PT2=6: Special halt detection states. PT1=0..6 are false detections, PT1=7 is the actual stop.
         StateAction{12,   0, "False detection of halt, keep going"}, // PT1=0
         StateAction{12,   0, "False detection of halt, keep going"}, // PT1=1
         StateAction{12,   0, "False detection of halt, keep going"}, // PT1=2
@@ -77,6 +136,17 @@ public:
         StateAction{12,   0, "False detection of halt, keep going"}, // PT1=5
         StateAction{12,   0, "False detection of halt, keep going"}, // PT1=6
         StateAction{0,    0, "[INFO] Halting state encountered"}     // PT1=7
+
+        // PT2=7: Actions for PT1=0 to PT1=7
+        StateAction{12,  45, "Correcting slight right drift"}, // PT1=0
+        StateAction{12,  45, "Steady forward motion"},         // PT1=1
+        StateAction{12,  30, "Correcting left drift"},         // PT1=2
+        StateAction{12,  30, "Missed right turn"},             // PT1=3
+        StateAction{12, -60, "Hard correction for left drift"}, // PT1=4
+        StateAction{12,  30, "Re-centering from a fork"},      // PT1=5
+        StateAction{12,  60, "Sharp right turn"},              // PT1=6
+        StateAction{8,   0, "Halting condition?"},             // PT1=7
+
     };
 
     // Main FSM process logic
@@ -101,14 +171,22 @@ public:
 
         // Debug/tracing output
         if (trace) {
-            std::cout << "[TRACE] State Processed: "
-                      << "PT1=" << PT1
-                      << ", PT2=" << PT2
-                      << ", StateIndex=" << stateIndex
-                      << ", Speed=" << action.speed
-                      << ", Direction=" << action.direction
-                      << " | Comment: " << action.comment
-                      << "\n";
+            Serial.print( "[TRACE] State Processed: ")
+            Serial.print( "PT1= ")
+            Serial.print(PT1);
+            Serial.print (", PT2= ")
+            Serial.print(PT2)
+           Serial.print(", StateIndex= ")
+           Serial.print(stateIndex)
+           Serial.print(" | Action: Speed= "
+           Serial.print (action.speed)
+              Serial.print( "Direction= ")
+              Serial.print(action.direction)
+              Serial.print(" Comment: ")
+                Serial.println(action.comment);
+
+
+
         }
 
         // Execute the action

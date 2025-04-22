@@ -18,11 +18,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fix includes for seeTrack matching brackets&#10;fixed Serial.prints">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed declaration of theta0 and theta1, PW0, and PW1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seeTrack.ino" beforeDir="false" afterPath="$PROJECT_DIR$/seeTrack.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +47,27 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Freenove_4WD_Car.ino" root0="FORCE_HIGHLIGHTING" />
@@ -104,7 +124,7 @@
       <workItem from="1743819827229" duration="8388000" />
       <workItem from="1744759313881" duration="3473000" />
       <workItem from="1744933721667" duration="11428000" />
-      <workItem from="1745112596639" duration="21064000" />
+      <workItem from="1745112596639" duration="25935000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -370,7 +390,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745278404622</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="fixed declaration of theta0 and theta1, PW0, and PW1">
+      <option name="closed" value="true" />
+      <created>1745280113609</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1745280113610</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -400,7 +428,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="&#10;fixed line 8, added missing = to constexpr" />
     <MESSAGE value="&#10;seeTrack.ino -- commentted out lines 51-64. Should not be needed" />
     <MESSAGE value="changes to make blfTimBefore a global variable to keep BLF and gBLF from creating compiler errors" />
     <MESSAGE value="changes to make blfTimBefore, blfRTimeCount, and  blfTimeFlag a global variable to keep BLF and gBLF from creating compiler errors&#10;gBLF = Genes_Basic_Line_Following.ino" />
@@ -425,7 +452,8 @@
     <MESSAGE value="add &quot;&quot;#include Robot.ino&quot; to Advanced_Line_Following.ino" />
     <MESSAGE value="fix includes for seeTrack.ino" />
     <MESSAGE value="fix includes for seeTrack matching brackets&#10;fixed Serial.prints" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix includes for seeTrack matching brackets&#10;fixed Serial.prints" />
+    <MESSAGE value="fixed declaration of theta0 and theta1, PW0, and PW1" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed declaration of theta0 and theta1, PW0, and PW1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -503,6 +531,26 @@
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
           <line>309</line>
           <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>343</line>
+          <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
+          <line>67</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
+          <line>56</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
+          <line>107</line>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
