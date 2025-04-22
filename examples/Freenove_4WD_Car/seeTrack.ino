@@ -5,11 +5,14 @@
 static constexpr int NUM_HISTORY = 6;  // Number of historical states to track (PT1 - PT6)
 static constexpr int NUM_READINGS = 5; // Depth of history (last 5 readings for each state)
 
+int PT0 = 0; // Initial state for PT0, not used in the current logic
 int PT1 = 0;
 int PT2 = 0;
 int PT3 = 0;
 int PT4 = 0;
 int PT5 = 0;
+int PW0 = 0; // Previous reading for PT1, not used in the current logic
+int PW1 = 0; // Previous reading for PT2, not used in the current logic
 
 
 // Multi-state history array: rows for each PT state, columns for history depth

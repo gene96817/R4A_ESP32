@@ -11,8 +11,12 @@ public:
     // Member variables
     int speed;         // Relative speed, ranges from -20 to 20
     float direction;   // Direction in degrees
+    float theta0;
+    float theta1;
+
     int leftWheelSpeed;
     int rightWheelSpeed;
+
 
     // Static constants for limits
     static constexpr int MAX_PWM = 4095;          // Maximum pulse-width modulation

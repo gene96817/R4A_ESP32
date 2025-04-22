@@ -296,7 +296,7 @@ void glfStop(R4A_ROBOT_CHALLENGE * object)
 
      // gets here when a char is read
 
-void GLF-make-a-step() {
+void GLF_make_a_step() {
      // run_time = millis() - start_time;  // calculate the time stamp
      Track_Read();  // get a sensor reading
 
@@ -308,7 +308,7 @@ void GLF-make-a-step() {
      PT1 = PT0;
      PT0 = sensorValue[3];
      PW1 = PW0;
-     theta1 = theta0;
+
 
      // Suppress these debug messages to speed up run time.
 
