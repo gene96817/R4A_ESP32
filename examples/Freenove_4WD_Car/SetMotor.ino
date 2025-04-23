@@ -35,6 +35,7 @@ public:
 
     // Utility function to map one range to another
     static int map(int x, int in_min, int in_max, int out_min, int out_max) {
+        if (in_min == in_max) return out_min;  // Prevent division by zero
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 

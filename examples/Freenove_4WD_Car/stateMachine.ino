@@ -24,7 +24,7 @@ public:
   static constexpr size_t NUM_PT1_STATES = 8;  // Number of PT1 sensor states
   static constexpr size_t NUM_PT2_STATES = 8;  // Number of PT2 sensor states
 
-  SetMotor(speed, direction);
+  _SetMotor(speed, direction);
 
   executeMotorMove();
 

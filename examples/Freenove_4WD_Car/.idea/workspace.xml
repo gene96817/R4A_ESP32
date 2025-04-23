@@ -18,8 +18,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fix seeTrack scope">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="remove old loop control for following line">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +106,8 @@
       <workItem from="1744933721667" duration="11428000" />
       <workItem from="1745112596639" duration="28312000" />
       <workItem from="1745287968025" duration="9125000" />
-      <workItem from="1745368651626" duration="6726000" />
+      <workItem from="1745368651626" duration="8175000" />
+      <workItem from="1745444045826" duration="3625000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -401,7 +405,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745376383429</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="remove old loop control for following line">
+      <option name="closed" value="true" />
+      <created>1745376951558</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1745376951558</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -431,7 +443,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactored reading sensors, keeping history, and printing sensor readings for debugging &#10;seeTradk&#10;stateHistory&#10;showsensor" />
     <MESSAGE value="fixed #include to correct scope of declarations." />
     <MESSAGE value="fixed inconsistent declaration of pcf8574" />
     <MESSAGE value="fixed stateHistory using () when it should be []" />
@@ -456,7 +467,8 @@
     <MESSAGE value="fixed declarations for stateMachine.ino&#10;converted some std::cout to Serial.print&#10;&#10;Still need to &#10;    go back to fix all the state machine cells&#10;    convert all std::cout" />
     <MESSAGE value="fix setMotor scope" />
     <MESSAGE value="fix seeTrack scope" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix seeTrack scope" />
+    <MESSAGE value="remove old loop control for following line" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove old loop control for following line" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -579,6 +591,21 @@
           <url>file://$PROJECT_DIR$/stateMachine.ino</url>
           <line>12</line>
           <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>8</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/SetMotor.ino</url>
+          <line>8</line>
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/SetMotor.ino</url>
+          <line>79</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

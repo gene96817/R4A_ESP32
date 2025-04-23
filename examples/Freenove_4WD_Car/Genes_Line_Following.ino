@@ -23,7 +23,7 @@
 #include "GeneFunctions.h"
 #include "SetMotor.ino"
 #include "seeTrack.ino"
-// #include "stateMachine.ino"
+#include "stateMachine.ino"
 
 
 
@@ -343,7 +343,7 @@ void GLF_make_a_step() {
 
 
      //  delay(20);               // Move for 0.1 seconds then halt -- Warning: This halts code execution
-     Motor_SetMotor(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
+     Motor_Move(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
      // delay(10);
 
   // WARNING.... check all code for PT2 and PT1 usage
