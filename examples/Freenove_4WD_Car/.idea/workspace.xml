@@ -18,12 +18,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="remove #include &quot;SdetMotor.ino&quot; from Genes_Line_Following.ino">
-      <change afterPath="$PROJECT_DIR$/GeneFunctions.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fix setMotor scope">
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Robot.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Robot.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +151,7 @@
       <workItem from="1744933721667" duration="11428000" />
       <workItem from="1745112596639" duration="28312000" />
       <workItem from="1745287968025" duration="9125000" />
-      <workItem from="1745368651626" duration="5880000" />
+      <workItem from="1745368651626" duration="6216000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -437,7 +433,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745284965700</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="fix setMotor scope">
+      <option name="closed" value="true" />
+      <created>1745376234312</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1745376234312</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -467,7 +471,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changes to make blfTimBefore a global variable to keep BLF and gBLF from creating compiler errors" />
     <MESSAGE value="changes to make blfTimBefore, blfRTimeCount, and  blfTimeFlag a global variable to keep BLF and gBLF from creating compiler errors&#10;gBLF = Genes_Basic_Line_Following.ino" />
     <MESSAGE value="refactored reading sensors, keeping history, and printing sensor readings for debugging &#10;seeTradk&#10;stateHistory&#10;showsensor" />
     <MESSAGE value="fixed #include to correct scope of declarations." />
@@ -492,7 +495,8 @@
     <MESSAGE value="fix includes for seeTrack matching brackets&#10;fixed Serial.prints" />
     <MESSAGE value="fixed declaration of theta0 and theta1, PW0, and PW1" />
     <MESSAGE value="fixed declarations for stateMachine.ino&#10;converted some std::cout to Serial.print&#10;&#10;Still need to &#10;    go back to fix all the state machine cells&#10;    convert all std::cout" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed declarations for stateMachine.ino&#10;converted some std::cout to Serial.print&#10;&#10;Still need to &#10;    go back to fix all the state machine cells&#10;    convert all std::cout" />
+    <MESSAGE value="fix setMotor scope" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix setMotor scope" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
