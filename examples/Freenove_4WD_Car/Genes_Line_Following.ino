@@ -339,117 +339,19 @@ void GLF_make_a_step() {
 
   // WARNING.... check all code for PT2 and PT1 usage
   // PT1 is latest reading.... PT2 is previous reading
-  /*  execute action
-    switch (sensorValue[3])  {   
-      // look at the sensor reading
-      // CAUTION: BITS flipped to be Left - middle - right
-      // this is PT0 the column in the state tablel
 
-      // THis starts the definition of the state table. 
-
-      //  do something at this position -- this section is the state table
-      case 0:
-        state0 (PT1);
-        break;  // end case 0
-
-      case 1:  
-        state1(PT1);
-        break;  // end of case 1
-
-      case 2: 
-        state2(PT1);
-        break;  //end of case 2
-
-      case 3:  //011
-        state3(PT1);
-        break;  //end of case 3; 
-
-      case 4:  //100
-        if (trace) {Serial.print("Case 4\t");};
-        // wheel(2, 100);
-        state4(PT1);
-        break;  // case 4
-
-      case 5:  //101
-        if (trace) {Serial.print("Case 5   ERROR? get one more reading  ");};
-        // showArrow(1, 100);
-        search();
-        break;   // case 5
-
-      case 6:  //110       LEFT TURN !
-        state6(PT1);
-        break; // end case 6
-
-
-      case 7:  //111
-        if (trace) {Serial.print("Case 7   Halt");};
-        // eyesBlink1(100);
-
-        if (PT1 == 6) {
-          SetMotor(18, -100);
-        } else if (PT2 == 2) {
-          SetMotor(18, 0); 
-        } else if (PT3 == 2) {
-          SetMotor(18, 0);
-        } else if (PT1 == 2) {
-          SetMotor(18, 0);
-        } else if (PT2 == 2) {
-          SetMotor(18, 100);
-        } else if (PT3 == 3) {
-          SetMotor(18, 0);
-        } else {
-          SetMotor(0, 0);
-        }  //HALT
-        
-        SetMotor(12,0);
-        //  
-        delay(10);
-      
-       break;  // end case 7
-
-
-      default:
-        // Remove print statement to speed up code
-        if (trace) {Serial.print("Case Default");};
-        SetMotor(10, 0);
-        //  
-        delay(10);
-        break;
-      //end of state table
 
 
      //  delay(20);               // Move for 0.1 seconds then halt -- Warning: This halts code execution
      Motor_SetMotor(0, 0, 0, 0);  // This halts the motors. Effect is the movement started above halts after the delay.
      // delay(10);
-*/
+
   // WARNING.... check all code for PT2 and PT1 usage
   // PT1 is latest reading.... PT2 is previous reading
 
-  //stateTable(PT2 * 8 + PT1);
+  stateTable(PT2 * 8 + PT1);
 
-  /*    remove character startstop control
-      if (Serial.available())  // a char arrived
-      {
-        receivedChar = Serial.read();  //then pop the char
-        // wait for another character
-        while (!Serial.available()) {
-         // do nothing while waiting
-         }
-        // a char arrived
-       receivedChar = Serial.read();  //pop the character
-                                     // Process the received character (e.g., print it)
-        // if (trace) { 
-        Serial.print("        XXXXXX Received character: ");
-        Serial.print(receivedChar);
-        Serial.print("\n");
-        // }; 
-       }
-    */
-
-}  // end of iteration
-
-}  // end of loop
-}  // end loop
+}
 
 
 //end original code
