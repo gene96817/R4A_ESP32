@@ -12,7 +12,7 @@
 // #include <iostream>
 #include <array>
 #include <functional>
-#include <SetMotor.ino>
+// #include <SetMotor.ino>
 
 // #include "Genes_Basic_Line_Following.h"
 
@@ -23,15 +23,33 @@ private:
 public:
   static constexpr size_t NUM_PT1_STATES = 8;  // Number of PT1 sensor states
   static constexpr size_t NUM_PT2_STATES = 8;  // Number of PT2 sensor states
+  int speed = 0;
+  int direction = 0;
 
-  _SetMotor(speed, direction);
+  // Constructor for the LineFollowingService class
+  LineFollowingService(int initSpeed, int initDirection)
+      : speed(initSpeed), direction(initDirection) {
+      // Initialize the motor with speed and direction
+      SetMotor motor(speed, direction);
+      motor.executeMotorMove(); // Move the motors
+  }
 
-  executeMotorMove();
-
+  // Define the cell in the state table
+struct StateAction {    // Action in each state table cell
+  int speed;            // Motor speed
+  int direction;        // Steering direction
+  const char* comment;  // Description of why action was taken
+};
 
   // Helper method for executing state actions
   void executeAction(const StateAction& action) {
-    MOVE(action.speed, action.direction);
+    // Update the speed and direction
+    speed = action.speed;
+    direction = action.direction;
+
+    // Create a motor object and execute the motor move
+    SetMotor motor(speed, direction);
+    motor.executeMotorMove();
   }
 
   // Helper method for logging trace messages
@@ -42,16 +60,6 @@ public:
   }
 
 
-  // Add other members and methods as required...
-};
-
-
-// Define the cell in the state table
-struct StateAction {    // Action in each state table cell
-  int speed;            // Motor speed
-  int direction;        // Steering direction
-  const char* comment;  // Description of why action was taken
-};
 
 // Complete the 64-state table
 std::array<StateAction, NUM_STATES> stateTable = {
@@ -135,7 +143,7 @@ std::array<StateAction, NUM_STATES> stateTable = {
   StateAction{ 12, 0, "False detection of halt, keep going" },  // PT1=4
   StateAction{ 12, 0, "False detection of halt, keep going" },  // PT1=5
   StateAction{ 12, 0, "False detection of halt, keep going" },  // PT1=6
-  StateAction{ 0, 0, "[INFO] Halting state encountered" }       // PT1=7
+  StateAction{ 0, 0, "[INFO] Halting state encountered" },       // PT1=7
 
   // PT2=7: Actions for PT1=0 to PT1=7
   StateAction{ 12, 45, "Correcting slight right drift" },    // PT1=0
