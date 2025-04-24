@@ -18,11 +18,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="remove old loop control for following line">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
