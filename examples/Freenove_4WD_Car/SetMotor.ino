@@ -6,80 +6,59 @@
 // #include "SetMotor.h"
 // #include "Genes_Line_Following.ino"
 
-class SetMotor {
-public:
-    // Member variables
-    int speed;         // Relative speed, ranges from -20 to 20
-    float direction;   // Direction in degrees
-    float theta0;
-    float theta1;
+#include <cmath>
+#include <algorithm> // For std::min and std::max
 
-    int leftWheelSpeed;
-    int rightWheelSpeed;
+// Shared constants
+constexpr int MAX_PWM = 4095;
+constexpr int MIN_PWM = -4095;
+constexpr int MAX_SPEED = 20;
+constexpr int MIN_SPEED = -20;
+constexpr float DEGREE_TO_RADIAN = M_PI / 180.0;
+constexpr float DIRECTION_OFFSET_DEGREES = 45.0;
 
+// Utility function to map one range to another
+int map(int x, int in_min, int in_max, int out_min, int out_max) {
+    if (in_min == in_max) return out_min; // Prevent division by zero
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
-    // Static constants for limits
-    static constexpr int MAX_PWM = 4095;          // Maximum pulse-width modulation
-    static constexpr int MIN_PWM = -4095;         // Minimum pulse-width modulation
-    static constexpr int MAX_SPEED = 20;          // Maximum allowed speed
-    static constexpr int MIN_SPEED = -20;         // Minimum allowed speed
-    static constexpr float DEGREE_TO_RADIAN = M_PI / 180.0; // Conversion factor: degrees → radians
-    static constexpr float DIRECTION_OFFSET_DEGREES = 45.0; // Wheel direction offset (for balance)
+// Helper function to calculate radians for direction
+float calculateDirectionRadians(float direction) {
+    return (direction + DIRECTION_OFFSET_DEGREES) * DEGREE_TO_RADIAN;
+}
 
-    // Helper function to adjust wheel speed
-    int adjustWheelSpeed(float factor, int power) const {
-        int wheelSpeed = static_cast<int>(power * factor);
-        // Clamp wheel speeds to PWM range
-        return std::max(std::min(wheelSpeed, MAX_PWM), MIN_PWM);
-    }
+// Helper function to calculate motor power based on speed
+int calculatePower(int speed) {
+    return map(speed, MIN_SPEED, MAX_SPEED, MIN_PWM, MAX_PWM);
+}
 
-    // Utility function to map one range to another
-    static int map(int x, int in_min, int in_max, int out_min, int out_max) {
-        if (in_min == in_max) return out_min;  // Prevent division by zero
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
+// Helper function to adjust wheel speed
+int adjustWheelSpeed(float factor, int power) {
+    int wheelSpeed = static_cast<int>(power * factor);
+    return std::max(std::min(wheelSpeed, MAX_PWM), MIN_PWM);
+}
 
-    // Calculate radians for direction (including offset for wheel balancing)
-    static float calculateDirectionRadians(float direction) {
-        return (direction + DIRECTION_OFFSET_DEGREES) * DEGREE_TO_RADIAN;
-    }
+// The new global SetMotor function
+void SetMotor(int speed = 0, float direction = 0) {
+    // Ensure speed is within bounds
+    speed = std::max(std::min(speed, MAX_SPEED), MIN_SPEED);
 
-    // Calculate motor power based on speed
-    static int calculatePower(int speed) {
-        // Map speed to PWM output based on min/max bounds
-        return map(speed, MIN_SPEED, MAX_SPEED, MIN_PWM, MAX_PWM);
-    }
+    // Calculate runtime values
+    float directionRadians = calculateDirectionRadians(direction); // Convert direction to radians
+    int power = calculatePower(speed);                            // Map speed to motor power
 
+    // Calculate relative wheel speeds using direction
+    float leftWheelFactor = sin(directionRadians);
+    float rightWheelFactor = cos(directionRadians);
 
-    // Constructor
-    SetMotor(int speed = 0, float direction = 0)
-        : speed(speed), direction(direction), leftWheelSpeed(0), rightWheelSpeed(0) {
-        // Ensure speed is within bounds
-        if (speed > MAX_SPEED) this->speed = MAX_SPEED;
-        else if (speed < MIN_SPEED) this->speed = MIN_SPEED;
+    // Adjust actual wheel speeds using power and scaling
+    int leftWheelSpeed = adjustWheelSpeed(leftWheelFactor, power);
+    int rightWheelSpeed = adjustWheelSpeed(rightWheelFactor, power);
 
-        // Calculate runtime values
-        float directionRadians = calculateDirectionRadians(direction); // Convert direction to radians
-        int power = calculatePower(this->speed);                      // Map speed to motor power
-
-        // Calculate relative wheel speeds using direction
-        float leftWheelFactor = sin(directionRadians);  // Factor for left wheel speed
-        float rightWheelFactor = cos(directionRadians); // Factor for right wheel speed
-
-        // Adjust actual wheel speeds using power and scaling
-        leftWheelSpeed = adjustWheelSpeed(leftWheelFactor, power);
-        rightWheelSpeed = adjustWheelSpeed(rightWheelFactor, power);
-
-    //    void run() {
-    //      Serial.printnl("Motor is running");
-    //      }
-    };
-
-
-    // Execute motor command
-    void executeMotorMove() {
-        Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
-    }
+    // Execute motor movement
+    Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
+}
 
     // Accessors for testing or debugging
     int getLeftWheelSpeed() const { return leftWheelSpeed; }

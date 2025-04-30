@@ -20,6 +20,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Advanced_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Advanced_Line_Following.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +79,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;wip-2&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;wip-5&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/eugene/Robotics2/libraries/R4A_ESP32/examples/Freenove_4WD_Car/Freenove_4WD_Car.ino&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -105,6 +108,7 @@
       <workItem from="1745287968025" duration="9125000" />
       <workItem from="1745368651626" duration="8175000" />
       <workItem from="1745444045826" duration="3625000" />
+      <workItem from="1745988961066" duration="376000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -440,7 +444,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed #include to correct scope of declarations." />
     <MESSAGE value="fixed inconsistent declaration of pcf8574" />
     <MESSAGE value="fixed stateHistory using () when it should be []" />
     <MESSAGE value="removed unnecessary declaration of trace from stateMachine.ino" />
@@ -465,7 +468,8 @@
     <MESSAGE value="fix setMotor scope" />
     <MESSAGE value="fix seeTrack scope" />
     <MESSAGE value="remove old loop control for following line" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove old loop control for following line" />
+    <MESSAGE value="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

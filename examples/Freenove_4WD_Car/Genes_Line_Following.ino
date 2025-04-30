@@ -22,8 +22,8 @@
 #include "Freenove_4WD_Car_For_ESP32.cpp"
 #include "GeneFunctions.h"
 // #include "SetMotor.ino"
-#include "seeTrack.ino"
-#include "stateMachine.ino"
+//#include "seeTrack.ino"
+//#include "stateMachine.ino"
 
 
 

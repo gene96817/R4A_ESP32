@@ -124,17 +124,6 @@ std::array<StateAction, NUM_STATES> stateTable = {
   StateAction{ 12, 60, "Sharp right turn" },                 // PT1=6
   StateAction{ 8, 0, "Halting condition?" },                 // PT1=7
 
-
-  // PT2=5: Actions for PT1=0 to PT1=7
-  StateAction{ 12, 45, "Correcting slight right drift" },    // PT1=0
-  StateAction{ 12, 45, "Steady forward motion" },            // PT1=1
-  StateAction{ 12, 30, "Correcting left drift" },            // PT1=2
-  StateAction{ 12, 30, "Missed right turn" },                // PT1=3
-  StateAction{ 12, -60, "Hard correction for left drift" },  // PT1=4
-  StateAction{ 12, 30, "Re-centering from a fork" },         // PT1=5
-  StateAction{ 12, 60, "Sharp right turn" },                 // PT1=6
-  StateAction{ 8, 0, "Halting condition?" },                 // PT1=7
-
   // PT2=6: Special halt detection states. PT1=0..6 are false detections, PT1=7 is the actual stop.
   StateAction{ 12, 0, "False detection of halt, keep going" },  // PT1=0
   StateAction{ 12, 0, "False detection of halt, keep going" },  // PT1=1
