@@ -7,7 +7,7 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+    <option name="/Default/Housekeeping/RefactoringsMru/RenameRefactoring/DoSearchForTextInStrings/@EntryValue" value="true" type="bool" />
   </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
@@ -18,10 +18,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="add Motor_Move to SetMotor.ino">
+      <change afterPath="$PROJECT_DIR$/../../src/.idea/src.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Advanced_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Advanced_Line_Following.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Robot.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,11 +50,19 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Freenove_4WD_Car.ino" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Parameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/R4A_Robot.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -109,6 +119,9 @@
       <workItem from="1745368651626" duration="8175000" />
       <workItem from="1745444045826" duration="3625000" />
       <workItem from="1745988961066" duration="376000" />
+      <workItem from="1745989536201" duration="19218000" />
+      <workItem from="1746324616343" duration="20000" />
+      <workItem from="1746406230076" duration="24783000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -414,7 +427,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745376951558</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="fixed some #includes&#10;&#10;Fixed SetMotor.ino to make SetMotor a global">
+      <option name="closed" value="true" />
+      <created>1745990564050</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1745990564050</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -444,7 +465,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed inconsistent declaration of pcf8574" />
     <MESSAGE value="fixed stateHistory using () when it should be []" />
     <MESSAGE value="removed unnecessary declaration of trace from stateMachine.ino" />
     <MESSAGE value="fixed type with stateHistory[][]" />
@@ -469,7 +489,8 @@
     <MESSAGE value="fix seeTrack scope" />
     <MESSAGE value="remove old loop control for following line" />
     <MESSAGE value="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed" />
+    <MESSAGE value="fixed some #includes&#10;&#10;Fixed SetMotor.ino to make SetMotor a global" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed some #includes&#10;&#10;Fixed SetMotor.ino to make SetMotor a global" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -525,7 +546,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>198</line>
+          <line>193</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -540,12 +561,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>24</line>
-          <option name="timeStamp" value="50" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>317</line>
+          <line>312</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -580,7 +596,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>98</line>
+          <line>93</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -589,24 +605,14 @@
           <option name="timeStamp" value="65" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/stateMachine.ino</url>
-          <line>12</line>
-          <option name="timeStamp" value="67" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
           <line>8</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/SetMotor.ino</url>
-          <line>8</line>
-          <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/SetMotor.ino</url>
-          <line>79</line>
-          <option name="timeStamp" value="70" />
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>94</line>
+          <option name="timeStamp" value="81" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

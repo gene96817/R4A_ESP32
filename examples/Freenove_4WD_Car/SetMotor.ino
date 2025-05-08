@@ -8,69 +8,86 @@
 
 #include <cmath>
 #include <algorithm> // For std::min and std::max
+#include <iostream>
+#include "GeneFunctions.h"
 
-// Shared constants
-constexpr int MAX_PWM = 4095;
-constexpr int MIN_PWM = -4095;
-constexpr int MAX_SPEED = 20;
-constexpr int MIN_SPEED = -20;
-constexpr float DEGREE_TO_RADIAN = M_PI / 180.0;
-constexpr float DIRECTION_OFFSET_DEGREES = 45.0;
+// Constants for motor configuration (define actual values)
+constexpr int MOTOR_SPEED_LV4 = 4000;
+constexpr int MOTOR_SPEED_LV3 = 3000;
+constexpr int MOTOR_SPEED_LV2 = 2500;
+constexpr int MOTOR_SPEED_LV1 = 1500;
+constexpr int MOTOR_SPEED_MIN = 1500;
+// constexpr int MOTOR_SPEED_MIN = -4095;
+constexpr int MOTOR_SPEED_MAX = 4095;
+constexpr int MOTOR_1_DIRECTION = 1;
+constexpr int MOTOR_2_DIRECTION = 1;
+constexpr int MOTOR_3_DIRECTION = 1;
+constexpr int MOTOR_4_DIRECTION = 1;
 
-// Utility function to map one range to another
-int map(int x, int in_min, int in_max, int out_min, int out_max) {
-    if (in_min == in_max) return out_min; // Prevent division by zero
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+
+//  bool trace = true;    // this enables all the print statements for debugging.
+
+int speed;      //relative speed from -20 to 20
+int direction;  //degrees
+int DEGREE_TO_RADIAN = 2 * 3.1415 / 360;
+//what is relative wheel speed -- is there an offset for cos & sin?
+// for the relative wheel speed to be equal, we need the direction offset to be 45 degrees
+float  Direction_Offset_Degrees = 45;
+
+int leftWheelSpeed;
+int rightWheelSpeed;
+
+
+/*  do we need this at all... comment out for now
+// In setChannelPulseWidth
+bool PCA9685::setChannelPulseWidth(int pin, int pulseWidth) {
+    if (pin < 0 || pulseWidth < 0 || pulseWidth > MAX_PWM) {
+        std::cerr << "[ERROR] Invalid pin or pulse width\n";
+        return false;
+    }
+    std::cout << "[PCA9685] Setting pin " << pin << " to pulse width " << pulseWidth << "\n";
+    return true;
 }
+*/
 
-// Helper function to calculate radians for direction
-float calculateDirectionRadians(float direction) {
-    return (direction + DIRECTION_OFFSET_DEGREES) * DEGREE_TO_RADIAN;
-}
-
-// Helper function to calculate motor power based on speed
-int calculatePower(int speed) {
-    return map(speed, MIN_SPEED, MAX_SPEED, MIN_PWM, MAX_PWM);
-}
-
-// Helper function to adjust wheel speed
-int adjustWheelSpeed(float factor, int power) {
-    int wheelSpeed = static_cast<int>(power * factor);
-    return std::max(std::min(wheelSpeed, MAX_PWM), MIN_PWM);
-}
-
-// The new global SetMotor function
+// Function to compute motor speeds and set hardware pulse widths
+// SetMotor (speed, direction) was Move (speed, direction)
 void SetMotor(int speed = 0, float direction = 0) {
-    // Ensure speed is within bounds
-    speed = std::max(std::min(speed, MAX_SPEED), MIN_SPEED);
+    // Constrain the speed value to the allowed range
+    speed = constrain(speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
 
-    // Calculate runtime values
-    float directionRadians = calculateDirectionRadians(direction); // Convert direction to radians
-    int power = calculatePower(speed);                            // Map speed to motor power
+    // Convert the direction to radians (with offset) and calculate power
+    float directionRadians = (direction + Direction_Offset_Degrees) * DEGREE_TO_RADIAN
+;
+    // int power = calculatePower(speed);
 
-    // Calculate relative wheel speeds using direction
+    // Wheel direction calculations:
     float leftWheelFactor = sin(directionRadians);
     float rightWheelFactor = cos(directionRadians);
 
-    // Adjust actual wheel speeds using power and scaling
-    int leftWheelSpeed = adjustWheelSpeed(leftWheelFactor, power);
-    int rightWheelSpeed = adjustWheelSpeed(rightWheelFactor, power);
+     // Apply power to each wheel based on the factors:
+     int leftWheelSpeed = speed * leftWheelFactor;
 
-    // Execute motor movement
+     if (leftWheelSpeed < 0) {leftWheelSpeed = min(leftWheelSpeed, -MOTOR_SPEED_MIN);}
+     else if (leftWheelSpeed == 0) {leftWheelSpeed = 0;}
+     else if (leftWheelSpeed > MOTOR_SPEED_MIN) {leftWheelSpeed = max(leftWheelSpeed, MOTOR_SPEED_MIN);};
+
+
+     int rightWheelSpeed = speed * rightWheelFactor;
+
+     if (rightWheelSpeed < 0) {rightWheelSpeed = min(rightWheelSpeed, -MOTOR_SPEED_MIN);}
+     else if (rightWheelSpeed == 0) {rightWheelSpeed = 0;}
+     else if (rightWheelSpeed > MOTOR_SPEED_MIN) {rightWheelSpeed = max(rightWheelSpeed, MOTOR_SPEED_MIN);};
+
+
+
+    // Output debug information
+    std::cout << "[DEBUG] Speed: " << speed << ", Direction: " << direction << "\n";
+    std::cout << "Left Wheel Speed: " << leftWheelSpeed
+              << ", Right Wheel Speed: " << rightWheelSpeed << "\n";
+
+    // Send calculated speeds to the motors
     Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
+    //see Robot.ino for funtions driving wheels
+
 }
-
-    // Accessors for testing or debugging
-    int getLeftWheelSpeed() const { return leftWheelSpeed; }
-    int getRightWheelSpeed() const { return rightWheelSpeed; }
-};
-
-
-/*   Usage hints
-SetMotor motor(15, 30.0); // Speed = 15, Direction = 30 degrees
-motor.executeMotorMove(); // Executes motor movement command
-
-// Debug speeds
-std::cout << "Left Wheel Speed: " << motor.getLeftWheelSpeed();
-std::cout << "Right Wheel Speed: " << motor.getRightWheelSpeed();
- */

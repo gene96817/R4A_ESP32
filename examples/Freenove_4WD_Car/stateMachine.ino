@@ -48,7 +48,7 @@ struct StateAction {    // Action in each state table cell
     direction = action.direction;
 
     // Create a motor object and execute the motor move
-    SetMotor motor(speed, direction);
+    SetMotor(speed, direction);
     motor.executeMotorMove();
   }
 

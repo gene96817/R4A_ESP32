@@ -68,3 +68,15 @@ bool robotMotorSetSpeeds(int16_t left, int16_t right, Print* display) {
          && motorBackRight.speed(right, display)
          && pca9685.writeBufferedRegisters(display);
 }
+
+
+// Send calculated speeds to the motors
+    Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
+
+// Set motor speeds using the robotMotorSetSpeeds function
+robotMotorSetSpeeds(leftWheelSpeed, rightWheelSpeed, nullptr); // Assuming `nullptr` for `Print* display`
+
+
+    //see Robot.ino for funtions driving wheels
+
+}
