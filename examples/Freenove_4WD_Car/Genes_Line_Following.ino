@@ -20,7 +20,7 @@
 //****************************************
 
 #include "SetMotor.ino"
-
+#include "seeTrack.ino"
 
 #define glf_DEBUG_MOTORS 0
 #define glf_DEBUG_STATES 0
@@ -56,10 +56,10 @@ bool trace = true;  // this enables all the print statements for debugging.
 int SensorReadings[6] = { 2, 2, 2, 2, 0, 0 };  // last 6 positions read
 int theta[2] = { 0, 0 };                       // last 2 theta (headings) readings
 
-int speed;        //relative speed from -20 to 20
-float direction;  //degrees
-int leftWheelSpeed;
-int rightWheelSpeed;
+// int speed;        //relative speed from -20 to 20
+// float direction;  //degrees
+// int leftWheelSpeed;
+// int rightWheelSpeed;
 
 
 

@@ -37,18 +37,34 @@ float  Direction_Offset_Degrees = 45;
 int leftWheelSpeed;
 int rightWheelSpeed;
 
+// Add this function declaration before SetMotor function
+bool Motor_Move(int left1, int left2, int right1, int right2) {
+    // Constrain all input values to the valid motor speed range
+    left1 = constrain(left1, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
+    left2 = constrain(left2, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
+    right1 = constrain(right1, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
+    right2 = constrain(right2, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
 
-/*  do we need this at all... comment out for now
-// In setChannelPulseWidth
-bool PCA9685::setChannelPulseWidth(int pin, int pulseWidth) {
-    if (pin < 0 || pulseWidth < 0 || pulseWidth > MAX_PWM) {
-        std::cerr << "[ERROR] Invalid pin or pulse width\n";
-        return false;
-    }
-    std::cout << "[PCA9685] Setting pin " << pin << " to pulse width " << pulseWidth << "\n";
-    return true;
+    // Apply direction multipliers for each motor
+    left1 *= MOTOR_1_DIRECTION;
+    left2 *= MOTOR_2_DIRECTION;
+    right1 *= MOTOR_3_DIRECTION;
+    right2 *= MOTOR_4_DIRECTION;
+
+    // Debug output
+    std::cout << "[Motor_Move] Setting motors: "
+              << "Left1=" << left1 << ", "
+              << "Left2=" << left2 << ", "
+              << "Right1=" << right1 << ", "
+              << "Right2=" << right2 << "\n";
+
+
+
+// Set motor speeds using the robotMotorSetSpeeds function
+return robotMotorSetSpeeds(leftWheelSpeed, rightWheelSpeed, nullptr); // Assuming `nullptr` for `Print* display`
+
+
 }
-*/
 
 // Function to compute motor speeds and set hardware pulse widths
 // SetMotor (speed, direction) was Move (speed, direction)
@@ -86,8 +102,6 @@ void SetMotor(int speed = 0, float direction = 0) {
     std::cout << "Left Wheel Speed: " << leftWheelSpeed
               << ", Right Wheel Speed: " << rightWheelSpeed << "\n";
 
-    // Send calculated speeds to the motors
-    Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
-    //see Robot.ino for funtions driving wheels
+
 
 }

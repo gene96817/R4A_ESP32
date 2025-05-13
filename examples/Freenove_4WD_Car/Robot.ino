@@ -61,22 +61,11 @@ void robotIdle(uint32_t currentMsec) {
 // 770 uSec = (1+8+1+8+1+((8+1)×32)+1)÷(400×1000)
 // Returns true if successful, false otherwise
 bool robotMotorSetSpeeds(int16_t left, int16_t right, Print* display) {
-  // Update motor speeds
+
+// Update motor speeds
   return motorFrontLeft.speed(left, display)
          && motorBackLeft.speed(left, display)
          && motorFrontRight.speed(right, display)
          && motorBackRight.speed(right, display)
          && pca9685.writeBufferedRegisters(display);
-}
-
-
-// Send calculated speeds to the motors
-    Motor_Move(leftWheelSpeed, leftWheelSpeed, rightWheelSpeed, rightWheelSpeed);
-
-// Set motor speeds using the robotMotorSetSpeeds function
-robotMotorSetSpeeds(leftWheelSpeed, rightWheelSpeed, nullptr); // Assuming `nullptr` for `Print* display`
-
-
-    //see Robot.ino for funtions driving wheels
-
 }
