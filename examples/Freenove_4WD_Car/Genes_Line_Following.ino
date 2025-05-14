@@ -23,7 +23,7 @@
 #include "seeTrack.ino"
 
 #define glf_DEBUG_MOTORS 0
-#define glf_DEBUG_STATES 0
+// #define glf_DEBUG_STATES 0
 
 #define glf_SPEED_LV4 4000
 #define glf_SPEED_LV3 3000
@@ -53,6 +53,7 @@ bool trace = true;  // this enables all the print statements for debugging.
 // int glfTimeFlag = 0;    //Record the blink time
 
 //initialize memory of track detection
+int sensorValue[3];
 int SensorReadings[6] = { 2, 2, 2, 2, 0, 0 };  // last 6 positions read
 int theta[2] = { 0, 0 };                       // last 2 theta (headings) readings
 
@@ -150,7 +151,9 @@ showsensor(); SetMotor(10,-180);
     Serial.print("Searching to left  ");
     SetMotor(12, -20);
     Track_Read();  // get a new sensor reading
-    if (sensorValue[3] != 0) break;
+
+
+if (sensorValue[3] != 0) break;
   }
   //backup
   showsensor();
@@ -344,7 +347,7 @@ void GLF_make_a_step() {
   // WARNING.... check all code for PT2 and PT1 usage
   // PT1 is latest reading.... PT2 is previous reading
 
-  stateTable(PT2 * 8 + PT1);
+  // stateTable(PT2 * 8 + PT1);
 
 }
 

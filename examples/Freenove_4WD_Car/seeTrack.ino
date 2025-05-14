@@ -14,6 +14,7 @@ int PT5 = 0;
 int PW0 = 0; // Previous reading for PT1, not used in the current logic
 int PW1 = 0; // Previous reading for PT2, not used in the current logic
 
+#define glf_DEBUG_STATES 0
 
 // Multi-state history array: rows for each PT state, columns for history depth
 int stateHistory[NUM_HISTORY][NUM_READINGS] = {0};
@@ -43,10 +44,10 @@ int seeTrack(int& PT2, int& PT3, int& PT4, int& PT5, int& PT6) {
 
     // Update history for all states
     // StateHistory(stateHistory, NUM_READINGS, PT1, PT2, PT3, PT4, PT5, PT6);
-      }
+    //   }
 
     // Debugging output
-    if (BLF_DEBUG_STATES) {
+    if (glf_DEBUG_STATES) {
       // verify this prints out the last six readings
         Serial.println("Sensor Values (PT1, PT2, PT3, PT4, PT5, PT6");
             }

@@ -18,17 +18,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables&#10;fixed Track_Read">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Advanced_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Advanced_Line_Following.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Freenove_4WD_Car_For_ESP32.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Freenove_4WD_Car_For_ESP32.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GeneFunctions.h" beforeDir="false" afterPath="$PROJECT_DIR$/GeneFunctions.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Genes_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Genes_Line_Following.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Robot.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Robot.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SetMotor.ino" beforeDir="false" afterPath="$PROJECT_DIR$/SetMotor.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/seeTrack.ino" beforeDir="false" afterPath="$PROJECT_DIR$/seeTrack.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stateMachine.ino" beforeDir="false" afterPath="$PROJECT_DIR$/stateMachine.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +128,9 @@
       <workItem from="1746776540597" duration="36000" />
       <workItem from="1747080768818" duration="701000" />
       <workItem from="1747081566424" duration="2201000" />
-      <workItem from="1747101369973" duration="2543000" />
+      <workItem from="1747101369973" duration="5249000" />
+      <workItem from="1747184687582" duration="3860000" />
+      <workItem from="1747261236899" duration="802000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -456,7 +452,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746666500931</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables&#10;fixed Track_Read">
+      <option name="closed" value="true" />
+      <created>1747104247966</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1747104247966</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -486,7 +490,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed unnecessary declaration of trace from stateMachine.ino" />
     <MESSAGE value="fixed type with stateHistory[][]" />
     <MESSAGE value="Fixed declarations for PT1...PT5" />
     <MESSAGE value="fixed declarations for NUM_HISTORY and NUM_READINGS" />
@@ -511,7 +514,8 @@
     <MESSAGE value="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed" />
     <MESSAGE value="fixed some #includes&#10;&#10;Fixed SetMotor.ino to make SetMotor a global" />
     <MESSAGE value="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables" />
+    <MESSAGE value="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables&#10;fixed Track_Read" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed errors defining Move_Motor&#10;fixed syntax errors on other variables&#10;fixed Track_Read" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -548,7 +552,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>193</line>
+          <line>196</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -558,12 +562,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/seeTrack.ino</url>
-          <line>50</line>
+          <line>51</line>
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>312</line>
+          <line>315</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -598,7 +602,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>93</line>
+          <line>94</line>
           <option name="timeStamp" value="63" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -613,27 +617,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>94</line>
+          <line>95</line>
           <option name="timeStamp" value="81" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>56</line>
+          <line>57</line>
           <option name="timeStamp" value="84" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>63</line>
+          <line>64</line>
           <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>129</line>
+          <line>130</line>
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>131</line>
+          <line>132</line>
           <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -656,6 +660,26 @@
           <url>file://$PROJECT_DIR$/Robot.ino</url>
           <line>71</line>
           <option name="timeStamp" value="94" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/seeTrack.ino</url>
+          <line>36</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/seeTrack.ino</url>
+          <line>15</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>133</line>
+          <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
+          <line>21</line>
+          <option name="timeStamp" value="100" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

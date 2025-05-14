@@ -59,7 +59,7 @@ struct StateAction {    // Action in each state table cell
     }
   }
 
-
+  stateTable(PT2 * 8 + PT1);
 
 // Complete the 64-state table
 std::array<StateAction, NUM_STATES> stateTable = {
