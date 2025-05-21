@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
-    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
+    <option name="/Default/Housekeeping/RefactoringsMru/RenameRefactoring/DoSearchForTextInStrings/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
   </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
@@ -18,8 +19,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="fixed #includes for Genes_Line_Following.ino&#10;&#10;I though all the .ino were combined and no #includes were needed">
+    <list default="true" id="b7e46431-f8f9-43c1-a28e-6d0c312ff9f1" name="Changes" comment="merging 4Genes_Line_Following.ino">
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Advanced_Line_Following.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Advanced_Line_Following.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +79,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;wip-2&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;wip-2a&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/eugene/Robotics2/libraries/R4A_ESP32/examples/Freenove_4WD_Car/Freenove_4WD_Car.ino&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -105,6 +108,7 @@
       <workItem from="1745287968025" duration="9125000" />
       <workItem from="1745368651626" duration="8175000" />
       <workItem from="1745444045826" duration="3625000" />
+      <workItem from="1747788691440" duration="820000" />
     </task>
     <task id="LOCAL-00001" summary="delete two #include in SetMotor.ino">
       <option name="closed" value="true" />
@@ -410,7 +414,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745376951558</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="merging 4Genes_Line_Following.ino">
+      <option name="closed" value="true" />
+      <created>1747787781016</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1747787781016</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -440,7 +452,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed #include to correct scope of declarations." />
     <MESSAGE value="fixed inconsistent declaration of pcf8574" />
     <MESSAGE value="fixed stateHistory using () when it should be []" />
     <MESSAGE value="removed unnecessary declaration of trace from stateMachine.ino" />
@@ -465,7 +476,8 @@
     <MESSAGE value="fix setMotor scope" />
     <MESSAGE value="fix seeTrack scope" />
     <MESSAGE value="remove old loop control for following line" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove old loop control for following line" />
+    <MESSAGE value="merging 4Genes_Line_Following.ino" />
+    <option name="LAST_COMMIT_MESSAGE" value="merging 4Genes_Line_Following.ino" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -479,11 +491,6 @@
           <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
           <line>270</line>
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Robot.ino</url>
-          <line>6</line>
-          <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Freenove_4WD_Car.ino</url>
@@ -520,8 +527,8 @@
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>198</line>
+          <url>file://$PROJECT_DIR$/4Genes_Line_Following.ino</url>
+          <line>13</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -535,13 +542,13 @@
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>24</line>
+          <url>file://$PROJECT_DIR$/4Genes_Line_Following.ino</url>
+          <line>3</line>
           <option name="timeStamp" value="50" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>317</line>
+          <url>file://$PROJECT_DIR$/4Genes_Line_Following.ino</url>
+          <line>64</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -575,11 +582,6 @@
           <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>98</line>
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/stateMachine.ino</url>
           <line>54</line>
           <option name="timeStamp" value="65" />
@@ -588,11 +590,6 @@
           <url>file://$PROJECT_DIR$/stateMachine.ino</url>
           <line>12</line>
           <option name="timeStamp" value="67" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Genes_Line_Following.ino</url>
-          <line>8</line>
-          <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/SetMotor.ino</url>
