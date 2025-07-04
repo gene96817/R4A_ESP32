@@ -40,7 +40,7 @@ This sketch is modified code from 01_Basic_Line_Following.ino which is modeled a
 
     loop - main routine
         r4aRobotUpdate - Updates the robot layer
-            blfChallenge - Perform the basic line following
+            glfChallenge - Perform the basic line following
                 pcf8574.read - Read line sensors
                     _i2cBus->_read - R4A I2C layer read routine
                         r4aEsp32I2cBusRead - R4A ESP32 I2C interface
@@ -123,8 +123,14 @@ int glfTimeFlag = 0;    //Record the blink time
         Serial.printf("Add your code to CLF::challenge()\r\n");
        }
 
+   // Calculate the state index and get the action
+    int stateIndex = PT2 * NUM_PT1_STATES + PT1;
+
+    // Get the action from the state table
+    const StateAction* action = &g_stateTable[stateIndex];
+
 //Update the robot direction
-executeAction();
+executeAction(action);
 }
 
 

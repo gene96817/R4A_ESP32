@@ -32,7 +32,6 @@ static int g_speed = 0;
 static int g_direction = 0;
 static int g_trace = 1;
 
-
 // Forward declarations
 void SetMotor(int speed, int direction);
 void executeAction(const StateAction* action);  // Add this forward declaration

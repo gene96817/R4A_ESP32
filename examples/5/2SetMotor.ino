@@ -17,34 +17,6 @@
 #include <math.h>
 
 
-/* motor_control.h */
-#ifndef MOTOR_CONTROL_H
-#define MOTOR_CONTROL_H
-
-/* Motor configuration */
-#define MOTOR_SPEED_MAX    4095
-#define MOTOR_SPEED_MIN    1500
-
-/* Direction constants */
-#define MOTOR_DIR_FORWARD   1
-#define MOTOR_DIR_REVERSE  -1
-
-// Motor pin definitions
-#define PIN_MOTOR_M1_IN1    8  // Motor 1 input 1
-#define PIN_MOTOR_M1_IN2    9  // Motor 1 input 2
-#define PIN_MOTOR_M2_IN1    10 // Motor 2 input 1
-#define PIN_MOTOR_M2_IN2    11 // Motor 2 input 2
-
-
-/* Function prototypes */
-/****************** 
-void SetMotor(int speed, float direction, int debug);
-int datalogger(int trace, int speed, float direction,
-               int left_speed, int right_speed);
-**************/
-
-#endif /* MOTOR_CONTROL_H */
-
 /* Math constants */
 // #define PI 3.14159265358979323846
 // #define DEG_TO_RAD (PI / 180.0)
@@ -60,9 +32,9 @@ int datalogger(int trace, int speed, float direction,
 const int NUM_SENSORS = 6;
 
 /* Global variables */
-static bool trace = true;
+// static bool trace = true;
 // static int sensorValue[NUM_SENSORS];
-static int theta_history[2];
+// static int theta_history[2];
 
 /* Motor speed levels */
 #define glf_SPEED_MAX 4095
@@ -115,83 +87,7 @@ int rightWheelSpeed;
 /* Function prototypes */
 
 //A function to control the car motor
-/*************************************
-void Motor_Move(int m1_speed, int m2_speed, int m3_speed, int m4_speed)
-{
-  m1_speed = MOTOR_1_DIRECTION * constrain(m1_speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
-  m2_speed = MOTOR_2_DIRECTION * constrain(m2_speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
-  m3_speed = MOTOR_3_DIRECTION * constrain(m3_speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
-  m4_speed = MOTOR_4_DIRECTION * constrain(m4_speed, MOTOR_SPEED_MIN, MOTOR_SPEED_MAX);
 
-  if (m1_speed >= 0)
-  {
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M1_IN1, m1_speed);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M1_IN2, 0);
-  }
-  else
-  {
-    m1_speed = -m1_speed;
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M1_IN1, 0);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M1_IN2, m1_speed);
-  }
-  if (m2_speed >= 0)
-  {
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M2_IN1, m2_speed);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M2_IN2, 0);
-  }
-  else
-  {
-    m2_speed = -m2_speed;
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M2_IN1, 0);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M2_IN2, m2_speed);
-  }
-  if (m3_speed >= 0)
-  {
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M3_IN1, m3_speed);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M3_IN2, 0);
-  }
-  else
-  {
-    m3_speed = -m3_speed;
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M3_IN1, 0);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M3_IN2, m3_speed);
-  }
-  if (m4_speed >= 0)
-  {
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M4_IN1, m4_speed);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M4_IN2, 0);
-  }
-  else
-  {
-    m4_speed = -m4_speed;
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M4_IN1, 0);
-    pca9685.setChannelPulseWidth(PIN_MOTOR_M4_IN2, m4_speed);
-  }
-}
-
-void Motor_Move(int m1_direction, int m1_speed, int m2_direction, int m2_speed) {
-    // Motor 1
-    if (m1_direction == 1) {  // Forward
-        pca9685.setPWM(PIN_MOTOR_M1_IN1, 0, m1_speed);
-        pca9685.setPWM(PIN_MOTOR_M1_IN2, 0, 0);
-    }
-    else if (m1_direction == -1) {  // Backward
-        pca9685.setPWM(PIN_MOTOR_M1_IN1, 0, 0);
-        pca9685.setPWM(PIN_MOTOR_M1_IN2, 0, m1_speed);
-    }
-
-    // Motor 2
-    if (m2_direction == 1) {  // Forward
-        pca9685.setPWM(PIN_MOTOR_M2_IN1, 0, m2_speed);
-        pca9685.setPWM(PIN_MOTOR_M2_IN2, 0, 0);
-    }
-    else if (m2_direction == -1) {  // Backward
-        pca9685.setPWM(PIN_MOTOR_M2_IN1, 0, 0);
-        pca9685.setPWM(PIN_MOTOR_M2_IN2, 0, m2_speed);
-    }
-}
-
-*********************************/
 
 
 
@@ -253,7 +149,6 @@ int datalogger(int trace, int speed, float direction,
     return MOTOR_SUCCESS;
 }
 
-///////////////////////////////////////////
 
 
 //****************************************
