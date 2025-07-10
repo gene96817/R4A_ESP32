@@ -69,6 +69,7 @@ This sketch is modified code from 01_Basic_Line_Following.ino which is modeled a
                 ESP32 I2C controller layer
 **********************************************************************/
 
+#include "4GenesLineFollowing.h"
 
 //****************************************
 // Constants
@@ -169,12 +170,12 @@ void menuGlfStart(const struct _R4A_MENU_ENTRY * menuEntry,
 {
     static R4A_ROBOT_CHALLENGE basicLineFollowing =
     {
-        blfChallenge,
-        blfInit,
-        blfStart,
-        blfStop,
+        glfChallenge,
+        glfInit,
+        glfStart,
+        glfStop,
 
-        "Basic Line Following",         // _name
+        "Gene's Line Following",         // _name
         ROBOT_LINE_FOLLOW_DURATION_SEC, // _duration
     };
     float voltage;

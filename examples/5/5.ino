@@ -102,6 +102,7 @@
 
 #include "Parameters.h"
 
+
 //****************************************
 // Constants
 //****************************************
@@ -300,11 +301,11 @@ void setup()
     loopCore1OutTimeUsec = (R4A_TIME_USEC_t *)r4aMalloc(length, "Core 1 out of loop time buffer (loopCore1OutTimeUsec)");
     if (!loopCore1OutTimeUsec)
         r4aReportFatalError("Failed to allocate loopCore1OutTimeUsec!");
-
+}
     //****************************************
     // Execute loop forever
     //****************************************
-}
+
 
 //*********************************************************************
 // Idle loop for core 1 of the application

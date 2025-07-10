@@ -3,6 +3,7 @@
 
   Declare the parameters and set default values
 **********************************************************************/
+#include "4GenesLineFollowing.h"
 
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
@@ -23,6 +24,7 @@ int16_t glfSpeedSlow;
 int16_t glfSpeedMedium;
 int16_t glfSpeedFast;
 
+bool    glfSetMotorDebug;
 
 //****************************************
 // NVM
@@ -61,6 +63,9 @@ const R4A_ESP32_NVM_PARAMETER nvmParameters[] =
     {true,  R4A_ESP32_NVM_PT_INT16,  (uint64_t)-4096,   4096,   &glfSpeedFast,      "glfFast",      4000},
     {true,  R4A_ESP32_NVM_PT_INT16,  (uint64_t)-4096,   4096,   &glfSpeedMedium,    "glfMedium",    3000},
     {true,  R4A_ESP32_NVM_PT_INT16,  (uint64_t)-4096,   4096,   &glfSpeedSlow,      "glfSlow",      1500},
+    {true,  R4A_ESP32_NVM_PT_BOOL,   0,                 1,      &
+    ,  "SetMotorDebug",    false},
+ 
 
     // Memory parameters
 // Required    Type                  Minimum     Maximum        Address                     Name            Default Value

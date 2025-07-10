@@ -91,10 +91,13 @@ int rightWheelSpeed;
 
 
 
-void SetMotor(int speed, float direction, int debug) {
+void SetMotor(int speed, int intDirection, const char* comment) {
     float directionRadians;
+    float direction;
     float leftWheelFactor, rightWheelFactor;
     int leftWheelSpeed, rightWheelSpeed;
+
+    direction = intDirection;
 
     /* Parameter validation */
     if (speed < -glf_SPEED_MAX || speed > glf_SPEED_MAX) {
@@ -117,7 +120,8 @@ void SetMotor(int speed, float direction, int debug) {
 
 
     /* Debug output */
-    if (debug) {
+    if (glfSetMotorDebug) {
+        printf ("%s\r\n", comment);
         printf("[DEBUG] Speed: %d, Direction: %.2f\n", speed, direction);
         printf("Left Wheel Speed: %d, Right Wheel Speed: %d\n",
                leftWheelSpeed, rightWheelSpeed);

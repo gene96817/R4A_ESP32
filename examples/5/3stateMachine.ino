@@ -12,14 +12,7 @@
 
 #include <array>
 #include <functional>
-
-
-// State action structure
-typedef struct {
-  int speed;
-  int direction;
-  const char* comment;
-} StateAction;
+#include "4GenesLineFollowing.h"
 
 
 // Constants
@@ -33,9 +26,12 @@ static int g_direction = 0;
 static int g_trace = 1;
 
 // Forward declarations
+/*********************
 void SetMotor(int speed, int direction);
 void executeAction(const StateAction* action);  // Add this forward declaration
 void traceLog(const char* message);
+*********************/
+
 
 
 
@@ -129,7 +125,7 @@ void executeAction(const StateAction* action) {
     g_speed = action->speed;
     g_direction = action->direction;
     // Call your motor control function here
-    SetMotor(g_speed, g_direction);
+    SetMotor(g_speed, g_direction, action->comment);
 }
 
 
@@ -183,5 +179,5 @@ void process(int PT1, int PT2, int PT3) {
 void initializeStateMachine(int initialSpeed, int initialDirection) {
   g_speed = initialSpeed;
   g_direction = initialDirection;
-  SetMotor(g_speed, g_direction);
+  SetMotor(g_speed, g_direction, "initial Speed and Direction");
 }
